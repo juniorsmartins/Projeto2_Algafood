@@ -10,7 +10,7 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Component
-public final class EstadoRepositoryImpl implements EstadoRepository {
+public class EstadoRepositoryImpl implements EstadoRepository {
 
     @PersistenceContext
     private EntityManager manager;
