@@ -1,21 +1,16 @@
 package io.algafoodapi.domain.service;
 
 import io.algafoodapi.domain.model.Cozinha;
+import io.algafoodapi.domain.repository.CozinhaRepository;
 import org.springframework.stereotype.Component;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 import java.util.List;
 
 @Component
 public class CadastrarCozinha {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    private CozinhaRepository repository;
 
     public List<Cozinha> listar() {
-        TypedQuery<Cozinha> query = entityManager.createQuery("from cozinha", Cozinha.class);
-        return query.getResultList();
+        return repository.listar();
     }
 }

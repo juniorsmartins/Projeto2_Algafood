@@ -13,11 +13,13 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode(of = "id")
+@ToString
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public final class Restaurante implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
