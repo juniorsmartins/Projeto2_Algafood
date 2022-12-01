@@ -24,6 +24,6 @@ public final class FormaPagamento implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "descricao", nullable = false)
+    @Column(name = "descricao", length = 250, nullable = false)
     private String descricao;
 }

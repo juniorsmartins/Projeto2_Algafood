@@ -24,9 +24,9 @@ public final class Permissao implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "nome", nullable = false)
+    @Column(name = "nome", length = 80, nullable = false)
     private String nome;
 
-    @Column(name = "descricao", nullable = false)
+    @Column(name = "descricao", length = 250, nullable = false)
     private String descricao;
 }
