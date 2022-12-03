@@ -49,6 +49,12 @@
 			<optional>true</optional>
 		</dependency>
 
+		<!-- Formata objeto em XML -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-xml</artifactId>
+		</dependency>
+
 
 		<!-- Banco de Dados -->
 		<dependency>
