@@ -1,6 +1,7 @@
 package io.algafoodapi.api.controller;
 
 import io.algafoodapi.domain.model.Cozinha;
+import io.algafoodapi.domain.model.CozinhasXmlWrapper;
 import io.algafoodapi.domain.repository.CozinhaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -12,18 +13,23 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/cozinhas", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+@RequestMapping(value = "/cozinhas", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }) // Content Negotiation (Json e XML)
 public class CozinhaController {
 
     @Autowired
     private CozinhaRepository cozinhaRepository;
 
-    @GetMapping
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Cozinha> listar() {
         return this.cozinhaRepository.listar();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(produces = MediaType.APPLICATION_XML_VALUE)
+    public CozinhasXmlWrapper listarXml() {
+        return new CozinhasXmlWrapper(this.cozinhaRepository.listar());
+    }
+
+    @GetMapping(value = "/{id}")
     public Cozinha buscar(@PathVariable(name = "id") Long id) {
         return this.cozinhaRepository.buscar(id);
     }
