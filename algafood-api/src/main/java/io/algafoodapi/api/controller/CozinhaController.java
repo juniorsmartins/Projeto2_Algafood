@@ -4,7 +4,9 @@ import io.algafoodapi.domain.model.Cozinha;
 import io.algafoodapi.domain.model.CozinhasXmlWrapper;
 import io.algafoodapi.domain.repository.CozinhaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,7 +32,14 @@ public class CozinhaController {
     }
 
     @GetMapping(value = "/{id}")
-    public Cozinha buscar(@PathVariable(name = "id") Long id) {
-        return this.cozinhaRepository.buscar(id);
+    public ResponseEntity<Cozinha> buscar(@PathVariable(name = "id") Long id) {
+
+        var cozinha = this.cozinhaRepository.buscar(id);
+
+        if(cozinha == null)
+            return ResponseEntity.notFound().build();
+
+        return ResponseEntity
+                .ok(cozinha);
     }
 }
