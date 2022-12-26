@@ -3,8 +3,10 @@ package io.algafoodapi.api.controller;
 import io.algafoodapi.domain.model.Cozinha;
 import io.algafoodapi.domain.model.CozinhasXmlWrapper;
 import io.algafoodapi.domain.repository.CozinhaRepository;
+import io.algafoodapi.domain.service.CadastroCozinhaService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,12 +19,15 @@ import java.util.List;
 public class CozinhaController {
 
     @Autowired
+    private CadastroCozinhaService cozinhaService;
+
+    @Autowired
     private CozinhaRepository cozinhaRepository;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void adicionar(@RequestBody Cozinha cozinha) {
-        this.cozinhaRepository.salvar(cozinha);
+        this.cozinhaService.salvar(cozinha);
     }
 
     @PutMapping(value = "/{id}")
@@ -45,18 +50,23 @@ public class CozinhaController {
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Cozinha> remover(@PathVariable(name = "id") Long id) {
 
-        var cozinha = this.cozinhaRepository.buscar(id);
+        try {
+            var cozinha = this.cozinhaRepository.buscar(id);
 
-        if(cozinha == null)
+            if(cozinha == null)
+                return ResponseEntity
+                        .notFound()
+                        .build();
+
+            this.cozinhaRepository.remover(cozinha.getId());
+
             return ResponseEntity
-                    .notFound()
+                    .noContent()
                     .build();
+        } catch (DataIntegrityViolationException data) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
 
-        this.cozinhaRepository.remover(cozinha);
-
-        return ResponseEntity
-                .noContent()
-                .build();
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
