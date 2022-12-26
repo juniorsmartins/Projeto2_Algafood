@@ -1,5 +1,7 @@
 package io.algafoodapi.api.controller;
 
+import io.algafoodapi.domain.exception.EntidadeEmUsoException;
+import io.algafoodapi.domain.exception.EntidadeNaoEncontradaException;
 import io.algafoodapi.domain.model.Cozinha;
 import io.algafoodapi.domain.model.CozinhasXmlWrapper;
 import io.algafoodapi.domain.repository.CozinhaRepository;
@@ -41,7 +43,7 @@ public class CozinhaController {
                     .build();
 
         BeanUtils.copyProperties(cozinhaAtual, cozinha, "id");
-        this.cozinhaRepository.salvar(cozinha);
+        this.cozinhaService.salvar(cozinha);
 
         return ResponseEntity
                 .ok(cozinha);
@@ -51,22 +53,22 @@ public class CozinhaController {
     public ResponseEntity<Cozinha> remover(@PathVariable(name = "id") Long id) {
 
         try {
-            var cozinha = this.cozinhaRepository.buscar(id);
+            this.cozinhaService.excluir(id);
 
-            if(cozinha == null)
-                return ResponseEntity
-                        .notFound()
-                        .build();
-
-            this.cozinhaRepository.remover(cozinha.getId());
-
+        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
             return ResponseEntity
-                    .noContent()
+                    .notFound()
                     .build();
-        } catch (DataIntegrityViolationException data) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+
+        } catch (EntidadeEmUsoException emUsoException) {
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .build();
         }
 
+        return ResponseEntity
+                .noContent()
+                .build();
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
