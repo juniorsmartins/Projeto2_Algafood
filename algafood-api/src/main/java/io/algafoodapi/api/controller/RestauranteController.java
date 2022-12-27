@@ -5,11 +5,10 @@ import io.algafoodapi.domain.model.Restaurante;
 import io.algafoodapi.domain.service.CadastroRestauranteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -18,6 +17,25 @@ public class RestauranteController {
 
     @Autowired
     private CadastroRestauranteService restauranteService;
+
+    @PostMapping
+    public ResponseEntity<?> adicionar(@RequestBody Restaurante restaurante, UriComponentsBuilder uriComponentsBuilder) {
+
+        try {
+            restaurante = this.restauranteService.salvar(restaurante);
+            return ResponseEntity
+                    .created(uriComponentsBuilder
+                            .path("restaurantes/{id}")
+                            .buildAndExpand(restaurante.getId())
+                            .toUri())
+                    .body(restaurante);
+
+        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(naoEncontradaException.getMessage());
+        }
+    }
 
     @GetMapping
     public ResponseEntity<List<Restaurante>> listar() {
@@ -30,19 +48,16 @@ public class RestauranteController {
     @GetMapping(value = "/{id}")
     public ResponseEntity<Restaurante> buscar(@PathVariable(name = "id") Long id) {
 
-        Restaurante restaurante;
-
         try {
-            restaurante = this.restauranteService.buscar(id);
+            var restaurante = this.restauranteService.buscar(id);
+            return ResponseEntity
+                    .ok()
+                    .body(restaurante);
 
         } catch (EntidadeNaoEncontradaException naoEncontradaException) {
             return ResponseEntity
                     .notFound()
                     .build();
         }
-
-        return ResponseEntity
-                .ok()
-                .body(restaurante);
     }
 }
