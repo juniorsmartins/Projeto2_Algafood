@@ -60,9 +60,19 @@ public class RestauranteController {
     @GetMapping
     public ResponseEntity<List<Restaurante>> listar() {
 
-        return ResponseEntity
-                .ok()
-                .body(this.restauranteService.listar());
+        try {
+            var restaurantes = this.restauranteService.listar();
+            return ResponseEntity
+                    .ok()
+                    .body(restaurantes);
+
+        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
+            return ResponseEntity
+                    .noContent()
+                    .build();
+        }
+
+
     }
 
     @GetMapping(value = "/{id}")

@@ -42,7 +42,12 @@ public final class CadastroCozinhaService {
     }
 
     public List<Cozinha> listar() {
-        return this.cozinhaRepository.listar();
+        var cozinhas = this.cozinhaRepository.listar();
+
+        if(cozinhas.isEmpty())
+            throw new EntidadeNaoEncontradaException(String.format("Não há cozinhas cadastradas no banco de dados."));
+
+        return cozinhas;
     }
 
     public Cozinha buscar(Long id) {

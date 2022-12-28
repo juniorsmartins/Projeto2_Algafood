@@ -73,11 +73,17 @@ public class CozinhaController {
     @GetMapping
     public ResponseEntity<List<Cozinha>> listar() {
 
-        var cozinhas = this.cozinhaService.listar();
+        try {
+            var cozinhas = this.cozinhaService.listar();
+            return ResponseEntity
+                    .ok()
+                    .body(cozinhas);
 
-        return ResponseEntity
-                .ok()
-                .body(cozinhas);
+        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
+            return ResponseEntity
+                    .noContent()
+                    .build();
+        }
     }
 
     @GetMapping(value = "/{id}")
