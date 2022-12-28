@@ -33,7 +33,7 @@ public final class CadastroRestauranteService {
         return this.restauranteRepository.salvar(restaurante);
     }
 
-    public Restaurante atualizar(Long id, Restaurante restauranteAtual) throws EntidadeNaoEncontradaException {
+    public Restaurante atualizar(Long id, Restaurante restauranteAtual) throws EntidadeNaoEncontradaException, RequisicaoMalFormuladaException {
 
         var restaurante = this.buscar(id);
 
