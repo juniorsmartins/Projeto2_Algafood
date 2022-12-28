@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 
@@ -20,30 +21,33 @@ public class CozinhaController {
     @Autowired
     private CadastroCozinhaService cozinhaService;
 
-    @Autowired
-    private CozinhaRepository cozinhaRepository;
-
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public void adicionar(@RequestBody Cozinha cozinha) {
-        this.cozinhaService.salvar(cozinha);
+    public ResponseEntity<Cozinha> adicionar(@RequestBody Cozinha cozinha, UriComponentsBuilder uriComponentsBuilder) {
+
+        cozinha = this.cozinhaService.salvar(cozinha);
+
+        return ResponseEntity
+                .created(uriComponentsBuilder
+                        .path("cozinhas/{id}")
+                        .buildAndExpand(cozinha.getId())
+                        .toUri())
+                .body(cozinha);
     }
 
     @PutMapping(value = "/{id}")
     public ResponseEntity<Cozinha> atualizar(@PathVariable(name = "id") Long id, @RequestBody Cozinha cozinhaAtual) {
 
-        var cozinha = this.cozinhaRepository.buscar(id);
+        try {
+            var cozinha = this.cozinhaService.atualizar(id, cozinhaAtual);
+            return ResponseEntity
+                    .ok()
+                    .body(cozinha);
 
-        if(cozinha == null)
+        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
             return ResponseEntity
                     .notFound()
                     .build();
-
-        BeanUtils.copyProperties(cozinhaAtual, cozinha, "id");
-        this.cozinhaService.salvar(cozinha);
-
-        return ResponseEntity
-                .ok(cozinha);
+        }
     }
 
     @DeleteMapping(value = "/{id}")
@@ -69,21 +73,28 @@ public class CozinhaController {
     }
 
     @GetMapping
-    public List<Cozinha> listar() {
-        return this.cozinhaRepository.listar();
+    public ResponseEntity<List<Cozinha>> listar() {
+
+        var cozinhas = this.cozinhaService.listar();
+
+        return ResponseEntity
+                .ok()
+                .body(cozinhas);
     }
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<Cozinha> buscar(@PathVariable(name = "id") Long id) {
 
-        var cozinha = this.cozinhaRepository.buscar(id);
+        try {
+            var cozinha = this.cozinhaService.buscar(id);
+            return ResponseEntity
+                    .ok()
+                    .body(cozinha);
 
-        if(cozinha == null)
+        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
             return ResponseEntity
                     .notFound()
                     .build();
-
-        return ResponseEntity
-                .ok(cozinha);
+        }
     }
 }
