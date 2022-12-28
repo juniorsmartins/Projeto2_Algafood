@@ -2,7 +2,6 @@ package io.algafoodapi.api.controller;
 
 import io.algafoodapi.domain.exception.EntidadeNaoEncontradaException;
 import io.algafoodapi.domain.model.Estado;
-import io.algafoodapi.domain.repository.EstadoRepository;
 import io.algafoodapi.domain.service.CadastroEstadoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +16,6 @@ public class EstadoController {
 
     @Autowired
     private CadastroEstadoService estadoService;
-
-    @Autowired
-    private EstadoRepository estadoRepository;
 
     @PostMapping
     public ResponseEntity<Estado> adicionar(@RequestBody Estado estado, UriComponentsBuilder uriComponentsBuilder) {
@@ -47,6 +43,21 @@ public class EstadoController {
                     .noContent()
                     .build();
         }
+    }
 
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<Estado> buscar(@PathVariable(name = "id") Long id) {
+
+        try {
+            var estado = this.estadoService.buscar(id);
+            return ResponseEntity
+                    .ok()
+                    .body(estado);
+
+        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
+            return ResponseEntity
+                    .notFound()
+                    .build();
+        }
     }
 }

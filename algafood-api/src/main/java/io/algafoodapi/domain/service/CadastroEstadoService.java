@@ -26,4 +26,14 @@ public final class CadastroEstadoService {
 
         return estados;
     }
+
+    public Estado buscar(Long id) {
+        var estado = this.estadoRepository.buscar(id);
+
+        if(estado == null)
+            throw new EntidadeNaoEncontradaException("""
+                    Não encontrado estado com código %d.""".formatted(id));
+
+        return estado;
+    }
 }
