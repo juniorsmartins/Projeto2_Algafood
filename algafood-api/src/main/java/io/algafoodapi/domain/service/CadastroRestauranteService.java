@@ -54,7 +54,7 @@ public final class CadastroRestauranteService {
         var restaurantes = this.restauranteRepository.listar();
 
         if(restaurantes.isEmpty())
-            throw new EntidadeNaoEncontradaException("Não há restaurantes cadastrados no banco de dados.");
+            throw new EntidadeNaoEncontradaException(String.format("Não há restaurantes cadastrados no banco de dados."));
 
         return restaurantes;
     }

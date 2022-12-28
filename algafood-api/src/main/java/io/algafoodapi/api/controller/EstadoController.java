@@ -1,5 +1,6 @@
 package io.algafoodapi.api.controller;
 
+import io.algafoodapi.domain.exception.EntidadeNaoEncontradaException;
 import io.algafoodapi.domain.model.Estado;
 import io.algafoodapi.domain.repository.EstadoRepository;
 import io.algafoodapi.domain.service.CadastroEstadoService;
@@ -33,7 +34,19 @@ public class EstadoController {
     }
 
     @GetMapping
-    public List<Estado> listar() {
-        return this.estadoRepository.listar();
+    public ResponseEntity<List<Estado>> listar() {
+
+        try {
+            var estados = this.estadoService.listar();
+            return ResponseEntity
+                    .ok()
+                    .body(estados);
+
+        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
+            return ResponseEntity
+                    .noContent()
+                    .build();
+        }
+
     }
 }
