@@ -1,7 +1,11 @@
 package io.algafoodapi.infraestrutura.repository;
 
+import io.algafoodapi.domain.exception.EntidadeEmUsoException;
+import io.algafoodapi.domain.exception.EntidadeNaoEncontradaException;
 import io.algafoodapi.domain.model.Estado;
 import io.algafoodapi.domain.repository.EstadoRepository;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,8 +37,12 @@ public class EstadoRepositoryImpl implements EstadoRepository {
 
     @Transactional
     @Override
-    public void remover(Estado estado) {
-        estado = buscar(estado.getId());
+    public void remover(Long id) {
+        var estado = this.buscar(id);
+
+        if(estado == null)
+            throw new EmptyResultDataAccessException(1);
+
         this.manager.remove(estado);
     }
 }

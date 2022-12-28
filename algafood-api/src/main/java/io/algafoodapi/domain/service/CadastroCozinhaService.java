@@ -30,6 +30,7 @@ public final class CadastroCozinhaService {
     }
 
     public void excluir(Long id) {
+
         try {
             this.cozinhaRepository.remover(id);
 

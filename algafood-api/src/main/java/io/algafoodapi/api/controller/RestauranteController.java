@@ -5,6 +5,7 @@ import io.algafoodapi.domain.exception.RequisicaoMalFormuladaException;
 import io.algafoodapi.domain.model.Restaurante;
 import io.algafoodapi.domain.service.CadastroRestauranteService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -58,7 +59,7 @@ public class RestauranteController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Restaurante>> listar() {
+    public ResponseEntity<?> listar() {
 
         try {
             var restaurantes = this.restauranteService.listar();
@@ -68,15 +69,13 @@ public class RestauranteController {
 
         } catch (EntidadeNaoEncontradaException naoEncontradaException) {
             return ResponseEntity
-                    .noContent()
-                    .build();
+                    .status(HttpStatus.NO_CONTENT)
+                    .body(naoEncontradaException.getMessage());
         }
-
-
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Restaurante> buscar(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<?> buscar(@PathVariable(name = "id") Long id) {
 
         try {
             var restaurante = this.restauranteService.buscar(id);
@@ -86,8 +85,8 @@ public class RestauranteController {
 
         } catch (EntidadeNaoEncontradaException naoEncontradaException) {
             return ResponseEntity
-                    .notFound()
-                    .build();
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(naoEncontradaException.getMessage());
         }
     }
 }
