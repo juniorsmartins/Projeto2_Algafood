@@ -22,7 +22,7 @@ public final class Cozinha implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @JsonIgnore
+//    @JsonIgnore
     @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

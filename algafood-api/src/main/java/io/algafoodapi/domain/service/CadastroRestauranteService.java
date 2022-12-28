@@ -18,12 +18,13 @@ public final class CadastroRestauranteService {
     @Autowired
     private CozinhaRepository cozinhaRepository;
 
-    public Restaurante salvar(Restaurante restaurante) {
+    @Autowired
+    private CadastroCozinhaService cozinhaService;
+
+    public Restaurante salvar(Restaurante restaurante) throws EntidadeNaoEncontradaException {
+
         var cozinhaId = restaurante.getCozinha().getId();
-        var cozinha = this.cozinhaRepository.buscar(cozinhaId);
-        if(cozinha == null)
-            throw new EntidadeNaoEncontradaException("""
-                    Não existe cadastro de cozinha com código %d.""".formatted(cozinhaId));
+        var cozinha = this.cozinhaService.buscar(cozinhaId);
         restaurante.setCozinha(cozinha);
 
         return this.restauranteRepository.salvar(restaurante);
