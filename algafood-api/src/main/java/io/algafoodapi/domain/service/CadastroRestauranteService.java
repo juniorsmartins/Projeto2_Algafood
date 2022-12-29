@@ -70,6 +70,7 @@ public final class CadastroRestauranteService {
     }
 
     public List<Restaurante> listar() {
+
         var restaurantes = this.restauranteRepository.listar();
 
         if(restaurantes.isEmpty())

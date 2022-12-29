@@ -38,6 +38,7 @@ public class RestauranteController {
 
     @PutMapping(value = "/{id}")
     public ResponseEntity<?> atualizar(@PathVariable(name = "id") Long id, @RequestBody Restaurante restaurante) {
+
         try {
             restaurante = this.restauranteService.atualizar(id, restaurante);
             return ResponseEntity
