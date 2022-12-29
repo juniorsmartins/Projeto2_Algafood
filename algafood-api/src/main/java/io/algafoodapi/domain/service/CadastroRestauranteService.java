@@ -8,6 +8,7 @@ import io.algafoodapi.domain.repository.CozinhaRepository;
 import io.algafoodapi.domain.repository.RestauranteRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,7 +34,7 @@ public final class CadastroRestauranteService {
         return this.restauranteRepository.salvar(restaurante);
     }
 
-    public Restaurante atualizar(Long id, Restaurante restauranteAtual) throws EntidadeNaoEncontradaException {
+    public Restaurante atualizar(Long id, Restaurante restauranteAtual) throws EntidadeNaoEncontradaException, RequisicaoMalFormuladaException {
 
         var restaurante = this.buscar(id);
 
@@ -50,13 +51,14 @@ public final class CadastroRestauranteService {
         return this.restauranteRepository.salvar(restaurante);
     }
 
-    public List<Restaurante> listar() {
-        var restaurantes = this.restauranteRepository.listar();
+    public void excluir(Long id) {
 
-        if(restaurantes.isEmpty())
-            throw new EntidadeNaoEncontradaException("Não há restaurantes cadastrados no banco de dados.");
+        try {
+            this.restauranteRepository.remover(id);
 
-        return restaurantes;
+        } catch (EmptyResultDataAccessException dataAccessException) {
+            throw new EntidadeNaoEncontradaException(String.format("Não encontrado restaurante com código %d.", id));
+        }
     }
 
     public Restaurante buscar(Long id) {
@@ -68,5 +70,14 @@ public final class CadastroRestauranteService {
                     Não encontrado restaurante com código %d.""".formatted(id));
 
         return restaurante;
+    }
+
+    public List<Restaurante> listar() {
+        var restaurantes = this.restauranteRepository.listar();
+
+        if(restaurantes.isEmpty())
+            throw new EntidadeNaoEncontradaException(String.format("Não há restaurantes cadastrados no banco de dados."));
+
+        return restaurantes;
     }
 }
