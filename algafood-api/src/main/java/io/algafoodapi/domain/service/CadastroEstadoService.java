@@ -4,6 +4,7 @@ import io.algafoodapi.domain.exception.EntidadeEmUsoException;
 import io.algafoodapi.domain.exception.EntidadeNaoEncontradaException;
 import io.algafoodapi.domain.model.Estado;
 import io.algafoodapi.domain.repository.EstadoRepository;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -21,6 +22,13 @@ public final class CadastroEstadoService {
         return this.estadoRepository.salvar(estado);
     }
 
+    public Estado atualizar(Long id, Estado estadoAtual) throws EntidadeNaoEncontradaException {
+
+        var estado = this.buscar(id);
+        BeanUtils.copyProperties(estadoAtual, estado, "id");
+        return this.salvar(estado);
+    }
+
     public void excluir(Long id) {
 
         try {
@@ -34,16 +42,6 @@ public final class CadastroEstadoService {
         }
     }
 
-    public List<Estado> listar() {
-        var estados = this.estadoRepository.listar();
-
-        if(estados.isEmpty())
-            throw new EntidadeNaoEncontradaException("""
-                    Não há estados cadastrados no banco de dados.""");
-
-        return estados;
-    }
-
     public Estado buscar(Long id) {
         var estado = this.estadoRepository.buscar(id);
 
@@ -52,5 +50,15 @@ public final class CadastroEstadoService {
                     Não encontrado estado com código %d.""".formatted(id));
 
         return estado;
+    }
+
+    public List<Estado> listar() {
+        var estados = this.estadoRepository.listar();
+
+        if(estados.isEmpty())
+            throw new EntidadeNaoEncontradaException("""
+                    Não há estados cadastrados no banco de dados.""");
+
+        return estados;
     }
 }

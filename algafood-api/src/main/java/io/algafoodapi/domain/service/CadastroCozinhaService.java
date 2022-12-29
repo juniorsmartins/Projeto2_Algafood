@@ -42,15 +42,6 @@ public final class CadastroCozinhaService {
         }
     }
 
-    public List<Cozinha> listar() {
-        var cozinhas = this.cozinhaRepository.listar();
-
-        if(cozinhas.isEmpty())
-            throw new EntidadeNaoEncontradaException(String.format("Não há cozinhas cadastradas no banco de dados."));
-
-        return cozinhas;
-    }
-
     public Cozinha buscar(Long id) {
 
         var cozinha = this.cozinhaRepository.buscar(id);
@@ -60,5 +51,14 @@ public final class CadastroCozinhaService {
                     Não encontrada cozinha com código %d.""".formatted(id));
 
         return cozinha;
+    }
+
+    public List<Cozinha> listar() {
+        var cozinhas = this.cozinhaRepository.listar();
+
+        if(cozinhas.isEmpty())
+            throw new EntidadeNaoEncontradaException(String.format("Não há cozinhas cadastradas no banco de dados."));
+
+        return cozinhas;
     }
 }

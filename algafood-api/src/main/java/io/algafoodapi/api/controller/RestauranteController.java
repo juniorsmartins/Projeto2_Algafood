@@ -10,8 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.List;
-
 @RestController
 @RequestMapping(value = "/restaurantes")
 public class RestauranteController {
@@ -48,8 +46,8 @@ public class RestauranteController {
 
         } catch (EntidadeNaoEncontradaException naoEncontradaException) {
             return ResponseEntity
-                    .notFound()
-                    .build();
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(naoEncontradaException.getMessage());
 
         } catch (RequisicaoMalFormuladaException malFormuladaException) {
             return ResponseEntity

@@ -10,8 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.List;
-
 @RestController
 @RequestMapping(value = "/estados")
 public class EstadoController {
@@ -29,6 +27,22 @@ public class EstadoController {
                         .buildAndExpand(estado.getId())
                         .toUri())
                 .body(estado);
+    }
+
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<?> atualizar(@PathVariable(name = "id") Long id, @RequestBody Estado estado) {
+
+        try {
+            estado = this.estadoService.atualizar(id, estado);
+            return ResponseEntity
+                    .ok()
+                    .body(estado);
+
+        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(naoEncontradaException.getMessage());
+        }
     }
 
     @DeleteMapping(value = "/{id}")

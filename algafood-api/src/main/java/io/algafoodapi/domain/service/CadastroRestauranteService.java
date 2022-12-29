@@ -61,15 +61,6 @@ public final class CadastroRestauranteService {
         }
     }
 
-    public List<Restaurante> listar() {
-        var restaurantes = this.restauranteRepository.listar();
-
-        if(restaurantes.isEmpty())
-            throw new EntidadeNaoEncontradaException(String.format("Não há restaurantes cadastrados no banco de dados."));
-
-        return restaurantes;
-    }
-
     public Restaurante buscar(Long id) {
 
         var restaurante = this.restauranteRepository.buscar(id);
@@ -79,5 +70,14 @@ public final class CadastroRestauranteService {
                     Não encontrado restaurante com código %d.""".formatted(id));
 
         return restaurante;
+    }
+
+    public List<Restaurante> listar() {
+        var restaurantes = this.restauranteRepository.listar();
+
+        if(restaurantes.isEmpty())
+            throw new EntidadeNaoEncontradaException(String.format("Não há restaurantes cadastrados no banco de dados."));
+
+        return restaurantes;
     }
 }
