@@ -59,6 +59,21 @@ public class CidadeController {
 
 
 
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<?> buscar(@PathVariable(name = "id") Long id) {
+
+        try {
+            var cidade = this.cidadeService.buscar(id);
+            return ResponseEntity
+                    .ok()
+                    .body(cidade);
+
+        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(naoEncontradaException.getMessage());
+        }
+    }
 
     @GetMapping
     public ResponseEntity<?> listar() {
