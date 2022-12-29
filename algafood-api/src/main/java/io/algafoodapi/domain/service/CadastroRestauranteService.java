@@ -20,9 +20,6 @@ public final class CadastroRestauranteService {
     private RestauranteRepository restauranteRepository;
 
     @Autowired
-    private CozinhaRepository cozinhaRepository;
-
-    @Autowired
     private CadastroCozinhaService cozinhaService;
 
     public Restaurante salvar(Restaurante restaurante) throws EntidadeNaoEncontradaException {
