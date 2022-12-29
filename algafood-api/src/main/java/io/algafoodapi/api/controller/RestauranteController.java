@@ -5,11 +5,10 @@ import io.algafoodapi.domain.exception.RequisicaoMalFormuladaException;
 import io.algafoodapi.domain.model.Restaurante;
 import io.algafoodapi.domain.service.CadastroRestauranteService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "/restaurantes")
@@ -47,8 +46,8 @@ public class RestauranteController {
 
         } catch (EntidadeNaoEncontradaException naoEncontradaException) {
             return ResponseEntity
-                    .notFound()
-                    .build();
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(naoEncontradaException.getMessage());
 
         } catch (RequisicaoMalFormuladaException malFormuladaException) {
             return ResponseEntity
@@ -57,16 +56,24 @@ public class RestauranteController {
         }
     }
 
-    @GetMapping
-    public ResponseEntity<List<Restaurante>> listar() {
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<?> remover(@PathVariable(name = "id") Long id) {
 
-        return ResponseEntity
-                .ok()
-                .body(this.restauranteService.listar());
+        try {
+            this.restauranteService.excluir(id);
+            return ResponseEntity
+                    .noContent()
+                    .build();
+
+        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(naoEncontradaException.getMessage());
+        }
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Restaurante> buscar(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<?> buscar(@PathVariable(name = "id") Long id) {
 
         try {
             var restaurante = this.restauranteService.buscar(id);
@@ -76,7 +83,23 @@ public class RestauranteController {
 
         } catch (EntidadeNaoEncontradaException naoEncontradaException) {
             return ResponseEntity
-                    .notFound()
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(naoEncontradaException.getMessage());
+        }
+    }
+
+    @GetMapping
+    public ResponseEntity<?> listar() {
+
+        try {
+            var restaurantes = this.restauranteService.listar();
+            return ResponseEntity
+                    .ok()
+                    .body(restaurantes);
+
+        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
+            return ResponseEntity
+                    .noContent()
                     .build();
         }
     }
