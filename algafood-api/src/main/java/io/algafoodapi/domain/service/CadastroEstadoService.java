@@ -26,10 +26,10 @@ public final class CadastroEstadoService {
         try {
             this.estadoRepository.remover(id);
 
-        } catch (EmptyResultDataAccessException data) {
+        } catch (EmptyResultDataAccessException dataAccessException) {
             throw new EntidadeNaoEncontradaException(String.format("Não encontrado estado com código %d.", id));
 
-        } catch (DataIntegrityViolationException data) {
+        } catch (DataIntegrityViolationException violationException) {
             throw new EntidadeEmUsoException(String.format("Não pode ser removida cozinha com código %d, pois está em uso.", id));
         }
     }

@@ -52,22 +52,6 @@ public class EstadoController {
         }
     }
 
-    @GetMapping
-    public ResponseEntity<?> listar() {
-
-        try {
-            var estados = this.estadoService.listar();
-            return ResponseEntity
-                    .ok()
-                    .body(estados);
-
-        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
-            return ResponseEntity
-                    .status(HttpStatus.NO_CONTENT)
-                    .body(naoEncontradaException.getMessage());
-        }
-    }
-
     @GetMapping(value = "/{id}")
     public ResponseEntity<?> buscar(@PathVariable(name = "id") Long id) {
 
@@ -81,6 +65,22 @@ public class EstadoController {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .body(naoEncontradaException.getMessage());
+        }
+    }
+
+    @GetMapping
+    public ResponseEntity<?> listar() {
+
+        try {
+            var estados = this.estadoService.listar();
+            return ResponseEntity
+                    .ok()
+                    .body(estados);
+
+        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
+            return ResponseEntity
+                    .noContent()
+                    .build();
         }
     }
 }

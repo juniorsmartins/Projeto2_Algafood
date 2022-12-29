@@ -58,18 +58,18 @@ public class RestauranteController {
         }
     }
 
-    @GetMapping
-    public ResponseEntity<?> listar() {
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<?> remover(@PathVariable(name = "id") Long id) {
 
         try {
-            var restaurantes = this.restauranteService.listar();
+            this.restauranteService.excluir(id);
             return ResponseEntity
-                    .ok()
-                    .body(restaurantes);
+                    .noContent()
+                    .build();
 
         } catch (EntidadeNaoEncontradaException naoEncontradaException) {
             return ResponseEntity
-                    .status(HttpStatus.NO_CONTENT)
+                    .status(HttpStatus.NOT_FOUND)
                     .body(naoEncontradaException.getMessage());
         }
     }
@@ -87,6 +87,22 @@ public class RestauranteController {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .body(naoEncontradaException.getMessage());
+        }
+    }
+
+    @GetMapping
+    public ResponseEntity<?> listar() {
+
+        try {
+            var restaurantes = this.restauranteService.listar();
+            return ResponseEntity
+                    .ok()
+                    .body(restaurantes);
+
+        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
+            return ResponseEntity
+                    .noContent()
+                    .build();
         }
     }
 }

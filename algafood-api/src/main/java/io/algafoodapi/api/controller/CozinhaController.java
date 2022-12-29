@@ -68,22 +68,6 @@ public class CozinhaController {
         }
     }
 
-    @GetMapping
-    public ResponseEntity<?> listar() {
-
-        try {
-            var cozinhas = this.cozinhaService.listar();
-            return ResponseEntity
-                    .ok()
-                    .body(cozinhas);
-
-        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
-            return ResponseEntity
-                    .status(HttpStatus.NO_CONTENT)
-                    .body(naoEncontradaException.getMessage());
-        }
-    }
-
     @GetMapping(value = "/{id}")
     public ResponseEntity<?> buscar(@PathVariable(name = "id") Long id) {
 
@@ -97,6 +81,22 @@ public class CozinhaController {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .body(naoEncontradaException.getMessage());
+        }
+    }
+
+    @GetMapping
+    public ResponseEntity<?> listar() {
+
+        try {
+            var cozinhas = this.cozinhaService.listar();
+            return ResponseEntity
+                    .ok()
+                    .body(cozinhas);
+
+        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
+            return ResponseEntity
+                    .noContent()
+                    .build();
         }
     }
 }

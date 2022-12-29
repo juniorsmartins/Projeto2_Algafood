@@ -8,6 +8,7 @@ import io.algafoodapi.domain.repository.CozinhaRepository;
 import io.algafoodapi.domain.repository.RestauranteRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -48,6 +49,16 @@ public final class CadastroRestauranteService {
         BeanUtils.copyProperties(restauranteAtual, restaurante, "id");
 
         return this.restauranteRepository.salvar(restaurante);
+    }
+
+    public void excluir(Long id) {
+
+        try {
+            this.restauranteRepository.remover(id);
+
+        } catch (EmptyResultDataAccessException dataAccessException) {
+            throw new EntidadeNaoEncontradaException(String.format("Não encontrado restaurante com código %d.", id));
+        }
     }
 
     public List<Restaurante> listar() {
