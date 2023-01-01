@@ -20,9 +20,6 @@ public final class CadastroRestauranteService {
     private RestauranteRepository restauranteRepository;
 
     @Autowired
-    private CozinhaRepository cozinhaRepository;
-
-    @Autowired
     private CadastroCozinhaService cozinhaService;
 
     public Restaurante salvar(Restaurante restaurante) throws EntidadeNaoEncontradaException {
@@ -73,6 +70,7 @@ public final class CadastroRestauranteService {
     }
 
     public List<Restaurante> listar() {
+
         var restaurantes = this.restauranteRepository.listar();
 
         if(restaurantes.isEmpty())

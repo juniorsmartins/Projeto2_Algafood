@@ -38,7 +38,7 @@ public final class CadastroEstadoService {
             throw new EntidadeNaoEncontradaException(String.format("Não encontrado estado com código %d.", id));
 
         } catch (DataIntegrityViolationException violationException) {
-            throw new EntidadeEmUsoException(String.format("Não pode ser removida cozinha com código %d, pois está em uso.", id));
+            throw new EntidadeEmUsoException(String.format("Não pode ser removido estado com código %d, pois está em uso.", id));
         }
     }
 

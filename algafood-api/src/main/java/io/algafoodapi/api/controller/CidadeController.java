@@ -2,8 +2,8 @@ package io.algafoodapi.api.controller;
 
 import io.algafoodapi.domain.exception.EntidadeNaoEncontradaException;
 import io.algafoodapi.domain.exception.RequisicaoMalFormuladaException;
-import io.algafoodapi.domain.model.Restaurante;
-import io.algafoodapi.domain.service.CadastroRestauranteService;
+import io.algafoodapi.domain.model.Cidade;
+import io.algafoodapi.domain.service.CadastroCidadeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,23 +11,23 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
-@RequestMapping(value = "/restaurantes")
-public class RestauranteController {
+@RequestMapping(value = "/cidades")
+public class CidadeController {
 
     @Autowired
-    private CadastroRestauranteService restauranteService;
+    private CadastroCidadeService cidadeService;
 
     @PostMapping
-    public ResponseEntity<?> adicionar(@RequestBody Restaurante restaurante, UriComponentsBuilder uriComponentsBuilder) {
+    public ResponseEntity<?> adicionar(@RequestBody Cidade cidade, UriComponentsBuilder uriComponentsBuilder) {
 
         try {
-            restaurante = this.restauranteService.salvar(restaurante);
+            cidade = this.cidadeService.salvar(cidade);
             return ResponseEntity
                     .created(uriComponentsBuilder
-                            .path("restaurantes/{id}")
-                            .buildAndExpand(restaurante.getId())
+                            .path("cidades/{id}")
+                            .buildAndExpand(cidade.getId())
                             .toUri())
-                    .body(restaurante);
+                    .body(cidade);
 
         } catch (EntidadeNaoEncontradaException naoEncontradaException) {
             return ResponseEntity
@@ -37,13 +37,13 @@ public class RestauranteController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<?> atualizar(@PathVariable(name = "id") Long id, @RequestBody Restaurante restaurante) {
+    public ResponseEntity<?> atualizar(@PathVariable(name = "id") Long id, @RequestBody Cidade cidade) {
 
         try {
-            restaurante = this.restauranteService.atualizar(id, restaurante);
+            cidade = this.cidadeService.atualizar(id, cidade);
             return ResponseEntity
                     .ok()
-                    .body(restaurante);
+                    .body(cidade);
 
         } catch (EntidadeNaoEncontradaException naoEncontradaException) {
             return ResponseEntity
@@ -61,7 +61,7 @@ public class RestauranteController {
     public ResponseEntity<?> remover(@PathVariable(name = "id") Long id) {
 
         try {
-            this.restauranteService.excluir(id);
+            this.cidadeService.excluir(id);
             return ResponseEntity
                     .noContent()
                     .build();
@@ -70,6 +70,7 @@ public class RestauranteController {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .body(naoEncontradaException.getMessage());
+
         }
     }
 
@@ -77,10 +78,10 @@ public class RestauranteController {
     public ResponseEntity<?> buscar(@PathVariable(name = "id") Long id) {
 
         try {
-            var restaurante = this.restauranteService.buscar(id);
+            var cidade = this.cidadeService.buscar(id);
             return ResponseEntity
                     .ok()
-                    .body(restaurante);
+                    .body(cidade);
 
         } catch (EntidadeNaoEncontradaException naoEncontradaException) {
             return ResponseEntity
@@ -93,10 +94,10 @@ public class RestauranteController {
     public ResponseEntity<?> listar() {
 
         try {
-            var restaurantes = this.restauranteService.listar();
+            var cidades = this.cidadeService.listar();
             return ResponseEntity
                     .ok()
-                    .body(restaurantes);
+                    .body(cidades);
 
         } catch (EntidadeNaoEncontradaException naoEncontradaException) {
             return ResponseEntity

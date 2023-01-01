@@ -34,10 +34,10 @@ public final class CadastroCozinhaService {
         try {
             this.cozinhaRepository.remover(id);
 
-        } catch (EmptyResultDataAccessException data) {
+        } catch (EmptyResultDataAccessException dataAccessException) {
             throw new EntidadeNaoEncontradaException(String.format("Não encontrada cozinha com código %d.", id));
 
-        } catch (DataIntegrityViolationException data) {
+        } catch (DataIntegrityViolationException dataIntegrityViolationException) {
             throw new EntidadeEmUsoException(String.format("Não pode ser removida cozinha com código %d, pois está em uso.", id));
         }
     }
