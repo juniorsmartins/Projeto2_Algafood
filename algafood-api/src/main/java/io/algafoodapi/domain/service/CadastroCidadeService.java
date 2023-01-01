@@ -7,6 +7,7 @@ import io.algafoodapi.domain.model.Estado;
 import io.algafoodapi.domain.repository.CidadeRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -46,7 +47,17 @@ public final class CadastroCidadeService {
         return this.cidadeRepository.salvar(cidade);
     }
 
+    public void excluir(Long id) {
 
+        try {
+            this.cidadeRepository.remover(id);
+
+        } catch (EmptyResultDataAccessException dataAccessException) {
+            throw new EntidadeNaoEncontradaException("""
+                    Não encontrada cidade com código %d.""".formatted(id));
+
+        }
+    }
 
     public Cidade buscar(Long id) {
 

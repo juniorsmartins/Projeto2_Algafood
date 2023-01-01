@@ -57,7 +57,22 @@ public class CidadeController {
         }
     }
 
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<?> remover(@PathVariable(name = "id") Long id) {
 
+        try {
+            this.cidadeService.excluir(id);
+            return ResponseEntity
+                    .noContent()
+                    .build();
+
+        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(naoEncontradaException.getMessage());
+
+        }
+    }
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<?> buscar(@PathVariable(name = "id") Long id) {

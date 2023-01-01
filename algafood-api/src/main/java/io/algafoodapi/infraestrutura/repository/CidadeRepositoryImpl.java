@@ -32,6 +32,7 @@ public class CidadeRepositoryImpl implements CidadeRepository {
         return this.manager.merge(cidade);
     }
 
+    @Transactional
     @Override
     public void remover(Long id) {
         var cidade = this.buscar(id);
