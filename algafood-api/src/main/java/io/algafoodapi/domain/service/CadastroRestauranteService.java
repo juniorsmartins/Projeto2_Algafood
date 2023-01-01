@@ -1,5 +1,6 @@
 package io.algafoodapi.domain.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.algafoodapi.domain.exception.EntidadeNaoEncontradaException;
 import io.algafoodapi.domain.exception.RequisicaoMalFormuladaException;
 import io.algafoodapi.domain.model.Cozinha;
@@ -10,8 +11,11 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ReflectionUtils;
 
+import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public final class CadastroRestauranteService {
@@ -41,11 +45,28 @@ public final class CadastroRestauranteService {
         } catch (EntidadeNaoEncontradaException naoEncontradaException) {
             throw new RequisicaoMalFormuladaException(naoEncontradaException.getMessage());
         }
-
         restauranteAtual.setCozinha(cozinha);
+
         BeanUtils.copyProperties(restauranteAtual, restaurante, "id");
 
         return this.restauranteRepository.salvar(restaurante);
+    }
+
+    public Restaurante atualizarParcial(Long id, Map<String, Object> dadosOrigem) throws EntidadeNaoEncontradaException, RequisicaoMalFormuladaException {
+
+        var restauranteDoDatabase = this.buscar(id);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        Restaurante restauranteAtual = objectMapper.convertValue(dadosOrigem, Restaurante.class);
+
+        dadosOrigem.forEach((nomePropriedade, valorPropriedade) -> {
+            Field campo = ReflectionUtils.findField(Restaurante.class, nomePropriedade);
+            campo.setAccessible(true);
+            Object novoValor = ReflectionUtils.getField(campo, restauranteAtual);
+            ReflectionUtils.setField(campo, restauranteDoDatabase, novoValor);
+        });
+
+        return this.atualizar(id, restauranteDoDatabase);
     }
 
     public void excluir(Long id) {
