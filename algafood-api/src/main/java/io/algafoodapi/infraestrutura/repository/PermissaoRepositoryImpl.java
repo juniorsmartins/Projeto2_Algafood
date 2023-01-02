@@ -2,14 +2,14 @@ package io.algafoodapi.infraestrutura.repository;
 
 import io.algafoodapi.domain.model.Permissao;
 import io.algafoodapi.domain.repository.PermissaoRepository;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
-@Component
+@Repository
 public class PermissaoRepositoryImpl implements PermissaoRepository {
 
     @PersistenceContext
