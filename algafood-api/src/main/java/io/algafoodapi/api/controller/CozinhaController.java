@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(value = "/cozinhas")
 public class CozinhaController {
@@ -74,6 +76,22 @@ public class CozinhaController {
             return ResponseEntity
                     .ok()
                     .body(cozinha);
+
+        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(naoEncontradaException.getMessage());
+        }
+    }
+
+    @GetMapping(value = "/porNome")
+    public ResponseEntity<?> cozinhasPorNome(@RequestParam(name = "estilo_de_comida") String nome) {
+
+        try {
+            var cozinhas = this.cozinhaService.consultarPorNome(nome);
+            return ResponseEntity
+                    .ok()
+                    .body(cozinhas);
 
         } catch (EntidadeNaoEncontradaException naoEncontradaException) {
             return ResponseEntity

@@ -53,6 +53,16 @@ public final class CadastroCozinhaService {
         return cozinha;
     }
 
+    public List<Cozinha> consultarPorNome(String nome) {
+
+        var cozinhas = this.cozinhaRepository.consultarPorNome(nome);
+
+        if(cozinhas.isEmpty())
+            throw new EntidadeNaoEncontradaException(String.format("Não encontrada cozinha com nome %s.", nome));
+
+        return cozinhas;
+    }
+
     public List<Cozinha> listar() {
         var cozinhas = this.cozinhaRepository.listar();
 

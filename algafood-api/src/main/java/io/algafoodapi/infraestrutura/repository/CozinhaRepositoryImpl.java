@@ -22,6 +22,14 @@ public class CozinhaRepositoryImpl implements CozinhaRepository {
     }
 
     @Override
+    public List<Cozinha> consultarPorNome(String nomeCozinha) {
+
+        return this.manager.createQuery("from Cozinha where nome like :nome", Cozinha.class)
+                .setParameter("nome", "%" + nomeCozinha + "%")
+                .getResultList();
+    }
+
+    @Override
     public Cozinha buscar(Long id) {
         return this.manager.find(Cozinha.class, id);
     }
