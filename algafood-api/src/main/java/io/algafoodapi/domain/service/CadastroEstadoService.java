@@ -19,7 +19,7 @@ public final class CadastroEstadoService {
     private EstadoRepository estadoRepository;
 
     public Estado salvar(Estado estado) {
-        return this.estadoRepository.salvar(estado);
+        return this.estadoRepository.saveAndFlush(estado);
     }
 
     public Estado atualizar(Long id, Estado estadoAtual) throws EntidadeNaoEncontradaException {
@@ -32,7 +32,7 @@ public final class CadastroEstadoService {
     public void excluir(Long id) {
 
         try {
-            this.estadoRepository.remover(id);
+            this.estadoRepository.deleteById(id);
 
         } catch (EmptyResultDataAccessException dataAccessException) {
             throw new EntidadeNaoEncontradaException(String.format("Não encontrado estado com código %d.", id));
@@ -43,17 +43,13 @@ public final class CadastroEstadoService {
     }
 
     public Estado buscar(Long id) {
-        var estado = this.estadoRepository.buscar(id);
-
-        if(estado == null)
-            throw new EntidadeNaoEncontradaException("""
-                    Não encontrado estado com código %d.""".formatted(id));
-
-        return estado;
+        return this.estadoRepository.findById(id)
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("""
+                    Não encontrado estado com código %d.""".formatted(id)));
     }
 
     public List<Estado> listar() {
-        var estados = this.estadoRepository.listar();
+        var estados = this.estadoRepository.findAll();
 
         if(estados.isEmpty())
             throw new EntidadeNaoEncontradaException("""
