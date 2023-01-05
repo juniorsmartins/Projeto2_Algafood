@@ -10,8 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.List;
-
 @RestController
 @RequestMapping(value = "/cozinhas")
 public class CozinhaController {
@@ -72,7 +70,7 @@ public class CozinhaController {
     public ResponseEntity<?> buscar(@PathVariable(name = "id") Long id) {
 
         try {
-            var cozinha = this.cozinhaService.buscar(id);
+            var cozinha = this.cozinhaService.consultarPorId(id);
             return ResponseEntity
                     .ok()
                     .body(cozinha);
@@ -104,7 +102,7 @@ public class CozinhaController {
     public ResponseEntity<?> listar() {
 
         try {
-            var cozinhas = this.cozinhaService.listar();
+            var cozinhas = this.cozinhaService.buscarTodos();
             return ResponseEntity
                     .ok()
                     .body(cozinhas);

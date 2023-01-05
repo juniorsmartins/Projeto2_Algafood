@@ -10,6 +10,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -19,12 +20,12 @@ public final class CadastroCozinhaService {
     private CozinhaRepository cozinhaRepository;
 
     public Cozinha salvar(Cozinha cozinha) {
-        return this.cozinhaRepository.salvar(cozinha);
+        return this.cozinhaRepository.saveAndFlush(cozinha);
     }
 
     public Cozinha atualizar(Long id, Cozinha cozinhaAtual) throws EntidadeNaoEncontradaException {
 
-        var cozinha = this.buscar(id);
+        var cozinha = this.consultarPorId(id);
         BeanUtils.copyProperties(cozinhaAtual, cozinha, "id");
         return this.salvar(cozinha);
     }
@@ -32,7 +33,7 @@ public final class CadastroCozinhaService {
     public void excluir(Long id) {
 
         try {
-            this.cozinhaRepository.remover(id);
+            this.cozinhaRepository.deleteById(id);
 
         } catch (EmptyResultDataAccessException dataAccessException) {
             throw new EntidadeNaoEncontradaException(String.format("Não encontrada cozinha com código %d.", id));
@@ -42,20 +43,16 @@ public final class CadastroCozinhaService {
         }
     }
 
-    public Cozinha buscar(Long id) {
+    public Cozinha consultarPorId(Long id) {
 
-        var cozinha = this.cozinhaRepository.buscar(id);
-
-        if(cozinha == null)
-            throw new EntidadeNaoEncontradaException("""
-                    Não encontrada cozinha com código %d.""".formatted(id));
-
-        return cozinha;
+        return this.cozinhaRepository.findById(id)
+                .orElseThrow(() -> new EntidadeNaoEncontradaException(
+                        String.format("Não encontrada cozinha com código %d.", id)));
     }
 
     public List<Cozinha> consultarPorNome(String nome) {
 
-        var cozinhas = this.cozinhaRepository.consultarPorNome(nome);
+        var cozinhas = this.cozinhaRepository.findByNome(nome);
 
         if(cozinhas.isEmpty())
             throw new EntidadeNaoEncontradaException(String.format("Não encontrada cozinha com nome %s.", nome));
@@ -63,8 +60,11 @@ public final class CadastroCozinhaService {
         return cozinhas;
     }
 
-    public List<Cozinha> listar() {
-        var cozinhas = this.cozinhaRepository.listar();
+    public List<Cozinha> buscarTodos() {
+        var cozinhas = this.cozinhaRepository.findAll()
+                .stream()
+                .sorted(Comparator.comparing(Cozinha::getId).reversed())
+                .toList();
 
         if(cozinhas.isEmpty())
             throw new EntidadeNaoEncontradaException(String.format("Não há cozinhas cadastradas no banco de dados."));
