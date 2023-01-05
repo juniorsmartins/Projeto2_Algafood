@@ -49,7 +49,7 @@ public class CozinhaController {
     public ResponseEntity<?> remover(@PathVariable(name = "id") Long id) {
 
         try {
-            this.cozinhaService.excluir(id);
+            this.cozinhaService.excluirPorId(id);
             return ResponseEntity
                     .noContent()
                     .build();

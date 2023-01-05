@@ -49,7 +49,7 @@ public class EstadoController {
     public ResponseEntity<?> remover(@PathVariable(name = "id") Long id) {
 
         try {
-            this.estadoService.excluir(id);
+            this.estadoService.excluirPorId(id);
             return ResponseEntity
                     .noContent()
                     .build();
@@ -70,7 +70,7 @@ public class EstadoController {
     public ResponseEntity<?> buscar(@PathVariable(name = "id") Long id) {
 
         try {
-            var estado = this.estadoService.buscar(id);
+            var estado = this.estadoService.consultarPorId(id);
             return ResponseEntity
                     .ok()
                     .body(estado);
@@ -86,7 +86,7 @@ public class EstadoController {
     public ResponseEntity<?> listar() {
 
         try {
-            var estados = this.estadoService.listar();
+            var estados = this.estadoService.buscarTodos();
             return ResponseEntity
                     .ok()
                     .body(estados);

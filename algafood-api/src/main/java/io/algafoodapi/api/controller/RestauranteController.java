@@ -84,7 +84,7 @@ public class RestauranteController {
     public ResponseEntity<?> remover(@PathVariable(name = "id") Long id) {
 
         try {
-            this.restauranteService.excluir(id);
+            this.restauranteService.excluirPorId(id);
             return ResponseEntity
                     .noContent()
                     .build();
@@ -100,7 +100,7 @@ public class RestauranteController {
     public ResponseEntity<?> buscar(@PathVariable(name = "id") Long id) {
 
         try {
-            var restaurante = this.restauranteService.buscar(id);
+            var restaurante = this.restauranteService.consultarPorId(id);
             return ResponseEntity
                     .ok()
                     .body(restaurante);
@@ -116,7 +116,7 @@ public class RestauranteController {
     public ResponseEntity<?> listar() {
 
         try {
-            var restaurantes = this.restauranteService.listar();
+            var restaurantes = this.restauranteService.buscarTodos();
             return ResponseEntity
                     .ok()
                     .body(restaurantes);

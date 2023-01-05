@@ -24,7 +24,7 @@ public final class CidadeService {
     public Cidade salvar(Cidade cidade) throws EntidadeNaoEncontradaException {
 
         var estadoId = cidade.getEstado().getId();
-        var estado = this.estadoService.buscar(estadoId);
+        var estado = this.estadoService.consultarPorId(estadoId);
         cidade.setEstado(estado);
 
         return this.cidadeRepository.saveAndFlush(cidade);
@@ -32,11 +32,11 @@ public final class CidadeService {
 
     public Cidade atualizar(Long id, Cidade cidadeAtual) throws EntidadeNaoEncontradaException, RequisicaoMalFormuladaException {
 
-        var cidade = this.buscar(id);
+        var cidade = this.consultarPorId(id);
 
         Estado estado;
         try {
-            estado = this.estadoService.buscar(cidadeAtual.getEstado().getId());
+            estado = this.estadoService.consultarPorId(cidadeAtual.getEstado().getId());
         } catch (EntidadeNaoEncontradaException naoEncontradaException) {
             throw new RequisicaoMalFormuladaException(naoEncontradaException.getMessage());
         }
@@ -47,7 +47,7 @@ public final class CidadeService {
         return this.cidadeRepository.saveAndFlush(cidade);
     }
 
-    public void excluir(Long id) {
+    public void excluirPorId(Long id) {
 
         try {
             this.cidadeRepository.deleteById(id);
@@ -58,14 +58,14 @@ public final class CidadeService {
         }
     }
 
-    public Cidade buscar(Long id) {
+    public Cidade consultarPorId(Long id) {
 
         return this.cidadeRepository.findById(id)
                 .orElseThrow(() -> new EntidadeNaoEncontradaException("""
                     Não encontrada cidade com código %d.""".formatted(id)));
     }
 
-    public List<Cidade> listar() {
+    public List<Cidade> buscarTodos() {
 
         var cidades = this.cidadeRepository.findAll();
 

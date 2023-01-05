@@ -30,7 +30,7 @@ public final class CozinhaService {
         return this.salvar(cozinha);
     }
 
-    public void excluir(Long id) {
+    public void excluirPorId(Long id) {
 
         try {
             this.cozinhaRepository.deleteById(id);
