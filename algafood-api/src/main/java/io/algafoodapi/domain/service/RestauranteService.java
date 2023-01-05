@@ -17,13 +17,13 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public final class CadastroRestauranteService {
+public final class RestauranteService {
 
     @Autowired
     private RestauranteRepository restauranteRepository;
 
     @Autowired
-    private CadastroCozinhaService cozinhaService;
+    private CozinhaService cozinhaService;
 
     public Restaurante salvar(Restaurante restaurante) throws EntidadeNaoEncontradaException {
 

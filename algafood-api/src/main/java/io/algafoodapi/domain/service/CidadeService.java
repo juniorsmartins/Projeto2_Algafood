@@ -13,13 +13,13 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public final class CadastroCidadeService {
+public final class CidadeService {
 
     @Autowired
     private CidadeRepository cidadeRepository;
 
     @Autowired
-    private CadastroEstadoService estadoService;
+    private EstadoService estadoService;
 
     public Cidade salvar(Cidade cidade) throws EntidadeNaoEncontradaException {
 
@@ -27,7 +27,7 @@ public final class CadastroCidadeService {
         var estado = this.estadoService.buscar(estadoId);
         cidade.setEstado(estado);
 
-        return this.cidadeRepository.salvar(cidade);
+        return this.cidadeRepository.saveAndFlush(cidade);
     }
 
     public Cidade atualizar(Long id, Cidade cidadeAtual) throws EntidadeNaoEncontradaException, RequisicaoMalFormuladaException {
@@ -44,35 +44,30 @@ public final class CadastroCidadeService {
         cidadeAtual.setEstado(estado);
         BeanUtils.copyProperties(cidadeAtual, cidade, "id");
 
-        return this.cidadeRepository.salvar(cidade);
+        return this.cidadeRepository.saveAndFlush(cidade);
     }
 
     public void excluir(Long id) {
 
         try {
-            this.cidadeRepository.remover(id);
+            this.cidadeRepository.deleteById(id);
 
         } catch (EmptyResultDataAccessException dataAccessException) {
             throw new EntidadeNaoEncontradaException("""
                     Não encontrada cidade com código %d.""".formatted(id));
-
         }
     }
 
     public Cidade buscar(Long id) {
 
-        var cidade = this.cidadeRepository.buscar(id);
-
-        if(cidade == null)
-            throw new EntidadeNaoEncontradaException("""
-                    Não encontrada cidade com código %d.""".formatted(id));
-
-        return cidade;
+        return this.cidadeRepository.findById(id)
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("""
+                    Não encontrada cidade com código %d.""".formatted(id)));
     }
 
     public List<Cidade> listar() {
 
-        var cidades = this.cidadeRepository.listar();
+        var cidades = this.cidadeRepository.findAll();
 
         if(cidades.isEmpty())
             throw new EntidadeNaoEncontradaException(String.format("Não há cidades cadastradas no banco de dados."));

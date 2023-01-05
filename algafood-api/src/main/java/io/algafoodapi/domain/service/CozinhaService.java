@@ -14,7 +14,7 @@ import java.util.Comparator;
 import java.util.List;
 
 @Service
-public final class CadastroCozinhaService {
+public final class CozinhaService {
 
     @Autowired
     private CozinhaRepository cozinhaRepository;

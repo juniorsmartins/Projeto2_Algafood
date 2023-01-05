@@ -3,7 +3,7 @@ package io.algafoodapi.api.controller;
 import io.algafoodapi.domain.exception.EntidadeNaoEncontradaException;
 import io.algafoodapi.domain.exception.RequisicaoMalFormuladaException;
 import io.algafoodapi.domain.model.Restaurante;
-import io.algafoodapi.domain.service.CadastroRestauranteService;
+import io.algafoodapi.domain.service.RestauranteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +17,7 @@ import java.util.Map;
 public class RestauranteController {
 
     @Autowired
-    private CadastroRestauranteService restauranteService;
+    private RestauranteService restauranteService;
 
     @PostMapping
     public ResponseEntity<?> adicionar(@RequestBody Restaurante restaurante, UriComponentsBuilder uriComponentsBuilder) {
