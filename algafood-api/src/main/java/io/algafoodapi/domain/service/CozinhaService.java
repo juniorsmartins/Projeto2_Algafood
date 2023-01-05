@@ -52,7 +52,7 @@ public final class CozinhaService {
 
     public List<Cozinha> consultarPorNome(String nome) {
 
-        var cozinhas = this.cozinhaRepository.findByNome(nome);
+        var cozinhas = this.cozinhaRepository.findTodasByNomeContaining(nome);
 
         if(cozinhas.isEmpty())
             throw new EntidadeNaoEncontradaException(String.format("Não encontrada cozinha com nome %s.", nome));
