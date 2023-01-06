@@ -3,7 +3,7 @@ package io.algafoodapi.api.controller;
 import io.algafoodapi.domain.exception.EntidadeEmUsoException;
 import io.algafoodapi.domain.exception.EntidadeNaoEncontradaException;
 import io.algafoodapi.domain.model.Estado;
-import io.algafoodapi.domain.service.CadastroEstadoService;
+import io.algafoodapi.domain.service.EstadoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +15,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class EstadoController {
 
     @Autowired
-    private CadastroEstadoService estadoService;
+    private EstadoService estadoService;
 
     @PostMapping
     public ResponseEntity<Estado> adicionar(@RequestBody Estado estado, UriComponentsBuilder uriComponentsBuilder) {
@@ -49,7 +49,7 @@ public class EstadoController {
     public ResponseEntity<?> remover(@PathVariable(name = "id") Long id) {
 
         try {
-            this.estadoService.excluir(id);
+            this.estadoService.excluirPorId(id);
             return ResponseEntity
                     .noContent()
                     .build();
@@ -70,7 +70,7 @@ public class EstadoController {
     public ResponseEntity<?> buscar(@PathVariable(name = "id") Long id) {
 
         try {
-            var estado = this.estadoService.buscar(id);
+            var estado = this.estadoService.consultarPorId(id);
             return ResponseEntity
                     .ok()
                     .body(estado);
@@ -86,7 +86,7 @@ public class EstadoController {
     public ResponseEntity<?> listar() {
 
         try {
-            var estados = this.estadoService.listar();
+            var estados = this.estadoService.buscarTodos();
             return ResponseEntity
                     .ok()
                     .body(estados);

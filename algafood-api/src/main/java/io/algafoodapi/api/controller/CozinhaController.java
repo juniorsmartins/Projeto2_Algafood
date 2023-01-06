@@ -3,21 +3,19 @@ package io.algafoodapi.api.controller;
 import io.algafoodapi.domain.exception.EntidadeEmUsoException;
 import io.algafoodapi.domain.exception.EntidadeNaoEncontradaException;
 import io.algafoodapi.domain.model.Cozinha;
-import io.algafoodapi.domain.service.CadastroCozinhaService;
+import io.algafoodapi.domain.service.CozinhaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.List;
-
 @RestController
 @RequestMapping(value = "/cozinhas")
 public class CozinhaController {
 
     @Autowired
-    private CadastroCozinhaService cozinhaService;
+    private CozinhaService cozinhaService;
 
     @PostMapping
     public ResponseEntity<Cozinha> adicionar(@RequestBody Cozinha cozinha, UriComponentsBuilder uriComponentsBuilder) {
@@ -51,7 +49,7 @@ public class CozinhaController {
     public ResponseEntity<?> remover(@PathVariable(name = "id") Long id) {
 
         try {
-            this.cozinhaService.excluir(id);
+            this.cozinhaService.excluirPorId(id);
             return ResponseEntity
                     .noContent()
                     .build();
@@ -72,7 +70,7 @@ public class CozinhaController {
     public ResponseEntity<?> buscar(@PathVariable(name = "id") Long id) {
 
         try {
-            var cozinha = this.cozinhaService.buscar(id);
+            var cozinha = this.cozinhaService.consultarPorId(id);
             return ResponseEntity
                     .ok()
                     .body(cozinha);
@@ -104,7 +102,7 @@ public class CozinhaController {
     public ResponseEntity<?> listar() {
 
         try {
-            var cozinhas = this.cozinhaService.listar();
+            var cozinhas = this.cozinhaService.buscarTodos();
             return ResponseEntity
                     .ok()
                     .body(cozinhas);

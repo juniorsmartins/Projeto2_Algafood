@@ -3,7 +3,7 @@ package io.algafoodapi.api.controller;
 import io.algafoodapi.domain.exception.EntidadeNaoEncontradaException;
 import io.algafoodapi.domain.exception.RequisicaoMalFormuladaException;
 import io.algafoodapi.domain.model.Cidade;
-import io.algafoodapi.domain.service.CadastroCidadeService;
+import io.algafoodapi.domain.service.CidadeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +15,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class CidadeController {
 
     @Autowired
-    private CadastroCidadeService cidadeService;
+    private CidadeService cidadeService;
 
     @PostMapping
     public ResponseEntity<?> adicionar(@RequestBody Cidade cidade, UriComponentsBuilder uriComponentsBuilder) {
@@ -61,7 +61,7 @@ public class CidadeController {
     public ResponseEntity<?> remover(@PathVariable(name = "id") Long id) {
 
         try {
-            this.cidadeService.excluir(id);
+            this.cidadeService.excluirPorId(id);
             return ResponseEntity
                     .noContent()
                     .build();
@@ -78,7 +78,7 @@ public class CidadeController {
     public ResponseEntity<?> buscar(@PathVariable(name = "id") Long id) {
 
         try {
-            var cidade = this.cidadeService.buscar(id);
+            var cidade = this.cidadeService.consultarPorId(id);
             return ResponseEntity
                     .ok()
                     .body(cidade);
@@ -94,7 +94,7 @@ public class CidadeController {
     public ResponseEntity<?> listar() {
 
         try {
-            var cidades = this.cidadeService.listar();
+            var cidades = this.cidadeService.buscarTodos();
             return ResponseEntity
                     .ok()
                     .body(cidades);

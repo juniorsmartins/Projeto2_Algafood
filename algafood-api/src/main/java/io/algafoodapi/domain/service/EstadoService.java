@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public final class CadastroEstadoService {
+public final class EstadoService {
 
     @Autowired
     private EstadoRepository estadoRepository;
@@ -24,12 +24,12 @@ public final class CadastroEstadoService {
 
     public Estado atualizar(Long id, Estado estadoAtual) throws EntidadeNaoEncontradaException {
 
-        var estado = this.buscar(id);
+        var estado = this.consultarPorId(id);
         BeanUtils.copyProperties(estadoAtual, estado, "id");
         return this.salvar(estado);
     }
 
-    public void excluir(Long id) {
+    public void excluirPorId(Long id) {
 
         try {
             this.estadoRepository.deleteById(id);
@@ -42,13 +42,13 @@ public final class CadastroEstadoService {
         }
     }
 
-    public Estado buscar(Long id) {
+    public Estado consultarPorId(Long id) {
         return this.estadoRepository.findById(id)
                 .orElseThrow(() -> new EntidadeNaoEncontradaException("""
                     Não encontrado estado com código %d.""".formatted(id)));
     }
 
-    public List<Estado> listar() {
+    public List<Estado> buscarTodos() {
         var estados = this.estadoRepository.findAll();
 
         if(estados.isEmpty())
