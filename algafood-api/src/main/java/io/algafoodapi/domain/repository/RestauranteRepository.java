@@ -27,6 +27,9 @@ public interface RestauranteRepository extends JpaRepository<Restaurante, Long> 
     // ----- JPQL em arquivo XML -----
     List<Restaurante> buscarTodosPorNome(String nome);
 
+    // ----- JPQL em SDJ customizado -----
+    List<Restaurante> find(String nome, BigDecimal taxaFreteInicial, BigDecimal taxaFreteFinal);
+
     // ----- Native Query -----
 
 }

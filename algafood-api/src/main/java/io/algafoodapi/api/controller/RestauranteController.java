@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.Map;
 
 @RestController
@@ -144,4 +146,27 @@ public class RestauranteController {
                     .build();
         }
     }
+
+    @GetMapping(path = "/consultarPorNomeAndTaxas")
+    public ResponseEntity<?> consultarPorNomeAndTaxas(@Param("nome") String nome,
+                                                      @Param("freteTaxaInicial") BigDecimal freteTaxaInicial,
+                                                      @Param("freteTaxaFinal") BigDecimal freteTaxaFinal) {
+        if(nome == null || freteTaxaInicial == null || freteTaxaFinal == null)
+            return ResponseEntity
+                    .badRequest()
+                    .body("A requisição exige parâmetros obrigatórios: nome, taxaFreteInicial e taxaFreteFinal.");
+
+        try {
+            var restaurantes = this.restauranteService.consultarPorNomeAndTaxas(nome, freteTaxaInicial, freteTaxaFinal);
+            return ResponseEntity
+                    .ok()
+                    .body(restaurantes);
+
+        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
+            return ResponseEntity
+                    .noContent()
+                    .build();
+        }
+    }
 }
+
