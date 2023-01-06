@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -102,6 +103,19 @@ public final class RestauranteService {
     public List<Restaurante> buscarTodos() {
 
         var restaurantes = this.restauranteRepository.findAll()
+                .stream()
+                .sorted(Comparator.comparing(Restaurante::getId).reversed())
+                .toList();
+
+        if(restaurantes.isEmpty())
+            throw new EntidadeNaoEncontradaException(String.format("Não há restaurantes cadastrados no banco de dados."));
+
+        return restaurantes;
+    }
+
+    public List<Restaurante> consultarPorNomeAndTaxas(String nome, BigDecimal freteTaxaInicial, BigDecimal freteTaxaFinal) {
+
+        var restaurantes = this.restauranteRepository.find(nome, freteTaxaInicial, freteTaxaFinal)
                 .stream()
                 .sorted(Comparator.comparing(Restaurante::getId).reversed())
                 .toList();
