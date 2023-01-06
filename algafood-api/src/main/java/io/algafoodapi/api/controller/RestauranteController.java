@@ -3,8 +3,9 @@ package io.algafoodapi.api.controller;
 import io.algafoodapi.domain.exception.EntidadeNaoEncontradaException;
 import io.algafoodapi.domain.exception.RequisicaoMalFormuladaException;
 import io.algafoodapi.domain.model.Restaurante;
-import io.algafoodapi.domain.service.CadastroRestauranteService;
+import io.algafoodapi.domain.service.RestauranteService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +18,7 @@ import java.util.Map;
 public class RestauranteController {
 
     @Autowired
-    private CadastroRestauranteService restauranteService;
+    private RestauranteService restauranteService;
 
     @PostMapping
     public ResponseEntity<?> adicionar(@RequestBody Restaurante restaurante, UriComponentsBuilder uriComponentsBuilder) {
@@ -84,7 +85,7 @@ public class RestauranteController {
     public ResponseEntity<?> remover(@PathVariable(name = "id") Long id) {
 
         try {
-            this.restauranteService.excluir(id);
+            this.restauranteService.excluirPorId(id);
             return ResponseEntity
                     .noContent()
                     .build();
@@ -100,7 +101,7 @@ public class RestauranteController {
     public ResponseEntity<?> buscar(@PathVariable(name = "id") Long id) {
 
         try {
-            var restaurante = this.restauranteService.buscar(id);
+            var restaurante = this.restauranteService.consultarPorId(id);
             return ResponseEntity
                     .ok()
                     .body(restaurante);
@@ -112,11 +113,27 @@ public class RestauranteController {
         }
     }
 
+    @GetMapping(path = "/buscarTodosPorNome")
+    public ResponseEntity<?> listarPorNome(@Param("nome") String nome) {
+
+        try {
+            var restaurantes = this.restauranteService.buscarTodosPorNome(nome);
+            return ResponseEntity
+                    .ok()
+                    .body(restaurantes);
+
+        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
+            return ResponseEntity
+                    .noContent()
+                    .build();
+        }
+    }
+
     @GetMapping
     public ResponseEntity<?> listar() {
 
         try {
-            var restaurantes = this.restauranteService.listar();
+            var restaurantes = this.restauranteService.buscarTodos();
             return ResponseEntity
                     .ok()
                     .body(restaurantes);

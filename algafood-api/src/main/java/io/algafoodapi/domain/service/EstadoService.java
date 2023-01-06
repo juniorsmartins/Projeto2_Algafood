@@ -13,26 +13,26 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public final class CadastroEstadoService {
+public final class EstadoService {
 
     @Autowired
     private EstadoRepository estadoRepository;
 
     public Estado salvar(Estado estado) {
-        return this.estadoRepository.salvar(estado);
+        return this.estadoRepository.saveAndFlush(estado);
     }
 
     public Estado atualizar(Long id, Estado estadoAtual) throws EntidadeNaoEncontradaException {
 
-        var estado = this.buscar(id);
+        var estado = this.consultarPorId(id);
         BeanUtils.copyProperties(estadoAtual, estado, "id");
         return this.salvar(estado);
     }
 
-    public void excluir(Long id) {
+    public void excluirPorId(Long id) {
 
         try {
-            this.estadoRepository.remover(id);
+            this.estadoRepository.deleteById(id);
 
         } catch (EmptyResultDataAccessException dataAccessException) {
             throw new EntidadeNaoEncontradaException(String.format("Não encontrado estado com código %d.", id));
@@ -42,18 +42,14 @@ public final class CadastroEstadoService {
         }
     }
 
-    public Estado buscar(Long id) {
-        var estado = this.estadoRepository.buscar(id);
-
-        if(estado == null)
-            throw new EntidadeNaoEncontradaException("""
-                    Não encontrado estado com código %d.""".formatted(id));
-
-        return estado;
+    public Estado consultarPorId(Long id) {
+        return this.estadoRepository.findById(id)
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("""
+                    Não encontrado estado com código %d.""".formatted(id)));
     }
 
-    public List<Estado> listar() {
-        var estados = this.estadoRepository.listar();
+    public List<Estado> buscarTodos() {
+        var estados = this.estadoRepository.findAll();
 
         if(estados.isEmpty())
             throw new EntidadeNaoEncontradaException("""
