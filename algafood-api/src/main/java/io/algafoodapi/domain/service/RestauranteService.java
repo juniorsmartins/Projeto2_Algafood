@@ -86,6 +86,19 @@ public final class RestauranteService {
                     Não encontrado restaurante com código %d.""".formatted(id)));
     }
 
+    public List<Restaurante> buscarTodosPorNome(String nome) {
+
+        var restaurantes = this.restauranteRepository.buscarTodosPorNome(nome)
+                .stream()
+                .sorted(Comparator.comparing(Restaurante::getId).reversed())
+                .toList();
+
+        if(restaurantes.isEmpty())
+            throw new EntidadeNaoEncontradaException(String.format("Não há restaurantes cadastrados no banco de dados."));
+
+        return restaurantes;
+    }
+
     public List<Restaurante> buscarTodos() {
 
         var restaurantes = this.restauranteRepository.findAll()

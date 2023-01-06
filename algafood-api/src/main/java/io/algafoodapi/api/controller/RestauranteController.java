@@ -5,6 +5,7 @@ import io.algafoodapi.domain.exception.RequisicaoMalFormuladaException;
 import io.algafoodapi.domain.model.Restaurante;
 import io.algafoodapi.domain.service.RestauranteService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -109,6 +110,22 @@ public class RestauranteController {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .body(naoEncontradaException.getMessage());
+        }
+    }
+
+    @GetMapping(path = "/buscarTodosPorNome")
+    public ResponseEntity<?> listarPorNome(@Param("nome") String nome) {
+
+        try {
+            var restaurantes = this.restauranteService.buscarTodosPorNome(nome);
+            return ResponseEntity
+                    .ok()
+                    .body(restaurantes);
+
+        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
+            return ResponseEntity
+                    .noContent()
+                    .build();
         }
     }
 
