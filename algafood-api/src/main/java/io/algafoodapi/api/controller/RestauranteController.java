@@ -151,10 +151,6 @@ public class RestauranteController {
     public ResponseEntity<?> consultarPorNomeAndTaxas(@Param("nome") String nome,
                                                       @Param("freteTaxaInicial") BigDecimal freteTaxaInicial,
                                                       @Param("freteTaxaFinal") BigDecimal freteTaxaFinal) {
-        if(nome == null || freteTaxaInicial == null || freteTaxaFinal == null)
-            return ResponseEntity
-                    .badRequest()
-                    .body("A requisição exige parâmetros obrigatórios: nome, taxaFreteInicial e taxaFreteFinal.");
 
         try {
             var restaurantes = this.restauranteService.consultarPorNomeAndTaxas(nome, freteTaxaInicial, freteTaxaFinal);
