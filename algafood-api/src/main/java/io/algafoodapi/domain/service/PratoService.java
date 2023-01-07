@@ -3,13 +3,14 @@ package io.algafoodapi.domain.service;
 import io.algafoodapi.domain.exception.EntidadeNaoEncontradaException;
 import io.algafoodapi.domain.model.Prato;
 import io.algafoodapi.domain.repository.PratoRepository;
-import io.algafoodapi.infraestrutura.repository.spec.PratoComNomeSemelhanteSpec;
-import io.algafoodapi.infraestrutura.repository.spec.PratoComValorGratisSpec;
 import io.algafoodapi.infraestrutura.repository.spec.PratoFactorySpecs;
+import net.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PratoService {
@@ -30,6 +31,16 @@ public class PratoService {
             throw new EntidadeNaoEncontradaException(String.format("Não encontrados pratos com tais especificações."));
 
         return pratos;
+    }
+
+    public Optional<Prato> pratoPrimeiro() {
+
+        try {
+            return this.pratoRepository.buscarPrimeiro();
+
+        } catch (EmptyResultDataAccessException emptyResultDataAccessException) {
+            throw new EntidadeNaoEncontradaException(String.format("Não existem pratos cadastrados!"));
+        }
     }
 }
 

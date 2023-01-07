@@ -6,4 +6,4 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PratoRepository extends JpaRepository<Prato, Long>, JpaSpecificationExecutor<Prato> { }
+public interface PratoRepository extends CustomJpaRepository<Prato, Long>, JpaSpecificationExecutor<Prato> { }
