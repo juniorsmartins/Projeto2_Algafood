@@ -19,5 +19,5 @@ INSERT INTO permissoes(id, nome, descricao) VALUES(2, 'Consultar', 'Permissão p
 INSERT INTO permissoes(id, nome, descricao) VALUES(3, 'Atualizar', 'Permissão para atualizar recursos.');
 INSERT INTO permissoes(id, nome, descricao) VALUES(4, 'Deletar', 'Permissão para deletar recursos.');
 
-
+INSERT INTO restaurante_formas_pagamento(restaurante_id, forma_pagamento_id) VALUES(1, 1), (1, 2), (1, 3), (2, 3), (3, 2), (3, 5);
 

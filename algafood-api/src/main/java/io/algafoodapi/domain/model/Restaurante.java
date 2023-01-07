@@ -1,11 +1,15 @@
 package io.algafoodapi.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonRootName;
 import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
+@JsonRootName("restaurante")
 @Entity
 @Table(name = "restaurantes")
 @Builder
@@ -32,6 +36,13 @@ public final class Restaurante implements Serializable {
     private BigDecimal taxaFrete;
 
     @ManyToOne
-    @JoinColumn(name = "cozinha_id", nullable = false)
+    @JoinColumn(name = "cozinha_id")
     private Cozinha cozinha;
+
+
+    @ManyToMany
+    @JoinTable(name = "restaurante_formas_pagamento",
+            joinColumns = @JoinColumn(name = "restaurante_id"),
+            inverseJoinColumns = @JoinColumn(name = "forma_pagamento_id"))
+    private List<FormaPagamento> formasPagamento = new ArrayList<>();
 }
