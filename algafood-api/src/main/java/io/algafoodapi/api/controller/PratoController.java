@@ -44,5 +44,21 @@ public class PratoController {
                     .build();
         }
     }
+
+    @GetMapping(path = "/pratoPrimeiro")
+    public ResponseEntity<?> pratoPrimeiro() {
+
+        try {
+            var prato = this.pratoService.pratoPrimeiro();
+            return ResponseEntity
+                    .ok()
+                    .body(prato.get());
+
+        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
+            return ResponseEntity
+                    .noContent()
+                    .build();
+        }
+    }
 }
 
