@@ -115,7 +115,7 @@ public final class RestauranteService {
 
     public List<Restaurante> consultarPorNomeAndTaxas(String nome, BigDecimal freteTaxaInicial, BigDecimal freteTaxaFinal) {
 
-        var restaurantes = this.restauranteRepository.findDinamico(nome, freteTaxaInicial, freteTaxaFinal)
+        var restaurantes = this.restauranteRepository.findPorCriteria(nome, freteTaxaInicial, freteTaxaFinal)
                 .stream()
                 .sorted(Comparator.comparing(Restaurante::getId).reversed())
                 .toList();

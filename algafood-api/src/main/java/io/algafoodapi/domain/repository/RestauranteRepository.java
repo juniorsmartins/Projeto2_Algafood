@@ -30,7 +30,11 @@ public interface RestauranteRepository extends JpaRepository<Restaurante, Long> 
     // ----- JPQL em SDJ customizado -----
     List<Restaurante> find(String nome, BigDecimal taxaFreteInicial, BigDecimal taxaFreteFinal);
 
+    // ----- JPQL com consultas dinâmicas -----
     List<Restaurante> findDinamico(String nome, BigDecimal taxaFreteInicial, BigDecimal taxaFreteFinal);
+
+    // ----- JPQL com consultas dinâmicas pelo Criteria API -----
+    List<Restaurante> findPorCriteria(String nome, BigDecimal taxaFreteInicial, BigDecimal taxaFreteFinal);
 
     // ----- Native Query -----
 
