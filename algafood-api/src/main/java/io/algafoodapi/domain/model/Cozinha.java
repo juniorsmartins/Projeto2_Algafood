@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 import lombok.*;
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @JsonRootName("cozinha")
@@ -34,5 +35,5 @@ public final class Cozinha implements Serializable {
 
     @JsonIgnore
     @OneToMany(mappedBy = "cozinha")
-    private List<Restaurante> restaurantes;
+    private List<Restaurante> restaurantes = new ArrayList<>();
 }
