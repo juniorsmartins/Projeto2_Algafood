@@ -27,10 +27,9 @@ public final class RestauranteService {
     @Autowired
     private CozinhaService cozinhaService;
 
-    public Restaurante salvar(Restaurante restaurante) throws EntidadeNaoEncontradaException {
+    public Restaurante criar(Restaurante restaurante) throws EntidadeNaoEncontradaException {
 
-        var cozinhaId = restaurante.getCozinha().getId();
-        var cozinha = this.cozinhaService.consultarPorId(cozinhaId);
+        var cozinha = this.cozinhaService.consultarPorId(restaurante.getCozinha().getId());
         restaurante.setCozinha(cozinha);
 
         return this.restauranteRepository.saveAndFlush(restaurante);

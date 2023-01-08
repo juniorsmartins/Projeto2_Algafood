@@ -43,7 +43,7 @@ public final class Restaurante implements Serializable {
     private Endereco endereco;
 
 //    @JsonIgnoreProperties("hibernateLazyInitializer")
-    @JsonIgnore
+//    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cozinha_id", referencedColumnName = "id", nullable = false)
     private Cozinha cozinha;

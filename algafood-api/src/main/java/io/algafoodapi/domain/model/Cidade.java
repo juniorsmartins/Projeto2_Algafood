@@ -27,7 +27,7 @@ public final class Cidade implements Serializable {
     @Column(name = "nome", length = 80, nullable = false)
     private String nome;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "estado_id", nullable = false)
     private Estado estado;
 }

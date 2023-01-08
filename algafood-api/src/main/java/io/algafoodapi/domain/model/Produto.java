@@ -37,7 +37,7 @@ public final class Produto implements Serializable {
     @Column(name = "ativo")
     private Boolean ativo;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurante_id", referencedColumnName = "id", nullable = false)
     private Restaurante restaurante;
 }
