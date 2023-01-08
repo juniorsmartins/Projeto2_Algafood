@@ -32,7 +32,7 @@ public final class Grupo implements Serializable {
 
     @JsonIgnore
     @ManyToMany
-    @JoinTable(name = "grupo_permissoes",
+    @JoinTable(name = "grupos_permissoes",
         joinColumns = @JoinColumn(name = "grupo_id"),
         inverseJoinColumns = @JoinColumn(name = "permissao_id"))
     private List<Permissao> permissoes = new ArrayList<>();

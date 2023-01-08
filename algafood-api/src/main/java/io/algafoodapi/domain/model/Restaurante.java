@@ -41,6 +41,7 @@ public final class Restaurante implements Serializable {
     @Embedded
     private Endereco endereco;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "cozinha_id", referencedColumnName = "id", nullable = false)
     private Cozinha cozinha;
@@ -51,7 +52,7 @@ public final class Restaurante implements Serializable {
 
     @JsonIgnore
     @ManyToMany
-    @JoinTable(name = "restaurante_formas_pagamento",
+    @JoinTable(name = "restaurantes_formas_pagamento",
             joinColumns = @JoinColumn(name = "restaurante_id"),
             inverseJoinColumns = @JoinColumn(name = "forma_pagamento_id"))
     private List<FormaPagamento> formasPagamento = new ArrayList<>();
