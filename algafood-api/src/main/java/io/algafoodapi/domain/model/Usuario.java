@@ -44,7 +44,7 @@ public final class Usuario implements Serializable {
     private LocalDateTime dataCadastro;
 
     @JsonIgnore
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "usuarios_grupos",
         joinColumns = @JoinColumn(name = "usuario_id"),
         inverseJoinColumns = @JoinColumn(name = "grupo_id"))

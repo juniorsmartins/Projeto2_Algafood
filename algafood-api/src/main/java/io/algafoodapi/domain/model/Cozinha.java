@@ -34,6 +34,6 @@ public final class Cozinha implements Serializable {
     private String nome;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "cozinha")
+    @OneToMany(mappedBy = "cozinha", fetch = FetchType.LAZY)
     private List<Restaurante> restaurantes = new ArrayList<>();
 }
