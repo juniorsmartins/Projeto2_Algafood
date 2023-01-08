@@ -1,5 +1,6 @@
 package io.algafoodapi.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import lombok.*;
 
@@ -39,7 +40,7 @@ public final class Restaurante implements Serializable {
     @JoinColumn(name = "cozinha_id")
     private Cozinha cozinha;
 
-
+    @JsonIgnore
     @ManyToMany
     @JoinTable(name = "restaurante_formas_pagamento",
             joinColumns = @JoinColumn(name = "restaurante_id"),
