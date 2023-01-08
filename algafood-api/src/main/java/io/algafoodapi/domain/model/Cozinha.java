@@ -29,7 +29,7 @@ public final class Cozinha implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @JsonProperty("estilo_de_comida")
+    @JsonProperty("gastronomia")
     @Column(name = "nome", length = 80, nullable = false)
     private String nome;
 

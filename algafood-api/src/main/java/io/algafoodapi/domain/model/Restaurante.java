@@ -1,7 +1,6 @@
 package io.algafoodapi.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonRootName;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -13,7 +12,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@JsonRootName("restaurante")
 @Entity
 @Table(name = "restaurantes")
 @Builder
@@ -39,21 +37,17 @@ public final class Restaurante implements Serializable {
     @Column(name = "taxa_frete", nullable = false)
     private BigDecimal taxaFrete;
 
-    @ManyToOne
-    @JoinColumn(name = "cozinha_id")
-    private Cozinha cozinha;
-
     @JsonIgnore
     @Embedded
     private Endereco endereco;
 
-    @CreationTimestamp
-    @Column(name = "data_cadastro", nullable = false)
-    private LocalDateTime dataCadastro;
+    @ManyToOne
+    @JoinColumn(name = "cozinha_id", referencedColumnName = "id", nullable = false)
+    private Cozinha cozinha;
 
-    @UpdateTimestamp
-    @Column(name = "data_atualizacao", nullable = false)
-    private LocalDateTime dataAtualizacao;
+    @JsonIgnore
+    @OneToMany(mappedBy = "restaurante")
+    private List<Produto> produtos = new ArrayList<>();
 
     @JsonIgnore
     @ManyToMany
@@ -61,4 +55,14 @@ public final class Restaurante implements Serializable {
             joinColumns = @JoinColumn(name = "restaurante_id"),
             inverseJoinColumns = @JoinColumn(name = "forma_pagamento_id"))
     private List<FormaPagamento> formasPagamento = new ArrayList<>();
+
+    @JsonIgnore
+    @CreationTimestamp
+    @Column(name = "data_cadastro", nullable = false)
+    private LocalDateTime dataCadastro;
+
+    @JsonIgnore
+    @UpdateTimestamp
+    @Column(name = "data_atualizacao")
+    private LocalDateTime dataAtualizacao;
 }
