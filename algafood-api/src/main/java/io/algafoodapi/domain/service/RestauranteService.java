@@ -48,7 +48,7 @@ public final class RestauranteService {
         }
         restauranteAtual.setCozinha(cozinha);
 
-        BeanUtils.copyProperties(restauranteAtual, restaurante, "id", "formasPagamento");
+        BeanUtils.copyProperties(restauranteAtual, restaurante, "id", "formasPagamento", "endereco");
 
         return this.restauranteRepository.saveAndFlush(restaurante);
     }

@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "formas_de_pagar")
+@Table(name = "formas_pagamento")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
