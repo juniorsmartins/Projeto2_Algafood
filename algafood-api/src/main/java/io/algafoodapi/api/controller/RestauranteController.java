@@ -22,10 +22,10 @@ public class RestauranteController {
     private RestauranteService restauranteService;
 
     @PostMapping
-    public ResponseEntity<?> adicionar(@RequestBody Restaurante restaurante, UriComponentsBuilder uriComponentsBuilder) {
+    public ResponseEntity<?> criar(@RequestBody Restaurante restaurante, UriComponentsBuilder uriComponentsBuilder) {
 
         try {
-            restaurante = this.restauranteService.salvar(restaurante);
+            restaurante = this.restauranteService.criar(restaurante);
             return ResponseEntity
                     .created(uriComponentsBuilder
                             .path("restaurantes/{id}")
@@ -99,7 +99,7 @@ public class RestauranteController {
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<?> buscar(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<?> consultarPorId(@PathVariable(name = "id") Long id) {
 
         try {
             var restaurante = this.restauranteService.consultarPorId(id);
@@ -115,7 +115,7 @@ public class RestauranteController {
     }
 
     @GetMapping(path = "/buscarTodosPorNome")
-    public ResponseEntity<?> listarPorNome(@Param("nome") String nome) {
+    public ResponseEntity<?> buscarTodosPorNome(@Param("nome") String nome) {
 
         try {
             var restaurantes = this.restauranteService.buscarTodosPorNome(nome);
@@ -131,7 +131,7 @@ public class RestauranteController {
     }
 
     @GetMapping
-    public ResponseEntity<?> listar() {
+    public ResponseEntity<?> buscarTodos() {
 
         try {
             var restaurantes = this.restauranteService.buscarTodos();

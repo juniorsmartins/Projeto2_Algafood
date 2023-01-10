@@ -4,17 +4,18 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Entity
-@Table(name = "cidades")
+@Table(name = "produtos")
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 @ToString
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public final class Cidade implements Serializable {
+public final class Produto implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -24,11 +25,20 @@ public final class Cidade implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "nome", length = 80, nullable = false)
+    @Column(name = "nome")
     private String nome;
 
+    @Column(name = "descricao")
+    private String descricao;
+
+    @Column(name = "preco", precision = 2)
+    private BigDecimal preco;
+
+    @Column(name = "ativo")
+    private Boolean ativo;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "estado_id", nullable = false)
-    private Estado estado;
+    @JoinColumn(name = "restaurante_id", referencedColumnName = "id", nullable = false)
+    private Restaurante restaurante;
 }
 

@@ -1,25 +1,23 @@
 package io.algafoodapi.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonRootName;
 import lombok.*;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-@JsonRootName("cozinha")
 @Entity
-@Table(name = "cozinhas")
+@Table(name = "grupos")
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 @ToString
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public final class Cozinha implements Serializable {
+public final class Grupo implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -29,11 +27,14 @@ public final class Cozinha implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @JsonProperty("gastronomia")
-    @Column(name = "nome", length = 80, nullable = false)
+    @Column(name = "nome", nullable = false)
     private String nome;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "cozinha", fetch = FetchType.LAZY)
-    private List<Restaurante> restaurantes = new ArrayList<>();
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "grupos_permissoes",
+        joinColumns = @JoinColumn(name = "grupo_id"),
+        inverseJoinColumns = @JoinColumn(name = "permissao_id"))
+    private List<Permissao> permissoes = new ArrayList<>();
 }
+

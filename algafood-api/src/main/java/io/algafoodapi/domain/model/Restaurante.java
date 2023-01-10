@@ -1,15 +1,18 @@
 package io.algafoodapi.domain.model;
 
-import com.fasterxml.jackson.annotation.JsonRootName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@JsonRootName("restaurante")
 @Entity
 @Table(name = "restaurantes")
 @Builder
@@ -35,14 +38,34 @@ public final class Restaurante implements Serializable {
     @Column(name = "taxa_frete", nullable = false)
     private BigDecimal taxaFrete;
 
-    @ManyToOne
-    @JoinColumn(name = "cozinha_id")
+    @JsonIgnore
+    @Embedded
+    private Endereco endereco;
+
+//    @JsonIgnoreProperties("hibernateLazyInitializer")
+//    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cozinha_id", referencedColumnName = "id", nullable = false)
     private Cozinha cozinha;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "restaurante", fetch = FetchType.LAZY)
+    private List<Produto> produtos = new ArrayList<>();
 
-    @ManyToMany
-    @JoinTable(name = "restaurante_formas_pagamento",
+//    @JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "restaurantes_formas_pagamento",
             joinColumns = @JoinColumn(name = "restaurante_id"),
             inverseJoinColumns = @JoinColumn(name = "forma_pagamento_id"))
     private List<FormaPagamento> formasPagamento = new ArrayList<>();
+
+    @JsonIgnore
+    @CreationTimestamp
+    @Column(name = "data_cadastro", nullable = false)
+    private LocalDateTime dataCadastro;
+
+    @JsonIgnore
+    @UpdateTimestamp
+    @Column(name = "data_atualizacao")
+    private LocalDateTime dataAtualizacao;
 }
