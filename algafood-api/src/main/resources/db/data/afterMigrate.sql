@@ -1,3 +1,20 @@
+alter table estados disable trigger all;
+alter table cidades disable trigger all;
+alter table cozinhas disable trigger all;
+
+delete from estados;
+delete from cidades;
+delete from cozinhas;
+
+alter table estados enable trigger all;
+alter table cidades enable trigger all;
+alter table cozinhas enable trigger all;
+
+alter sequence estados_id_seq restart with 1;
+alter sequence cidades_id_seq restart with 1;
+alter sequence cozinhas_id_seq restart with 1;
+
+
 INSERT INTO estados(id, nome) VALUES
     (1, 'Rio Grande do Sul'),
     (2, 'Santa Catarina'),
