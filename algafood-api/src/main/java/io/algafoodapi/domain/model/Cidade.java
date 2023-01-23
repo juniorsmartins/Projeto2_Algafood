@@ -1,3 +1,11 @@
+/**
+ * @version 1.0.0
+ * @since 01/01/2023
+ *
+ * @author Junior Martins
+ * @link https://github.com/juniorsmartins/Projeto2_Algafood
+ */
+
 package io.algafoodapi.domain.model;
 
 import lombok.*;
