@@ -35,8 +35,8 @@ CREATE TABLE IF NOT EXISTS enderecos(
 	
 );
 
-
-
+insert into cozinhas(id, nome) values(7, 'Bulgara');
+insert into cozinhas(nome) values('Bulgara');
 
 select * from estados;
 select * from cidades;
