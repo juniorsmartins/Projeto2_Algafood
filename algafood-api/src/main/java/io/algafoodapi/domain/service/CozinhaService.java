@@ -19,7 +19,7 @@ public final class CozinhaService {
     @Autowired
     private CozinhaRepository cozinhaRepository;
 
-    public Cozinha salvar(Cozinha cozinha) {
+    public Cozinha salvar(Cozinha cozinha)   {
         return this.cozinhaRepository.saveAndFlush(cozinha);
     }
 
