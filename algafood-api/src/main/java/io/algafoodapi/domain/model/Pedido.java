@@ -1,5 +1,6 @@
 package io.algafoodapi.domain.model;
 
+import io.algafoodapi.domain.model.enuns.StatusPedidoEnum;
 import lombok.*;
 
 import javax.persistence.*;
@@ -26,13 +27,13 @@ public final class Pedido implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "sub_total", nullable = false)
-    private BigDecimal subTotal;
+    @Column(name = "subtotal", columnDefinition = "decimal(10.2)", nullable = false)
+    private BigDecimal subtotal;
 
-    @Column(name = "taxa_frete")
-    private BigDecimal taxaFrete;
+    @Column(name = "taxa_frete", columnDefinition = "decimal(10.2) default 0.00")
+    private BigDecimal taxaFrete = BigDecimal.ZERO;
 
-    @Column(name = "valor_total", nullable = false)
+    @Column(name = "valor_total", columnDefinition = "decimal(10.2)", nullable = false)
     private BigDecimal valorTotal;
 
     @Column(name = "data_hora_criacao", nullable = false)
@@ -46,4 +47,7 @@ public final class Pedido implements Serializable {
 
     @Column(name = "data_entrega")
     private LocalDateTime dataEntrega;
+
+    @Column(name = "status_pedido", nullable = false)
+    private StatusPedidoEnum statusPedido;
 }
