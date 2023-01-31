@@ -10,11 +10,11 @@ CREATE TABLE IF NOT EXISTS pedidos(
     subtotal DECIMAL(10.2) NOT NULL,
     taxa_frete DECIMAL(10.2) DEFAULT 0.00,
     valor_total DECIMAL(10.2) NOT NULL,
-    data_hora_criacao,
-    data_confirmacao,
-    data_cancelamento,
-    data_entrega,
-    status_pedido status_pedido_enum NOT NULL
+    data_hora_criacao TIMESTAMP NOT NULL,
+    data_confirmacao TIMESTAMP,
+    data_cancelamento TIMESTAMP,
+    data_entrega TIMESTAMP,
+    status_pedido status_pedido_enum NOT NULL,
 
     CONSTRAINT
 );
