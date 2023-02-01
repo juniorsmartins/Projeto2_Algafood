@@ -51,8 +51,8 @@ public final class Restaurante implements Serializable {
     @Column(name = "nome", length = 80, nullable = false)
     private String nome;
 
-    @Column(name = "taxa_frete", nullable = false)
-    private BigDecimal taxaFrete;
+    @Column(name = "taxa_frete", columnDefinition = "decimal(10.2) default 0.00", nullable = false)
+    private BigDecimal taxaFrete = BigDecimal.ZERO;
 
     @JsonIgnore
     @Embedded
