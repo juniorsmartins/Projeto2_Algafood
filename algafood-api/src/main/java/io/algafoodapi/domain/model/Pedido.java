@@ -57,4 +57,10 @@ public final class Pedido implements Serializable {
 
     @OneToMany(mappedBy = "pedido")
     private List<ItemPedido> itensPedido = new ArrayList<>();
+
+    private FormaPagamento formaPagamento;
+
+    private Restaurante restaurante;
+
+    private Usuario usuario;
 }
