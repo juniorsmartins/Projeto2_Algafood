@@ -49,4 +49,7 @@ public final class Usuario implements Serializable {
         joinColumns = @JoinColumn(name = "usuario_id"),
         inverseJoinColumns = @JoinColumn(name = "grupo_id"))
     private List<Grupo> grupos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY)
+    private List<Pedido> pedidos = new ArrayList<>();
 }

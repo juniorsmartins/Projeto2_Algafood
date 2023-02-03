@@ -14,7 +14,16 @@ CREATE TABLE IF NOT EXISTS pedidos(
     data_confirmacao TIMESTAMP,
     data_cancelamento TIMESTAMP,
     data_entrega TIMESTAMP,
-    status_pedido status_pedido_enum NOT NULL
+    status_pedido status_pedido_enum NOT NULL,
+    forma_pagamento_id bigint NOT NULL,
+    restaurante_id bigint NOT NULL,
+    usuario_id bigint NOT NULL,
+
+    // falta endereço
+
+    CONSTRAINT fk_forma_pagamento_id FOREIGN KEY(forma_pagamento_id) REFERENCES formas_pagamento(id),
+    CONSTRAINT fk_restaurante_id FOREIGN KEY(restaurante_id) REFERENCES restaurantes(id),
+    CONSTRAINT fk_usuario_id FOREIGN KEY(usuario_id) REFERENCES usuarios(id)
 );
 
 
