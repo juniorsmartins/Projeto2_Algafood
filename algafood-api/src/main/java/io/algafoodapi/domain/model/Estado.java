@@ -24,6 +24,6 @@ public final class Estado implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "nome", length = 80, nullable = false)
+    @Column(name = "nome", length = 100, nullable = false)
     private String nome;
 }

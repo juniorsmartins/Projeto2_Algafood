@@ -30,7 +30,7 @@ public final class Cozinha implements Serializable {
     private Long id;
 
     @JsonProperty("gastronomia")
-    @Column(name = "nome", length = 80, nullable = false)
+    @Column(name = "nome", length = 100, nullable = false)
     private String nome;
 
     @JsonIgnore

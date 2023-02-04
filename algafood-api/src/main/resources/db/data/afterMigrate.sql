@@ -40,4 +40,9 @@ INSERT INTO cozinhas(id, nome) VALUES
     (4, 'Estadunidense')
     On CONFLICT(id) DO NOTHING;
 
-
+INSERT INTO restaurantes(id, nome, taxa_frete, data_cadastro, cozinha_id, endereco_cep, endereco_bairro,
+    endereco_logradouro, endereco_numero, endereco_cidade_id) VALUES
+    (1, 'Casa do Porco', 30.10, now(), 1, '78000001', 'Centro-Sul', 'Avenida X', 1000, 1),
+    (2, 'Narisawa', 42.90, now(), 2, '78000002', 'Zona Norte', 'Rua Central', 2500, 2),
+    (3, 'White Rabbit', 80, now(), 4, '78000003', 'Alameda Vermelha', 'Avenida R', 4750, 6)
+    On CONFLICT(id) DO NOTHING;
