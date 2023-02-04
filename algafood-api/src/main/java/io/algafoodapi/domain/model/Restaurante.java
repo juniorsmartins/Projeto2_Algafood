@@ -83,4 +83,7 @@ public final class Restaurante implements Serializable {
     @UpdateTimestamp
     @Column(name = "data_atualizacao")
     private LocalDateTime dataAtualizacao;
+
+    @OneToMany(mappedBy = "restaurante", fetch = FetchType.LAZY)
+    private List<Pedido> pedidos = new ArrayList<>();
 }

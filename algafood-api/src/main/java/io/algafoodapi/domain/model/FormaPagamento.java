@@ -9,13 +9,10 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.EqualsAndHashCode;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "formas_pagamento")
@@ -38,4 +35,7 @@ public final class FormaPagamento implements Serializable {
 
     @Column(name = "descricao", length = 250, nullable = false)
     private String descricao;
+
+    @OneToMany(mappedBy = "formaPagamento", fetch = FetchType.LAZY)
+    private List<Pedido> pedidos = new ArrayList<>();
 }
