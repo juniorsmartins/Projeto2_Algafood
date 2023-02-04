@@ -24,19 +24,23 @@ public final class ItemPedido implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "quantidade")
+    @Column(name = "quantidade", nullable = false)
     private Integer quantidade;
 
-    @Column(name = "preco_unitario")
+    @Column(name = "preco_unitario", columnDefinition = "decimal(10.2)", nullable = false)
     private BigDecimal precoUnitario;
 
-    @Column(name = "preco_total")
+    @Column(name = "preco_total", columnDefinition = "decimal(10.2)", nullable = false)
     private BigDecimal precoTotal;
 
-    @Column(name = "observacao")
+    @Column(name = "observacao", length = 250)
     private String observacao;
 
     @ManyToOne
-    @JoinColumn(name = "pedido_id", nullable = false)
+    @JoinColumn(name = "pedido_id", referencedColumnName = "id", nullable = false)
     private Pedido pedido;
+
+    @ManyToOne
+    @JoinColumn(name = "produto_id", referencedColumnName = "id", nullable = false)
+    private Produto produto;
 }

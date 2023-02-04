@@ -29,13 +29,13 @@ public final class Usuario implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "nome", nullable = false)
+    @Column(name = "nome", length = 100, nullable = false)
     private String nome;
 
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", length = 150, unique = true, nullable = false)
     private String email;
 
-    @Column(name = "senha", nullable = false)
+    @Column(name = "senha", length = 100, nullable = false)
     private String senha;
 
     @JsonIgnore
@@ -50,6 +50,7 @@ public final class Usuario implements Serializable {
         inverseJoinColumns = @JoinColumn(name = "grupo_id"))
     private List<Grupo> grupos = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY)
     private List<Pedido> pedidos = new ArrayList<>();
 }
