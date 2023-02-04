@@ -19,11 +19,17 @@ CREATE TABLE IF NOT EXISTS pedidos(
     restaurante_id bigint NOT NULL,
     usuario_id bigint NOT NULL,
 
-    // falta endereço
+    endereco_cep VARCHAR(15) NOT NULL,
+    endereco_bairro VARCHAR(100) NOT NULL,
+    endereco_logradouro VARCHAR NOT NULL,
+    endereco_numero INTEGER NOT NULL,
+    endereco_complemento VARCHAR(250),
+    endereco_cidade_id INTEGER NOT NULL,
 
     CONSTRAINT fk_forma_pagamento_id FOREIGN KEY(forma_pagamento_id) REFERENCES formas_pagamento(id),
     CONSTRAINT fk_restaurante_id FOREIGN KEY(restaurante_id) REFERENCES restaurantes(id),
-    CONSTRAINT fk_usuario_id FOREIGN KEY(usuario_id) REFERENCES usuarios(id)
+    CONSTRAINT fk_usuario_id FOREIGN KEY(usuario_id) REFERENCES usuarios(id),
+    CONSTRAINT fk_address_cidade_id FOREIGN KEY(endereco_cidade_id) REFERENCES cidades(id)
 );
 
 

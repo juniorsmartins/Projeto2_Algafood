@@ -1,5 +1,6 @@
 package io.algafoodapi.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.algafoodapi.domain.model.enuns.StatusPedidoEnum;
 import lombok.*;
 
@@ -69,4 +70,8 @@ public final class Pedido implements Serializable {
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
+
+    @JsonIgnore
+    @Embedded
+    private Endereco endereco;
 }

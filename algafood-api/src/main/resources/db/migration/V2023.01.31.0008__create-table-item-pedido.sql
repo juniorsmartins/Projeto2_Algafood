@@ -5,7 +5,9 @@ CREATE TABLE IF NOT EXISTS itens_pedido(
     preco_total DECIMAL(10,2) NOT NULL,
     observacao VARCHAR(250),
     pedido_id bigint NOT NULL,
+    produto_id bigint NOT NULL,
 
-    CONSTRAINT fk_pedido_id FOREIGN KEY(pedido_id) REFERENCES pedidos(id)
+    CONSTRAINT fk_pedido_id FOREIGN KEY(pedido_id) REFERENCES pedidos(id),
+    CONSTRAINT fk_produto_id FOREIGN KEY(produto_id) REFERENCES produtos(id)
 );
 
