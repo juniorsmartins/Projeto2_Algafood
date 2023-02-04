@@ -14,7 +14,7 @@ import java.util.Comparator;
 import java.util.List;
 
 @Service
-public final class CozinhaService {
+public class CozinhaService {
 
     public static final String NAO_ENCONTRADA_COZINHA_COM_ID = "Não encontrada cozinha com código %d.";
     public static final String NÃO_ENCONTRADA_COZINHA_COM_NOME = "Não encontrada cozinha com nome %s.";
@@ -24,12 +24,16 @@ public final class CozinhaService {
     @Autowired
     private CozinhaRepository cozinhaRepository;
 
+    public Cozinha criar(Cozinha cozinha) {
+        return this.cozinhaRepository.saveAndFlush(cozinha);
+    }
+
     public Cozinha atualizar(Long id, Cozinha cozinhaAtual) {
 
         var cozinha = this.consultarPorIdOuLancarException(id);
         BeanUtils.copyProperties(cozinhaAtual, cozinha, "id");
 
-        return this.salvar(cozinha);
+        return this.criar(cozinha);
     }
 
     public void excluirPorId(Long id) {
@@ -56,10 +60,6 @@ public final class CozinhaService {
             throw new EntidadeNaoEncontradaException(String.format(NAO_EXISTEM_COZINHAS_CADASTRADAS));
 
         return cozinhas;
-    }
-
-    public Cozinha salvar(Cozinha cozinha)   {
-        return this.cozinhaRepository.saveAndFlush(cozinha);
     }
 
     public Cozinha consultarPorIdOuLancarException(Long id) {

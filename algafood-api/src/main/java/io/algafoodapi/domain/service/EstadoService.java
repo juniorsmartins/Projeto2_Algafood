@@ -15,6 +15,8 @@ import java.util.List;
 @Service
 public final class EstadoService {
 
+    public static final String NÃO_ENCONTRADO_ESTADO_COM_ID = "Não encontrado estado com código %d.";
+
     @Autowired
     private EstadoRepository estadoRepository;
 
@@ -43,9 +45,10 @@ public final class EstadoService {
     }
 
     public Estado consultarPorId(Long id) {
+
         return this.estadoRepository.findById(id)
-                .orElseThrow(() -> new EntidadeNaoEncontradaException("""
-                    Não encontrado estado com código %d.""".formatted(id)));
+                .orElseThrow(() -> new EntidadeNaoEncontradaException(
+                        String.format(NÃO_ENCONTRADO_ESTADO_COM_ID, id)));
     }
 
     public List<Estado> buscarTodos() {

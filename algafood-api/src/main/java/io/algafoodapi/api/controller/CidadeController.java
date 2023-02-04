@@ -1,7 +1,6 @@
 package io.algafoodapi.api.controller;
 
 import io.algafoodapi.domain.exception.EntidadeNaoEncontradaException;
-import io.algafoodapi.domain.exception.RequisicaoMalFormuladaException;
 import io.algafoodapi.domain.model.Cidade;
 import io.algafoodapi.domain.service.CidadeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,76 +17,46 @@ public class CidadeController {
     private CidadeService cidadeService;
 
     @PostMapping
-    public ResponseEntity<?> adicionar(@RequestBody Cidade cidade, UriComponentsBuilder uriComponentsBuilder) {
+    public ResponseEntity<?> criar(@RequestBody Cidade cidade, UriComponentsBuilder uriComponentsBuilder) {
 
-        try {
-            cidade = this.cidadeService.salvar(cidade);
-            return ResponseEntity
-                    .created(uriComponentsBuilder
-                            .path("cidades/{id}")
-                            .buildAndExpand(cidade.getId())
-                            .toUri())
-                    .body(cidade);
+        cidade = this.cidadeService.criar(cidade);
 
-        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(naoEncontradaException.getMessage());
-        }
+        return ResponseEntity
+                .created(uriComponentsBuilder
+                        .path("cidades/{id}")
+                        .buildAndExpand(cidade.getId())
+                        .toUri())
+                .body(cidade);
     }
 
     @PutMapping(value = "/{id}")
     public ResponseEntity<?> atualizar(@PathVariable(name = "id") Long id, @RequestBody Cidade cidade) {
 
-        try {
-            cidade = this.cidadeService.atualizar(id, cidade);
-            return ResponseEntity
-                    .ok()
-                    .body(cidade);
+        cidade = this.cidadeService.atualizar(id, cidade);
 
-        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(naoEncontradaException.getMessage());
-
-        } catch (RequisicaoMalFormuladaException malFormuladaException) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(malFormuladaException.getMessage());
-        }
+        return ResponseEntity
+                .ok()
+                .body(cidade);
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<?> remover(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<?> excluirPorId(@PathVariable(name = "id") Long id) {
 
-        try {
-            this.cidadeService.excluirPorId(id);
-            return ResponseEntity
-                    .noContent()
-                    .build();
+        this.cidadeService.excluirPorId(id);
 
-        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(naoEncontradaException.getMessage());
-
-        }
+        return ResponseEntity
+                .noContent()
+                .build();
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<?> buscar(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<?> consultarPorId(@PathVariable(name = "id") Long id) {
 
-        try {
-            var cidade = this.cidadeService.consultarPorId(id);
-            return ResponseEntity
-                    .ok()
-                    .body(cidade);
+        var cidade = this.cidadeService.consultarPorId(id);
 
-        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(naoEncontradaException.getMessage());
-        }
+        return ResponseEntity
+                .ok()
+                .body(cidade);
     }
 
     @GetMapping

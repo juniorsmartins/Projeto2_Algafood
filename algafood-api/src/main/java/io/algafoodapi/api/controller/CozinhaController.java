@@ -17,9 +17,10 @@ public class CozinhaController {
     private CozinhaService cozinhaService;
 
     @PostMapping
-    public ResponseEntity<Cozinha> adicionar(@RequestBody Cozinha cozinha, UriComponentsBuilder uriComponentsBuilder) {
+    public ResponseEntity<Cozinha> criar(@RequestBody Cozinha cozinha, UriComponentsBuilder uriComponentsBuilder) {
 
-        cozinha = this.cozinhaService.salvar(cozinha);
+        cozinha = this.cozinhaService.criar(cozinha);
+
         return ResponseEntity
                 .created(uriComponentsBuilder
                         .path("cozinhas/{id}")
