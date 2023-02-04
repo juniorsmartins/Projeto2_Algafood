@@ -24,10 +24,6 @@ public final class CozinhaService {
     @Autowired
     private CozinhaRepository cozinhaRepository;
 
-    public Cozinha salvar(Cozinha cozinha)   {
-        return this.cozinhaRepository.saveAndFlush(cozinha);
-    }
-
     public Cozinha atualizar(Long id, Cozinha cozinhaAtual) {
 
         var cozinha = this.consultarPorIdOuLancarException(id);
@@ -49,6 +45,23 @@ public final class CozinhaService {
         }
     }
 
+    public List<Cozinha> buscarTodos() {
+
+        var cozinhas = this.cozinhaRepository.findAll()
+                .stream()
+                .sorted(Comparator.comparing(Cozinha::getId).reversed())
+                .toList();
+
+        if(cozinhas.isEmpty())
+            throw new EntidadeNaoEncontradaException(String.format(NAO_EXISTEM_COZINHAS_CADASTRADAS));
+
+        return cozinhas;
+    }
+
+    public Cozinha salvar(Cozinha cozinha)   {
+        return this.cozinhaRepository.saveAndFlush(cozinha);
+    }
+
     public Cozinha consultarPorIdOuLancarException(Long id) {
 
         return this.cozinhaRepository.findById(id)
@@ -60,20 +73,8 @@ public final class CozinhaService {
 
         var cozinhas = this.cozinhaRepository.findTodasByNomeContaining(nome);
 
-        if(cozinhas.isEmpty())
+        if (cozinhas.isEmpty())
             throw new EntidadeNaoEncontradaException(String.format(NÃO_ENCONTRADA_COZINHA_COM_NOME, nome));
-
-        return cozinhas;
-    }
-
-    public List<Cozinha> buscarTodos() {
-        var cozinhas = this.cozinhaRepository.findAll()
-                .stream()
-                .sorted(Comparator.comparing(Cozinha::getId).reversed())
-                .toList();
-
-        if(cozinhas.isEmpty())
-            throw new EntidadeNaoEncontradaException(String.format(NAO_EXISTEM_COZINHAS_CADASTRADAS));
 
         return cozinhas;
     }

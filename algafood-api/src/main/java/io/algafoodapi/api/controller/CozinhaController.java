@@ -31,17 +31,11 @@ public class CozinhaController {
     @PutMapping(value = "/{id}")
     public ResponseEntity<?> atualizar(@PathVariable(name = "id") Long id, @RequestBody Cozinha cozinhaAtual) {
 
-        try {
             var cozinha = this.cozinhaService.atualizar(id, cozinhaAtual);
+
             return ResponseEntity
                     .ok()
                     .body(cozinha);
-
-        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(naoEncontradaException.getMessage());
-        }
     }
 
     @DeleteMapping(value = "/{id}")
@@ -65,7 +59,7 @@ public class CozinhaController {
     }
 
     @GetMapping(value = "/porNome")
-    public ResponseEntity<?> cozinhasPorNome(@RequestParam(name = "estilo_de_comida") String nome) {
+    public ResponseEntity<?> consultarPorNome(@RequestParam(name = "estilo_de_comida") String nome) {
 
         try {
             var cozinhas = this.cozinhaService.consultarPorNome(nome);
