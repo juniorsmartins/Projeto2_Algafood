@@ -16,6 +16,11 @@ import java.util.List;
 @Service
 public final class CozinhaService {
 
+    public static final String NAO_ENCONTRADA_COZINHA_COM_ID = "Não encontrada cozinha com código %d.";
+    public static final String NÃO_ENCONTRADA_COZINHA_COM_NOME = "Não encontrada cozinha com nome %s.";
+    public static final String NAO_EXISTEM_COZINHAS_CADASTRADAS = "Não existem cozinhas cadastradas.";
+    public static final String PROIBIDO_APAGAR_COZINHA_EM_USO_COM_ID = "Proibido apagar cozinha em uso. Código: %d.";
+
     @Autowired
     private CozinhaRepository cozinhaRepository;
 
@@ -23,10 +28,11 @@ public final class CozinhaService {
         return this.cozinhaRepository.saveAndFlush(cozinha);
     }
 
-    public Cozinha atualizar(Long id, Cozinha cozinhaAtual) throws EntidadeNaoEncontradaException {
+    public Cozinha atualizar(Long id, Cozinha cozinhaAtual) {
 
-        var cozinha = this.consultarPorId(id);
+        var cozinha = this.consultarPorIdOuLancarException(id);
         BeanUtils.copyProperties(cozinhaAtual, cozinha, "id");
+
         return this.salvar(cozinha);
     }
 
@@ -36,18 +42,18 @@ public final class CozinhaService {
             this.cozinhaRepository.deleteById(id);
 
         } catch (EmptyResultDataAccessException dataAccessException) {
-            throw new EntidadeNaoEncontradaException(String.format("Não encontrada cozinha com código %d.", id));
+            throw new EntidadeNaoEncontradaException(String.format(NAO_ENCONTRADA_COZINHA_COM_ID, id));
 
         } catch (DataIntegrityViolationException dataIntegrityViolationException) {
-            throw new EntidadeEmUsoException(String.format("Não pode ser removida cozinha com código %d, pois está em uso.", id));
+            throw new EntidadeEmUsoException(String.format(PROIBIDO_APAGAR_COZINHA_EM_USO_COM_ID, id));
         }
     }
 
-    public Cozinha consultarPorId(Long id) {
+    public Cozinha consultarPorIdOuLancarException(Long id) {
 
         return this.cozinhaRepository.findById(id)
                 .orElseThrow(() -> new EntidadeNaoEncontradaException(
-                        String.format("Não encontrada cozinha com código %d.", id)));
+                        String.format(NAO_ENCONTRADA_COZINHA_COM_ID, id)));
     }
 
     public List<Cozinha> consultarPorNome(String nome) {
@@ -55,7 +61,7 @@ public final class CozinhaService {
         var cozinhas = this.cozinhaRepository.findTodasByNomeContaining(nome);
 
         if(cozinhas.isEmpty())
-            throw new EntidadeNaoEncontradaException(String.format("Não encontrada cozinha com nome %s.", nome));
+            throw new EntidadeNaoEncontradaException(String.format(NÃO_ENCONTRADA_COZINHA_COM_NOME, nome));
 
         return cozinhas;
     }
@@ -67,7 +73,7 @@ public final class CozinhaService {
                 .toList();
 
         if(cozinhas.isEmpty())
-            throw new EntidadeNaoEncontradaException(String.format("Não há cozinhas cadastradas no banco de dados."));
+            throw new EntidadeNaoEncontradaException(String.format(NAO_EXISTEM_COZINHAS_CADASTRADAS));
 
         return cozinhas;
     }

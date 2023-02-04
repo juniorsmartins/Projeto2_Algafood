@@ -1,6 +1,5 @@
 package io.algafoodapi.api.controller;
 
-import io.algafoodapi.domain.exception.EntidadeEmUsoException;
 import io.algafoodapi.domain.exception.EntidadeNaoEncontradaException;
 import io.algafoodapi.domain.model.Cozinha;
 import io.algafoodapi.domain.service.CozinhaService;
@@ -46,40 +45,23 @@ public class CozinhaController {
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<?> remover(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<?> excluirPorId(@PathVariable(name = "id") Long id) {
 
-        try {
             this.cozinhaService.excluirPorId(id);
+
             return ResponseEntity
                     .noContent()
                     .build();
-
-        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(naoEncontradaException.getMessage());
-
-        } catch (EntidadeEmUsoException emUsoException) {
-            return ResponseEntity
-                    .status(HttpStatus.CONFLICT)
-                    .body(emUsoException.getMessage());
-        }
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<?> buscar(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<?> consultarPorId(@PathVariable(name = "id") Long id) {
 
-        try {
-            var cozinha = this.cozinhaService.consultarPorId(id);
+            var cozinha = this.cozinhaService.consultarPorIdOuLancarException(id);
+
             return ResponseEntity
                     .ok()
                     .body(cozinha);
-
-        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(naoEncontradaException.getMessage());
-        }
     }
 
     @GetMapping(value = "/porNome")
