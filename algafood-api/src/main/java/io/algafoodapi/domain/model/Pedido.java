@@ -8,12 +8,9 @@ import org.hibernate.annotations.CreationTimestamp;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "pedidos")
@@ -42,7 +39,6 @@ public final class Pedido implements Serializable {
     @Column(name = "valor_total", columnDefinition = "decimal(10.2)", nullable = false)
     private BigDecimal valorTotal;
 
-    @JsonIgnore
     @CreationTimestamp
     @Column(name = "data_hora_criacao", nullable = false)
     private LocalDateTime dataHoraCriacao;
@@ -60,7 +56,6 @@ public final class Pedido implements Serializable {
     @Column(name = "status_pedido", nullable = false)
     private StatusPedidoEnum statusPedido;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "pedido")
     private List<ItemPedido> itensPedido = new ArrayList<>();
 
@@ -76,7 +71,6 @@ public final class Pedido implements Serializable {
     @JoinColumn(name = "usuario_id", referencedColumnName = "id", nullable = false)
     private Usuario usuario;
 
-    @JsonIgnore
     @Embedded
-    private Endereco endereco;
+    private Endereco enderecoEntrega;
 }

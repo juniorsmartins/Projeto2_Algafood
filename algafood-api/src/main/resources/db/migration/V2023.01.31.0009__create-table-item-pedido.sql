@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS itens_pedido(
     produto_id bigint NOT NULL,
 
     CONSTRAINT fk_pedido_id_item_pedido FOREIGN KEY(pedido_id) REFERENCES pedidos(id),
-    CONSTRAINT fk_produto_id_item_pedido FOREIGN KEY(produto_id) REFERENCES produtos(id)
+    CONSTRAINT fk_produto_id_item_pedido FOREIGN KEY(produto_id) REFERENCES produtos(id),
+    CONSTRAINT constraint_unique_pedidoproduto_itens_pedido UNIQUE(pedido_id, produto_id)
 );
 
