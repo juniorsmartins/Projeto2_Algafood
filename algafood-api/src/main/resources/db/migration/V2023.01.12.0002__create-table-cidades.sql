@@ -5,6 +5,6 @@ CREATE TABLE IF NOT EXISTS cidades(
 
 	CONSTRAINT constraint_check_nome_cidade CHECK(nome <> ''),
 	CONSTRAINT constraint_unique_nome_cidade UNIQUE(nome),
-	CONSTRAINT fk_estado_id FOREIGN KEY(estado_id) REFERENCES estados(id)
+	CONSTRAINT fk_estado_id_cidade FOREIGN KEY(estado_id) REFERENCES estados(id)
 );
 

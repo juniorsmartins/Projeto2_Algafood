@@ -48,15 +48,21 @@ public final class Restaurante implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "nome", length = 80, nullable = false)
+    @Column(name = "nome", length = 100, nullable = false)
     private String nome;
 
     @Column(name = "taxa_frete", columnDefinition = "decimal(10.2) default 0.00", nullable = false)
     private BigDecimal taxaFrete = BigDecimal.ZERO;
 
     @JsonIgnore
-    @Embedded
-    private Endereco endereco;
+    @CreationTimestamp
+    @Column(name = "data_cadastro", nullable = false)
+    private LocalDateTime dataCadastro;
+
+    @JsonIgnore
+    @UpdateTimestamp
+    @Column(name = "data_atualizacao")
+    private LocalDateTime dataAtualizacao;
 
 //    @JsonIgnoreProperties("hibernateLazyInitializer")
 //    @JsonIgnore
@@ -74,16 +80,10 @@ public final class Restaurante implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "forma_pagamento_id"))
     private List<FormaPagamento> formasPagamento = new ArrayList<>();
 
-    @JsonIgnore
-    @CreationTimestamp
-    @Column(name = "data_cadastro", nullable = false)
-    private LocalDateTime dataCadastro;
-
-    @JsonIgnore
-    @UpdateTimestamp
-    @Column(name = "data_atualizacao")
-    private LocalDateTime dataAtualizacao;
-
     @OneToMany(mappedBy = "restaurante", fetch = FetchType.LAZY)
     private List<Pedido> pedidos = new ArrayList<>();
+
+    @JsonIgnore
+    @Embedded
+    private Endereco endereco;
 }

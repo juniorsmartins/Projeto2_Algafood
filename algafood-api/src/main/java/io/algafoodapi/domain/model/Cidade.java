@@ -32,11 +32,11 @@ public final class Cidade implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "nome", length = 80, nullable = false)
+    @Column(name = "nome", length = 100, unique = true, nullable = false)
     private String nome;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "estado_id", nullable = false)
+    @JoinColumn(name = "estado_id", referencedColumnName = "id", nullable = false)
     private Estado estado;
 }
 
