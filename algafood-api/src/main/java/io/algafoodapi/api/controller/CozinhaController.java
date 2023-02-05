@@ -1,25 +1,24 @@
 package io.algafoodapi.api.controller;
 
-import io.algafoodapi.domain.exception.EntidadeNaoEncontradaException;
 import io.algafoodapi.domain.model.Cozinha;
 import io.algafoodapi.domain.service.CozinhaService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
-@RequestMapping(value = "/cozinhas")
+@RequestMapping(path = "/cozinhas")
 public class CozinhaController {
 
     @Autowired
     private CozinhaService cozinhaService;
 
     @PostMapping
-    public ResponseEntity<Cozinha> adicionar(@RequestBody Cozinha cozinha, UriComponentsBuilder uriComponentsBuilder) {
+    public ResponseEntity<Cozinha> criar(@RequestBody Cozinha cozinha, UriComponentsBuilder uriComponentsBuilder) {
 
-        cozinha = this.cozinhaService.salvar(cozinha);
+        cozinha = this.cozinhaService.criar(cozinha);
+
         return ResponseEntity
                 .created(uriComponentsBuilder
                         .path("cozinhas/{id}")
@@ -28,71 +27,54 @@ public class CozinhaController {
                 .body(cozinha);
     }
 
-    @PutMapping(value = "/{id}")
+    @PutMapping(path = "/{id}")
     public ResponseEntity<?> atualizar(@PathVariable(name = "id") Long id, @RequestBody Cozinha cozinhaAtual) {
 
-        try {
-            var cozinha = this.cozinhaService.atualizar(id, cozinhaAtual);
-            return ResponseEntity
-                    .ok()
-                    .body(cozinha);
+        cozinhaAtual = this.cozinhaService.atualizar(id, cozinhaAtual);
 
-        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(naoEncontradaException.getMessage());
-        }
+        return ResponseEntity
+                .ok()
+                .body(cozinhaAtual);
     }
 
-    @DeleteMapping(value = "/{id}")
+    @DeleteMapping(path = "/{id}")
     public ResponseEntity<?> excluirPorId(@PathVariable(name = "id") Long id) {
 
-            this.cozinhaService.excluirPorId(id);
+        this.cozinhaService.excluirPorId(id);
 
-            return ResponseEntity
-                    .noContent()
-                    .build();
+        return ResponseEntity
+                .noContent()
+                .build();
     }
 
-    @GetMapping(value = "/{id}")
+    @GetMapping(path = "/{id}")
     public ResponseEntity<?> consultarPorId(@PathVariable(name = "id") Long id) {
 
-            var cozinha = this.cozinhaService.consultarPorIdOuLancarException(id);
+        var cozinha = this.cozinhaService.consultarPorId(id);
 
-            return ResponseEntity
-                    .ok()
-                    .body(cozinha);
+        return ResponseEntity
+                .ok()
+                .body(cozinha);
     }
 
-    @GetMapping(value = "/porNome")
-    public ResponseEntity<?> cozinhasPorNome(@RequestParam(name = "estilo_de_comida") String nome) {
+    @GetMapping(path = "/porNome")
+    public ResponseEntity<?> consultarPorNome(@RequestParam(name = "gastronomia") String nome) {
 
-        try {
-            var cozinhas = this.cozinhaService.consultarPorNome(nome);
-            return ResponseEntity
-                    .ok()
-                    .body(cozinhas);
+        var cozinhas = this.cozinhaService.consultarPorNome(nome);
 
-        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(naoEncontradaException.getMessage());
-        }
+        return ResponseEntity
+                .ok()
+                .body(cozinhas);
     }
 
     @GetMapping
     public ResponseEntity<?> listar() {
 
-        try {
-            var cozinhas = this.cozinhaService.buscarTodos();
-            return ResponseEntity
-                    .ok()
-                    .body(cozinhas);
+        var cozinhas = this.cozinhaService.listar();
 
-        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
-            return ResponseEntity
-                    .noContent()
-                    .build();
-        }
+        return ResponseEntity
+                .ok()
+                .body(cozinhas);
     }
 }
+

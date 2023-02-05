@@ -1,26 +1,24 @@
 package io.algafoodapi.api.controller;
 
-import io.algafoodapi.domain.exception.EntidadeEmUsoException;
-import io.algafoodapi.domain.exception.EntidadeNaoEncontradaException;
 import io.algafoodapi.domain.model.Estado;
 import io.algafoodapi.domain.service.EstadoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
-@RequestMapping(value = "/estados")
+@RequestMapping(path = "/estados")
 public class EstadoController {
 
     @Autowired
     private EstadoService estadoService;
 
     @PostMapping
-    public ResponseEntity<Estado> adicionar(@RequestBody Estado estado, UriComponentsBuilder uriComponentsBuilder) {
+    public ResponseEntity<Estado> criar(@RequestBody Estado estado, UriComponentsBuilder uriComponentsBuilder) {
 
         estado = this.estadoService.salvar(estado);
+
         return ResponseEntity
                 .created(uriComponentsBuilder
                         .path("estados/{id}")
@@ -29,72 +27,44 @@ public class EstadoController {
                 .body(estado);
     }
 
-    @PutMapping(value = "/{id}")
-    public ResponseEntity<?> atualizar(@PathVariable(name = "id") Long id, @RequestBody Estado estado) {
+    @PutMapping(path = "/{id}")
+    public ResponseEntity<?> atualizar(@PathVariable(name = "id") Long id, @RequestBody Estado estadoAtual) {
 
-        try {
-            estado = this.estadoService.atualizar(id, estado);
-            return ResponseEntity
-                    .ok()
-                    .body(estado);
+        estadoAtual = this.estadoService.atualizar(id, estadoAtual);
 
-        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(naoEncontradaException.getMessage());
-        }
+        return ResponseEntity
+                .ok()
+                .body(estadoAtual);
     }
 
-    @DeleteMapping(value = "/{id}")
-    public ResponseEntity<?> remover(@PathVariable(name = "id") Long id) {
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity<?> excluirPorId(@PathVariable(name = "id") Long id) {
 
-        try {
-            this.estadoService.excluirPorId(id);
-            return ResponseEntity
-                    .noContent()
-                    .build();
+        this.estadoService.excluirPorId(id);
 
-        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(naoEncontradaException.getMessage());
-
-        } catch (EntidadeEmUsoException emUsoException) {
-            return ResponseEntity
-                    .status(HttpStatus.CONFLICT)
-                    .body(emUsoException.getMessage());
-        }
+        return ResponseEntity
+                .noContent()
+                .build();
     }
 
-    @GetMapping(value = "/{id}")
-    public ResponseEntity<?> buscar(@PathVariable(name = "id") Long id) {
+    @GetMapping(path = "/{id}")
+    public ResponseEntity<?> consultarPorId(@PathVariable(name = "id") Long id) {
 
-        try {
-            var estado = this.estadoService.consultarPorId(id);
-            return ResponseEntity
-                    .ok()
-                    .body(estado);
+        var estado = this.estadoService.consultarPorId(id);
 
-        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(naoEncontradaException.getMessage());
-        }
+        return ResponseEntity
+                .ok()
+                .body(estado);
     }
 
     @GetMapping
     public ResponseEntity<?> listar() {
 
-        try {
-            var estados = this.estadoService.buscarTodos();
-            return ResponseEntity
-                    .ok()
-                    .body(estados);
+        var estados = this.estadoService.listar();
 
-        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
-            return ResponseEntity
-                    .noContent()
-                    .build();
-        }
+        return ResponseEntity
+                .ok()
+                .body(estados);
     }
 }
+
