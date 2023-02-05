@@ -29,7 +29,7 @@ public final class RestauranteService {
 
     public Restaurante criar(Restaurante restaurante) throws EntidadeNaoEncontradaException {
 
-        var cozinha = this.cozinhaService.consultarPorIdOuLancarException(restaurante.getCozinha().getId());
+        var cozinha = this.cozinhaService.consultarPorId(restaurante.getCozinha().getId());
         restaurante.setCozinha(cozinha);
 
         return this.restauranteRepository.saveAndFlush(restaurante);
@@ -41,7 +41,7 @@ public final class RestauranteService {
 
         Cozinha cozinha;
         try {
-            cozinha = this.cozinhaService.consultarPorIdOuLancarException(restauranteAtual.getCozinha().getId());
+            cozinha = this.cozinhaService.consultarPorId(restauranteAtual.getCozinha().getId());
         } catch (EntidadeNaoEncontradaException naoEncontradaException) {
             throw new RequisicaoMalFormuladaException(naoEncontradaException.getMessage());
         }

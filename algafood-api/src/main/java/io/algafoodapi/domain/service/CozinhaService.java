@@ -19,7 +19,7 @@ public class CozinhaService {
     public static final String NAO_ENCONTRADA_COZINHA_COM_ID = "Não encontrada cozinha com código %d.";
     public static final String NÃO_ENCONTRADA_COZINHA_COM_NOME = "Não encontrada cozinha com nome %s.";
     public static final String NAO_EXISTEM_COZINHAS_CADASTRADAS = "Não existem cozinhas cadastradas.";
-    public static final String PROIBIDO_APAGAR_COZINHA_EM_USO_COM_ID = "Proibido apagar cozinha em uso. Código: %d.";
+    public static final String PROIBIDO_APAGAR_COZINHA_EM_USO_COM_ID = "Proibido apagar cozinha em uso. ID: %d.";
 
     @Autowired
     private CozinhaRepository cozinhaRepository;
@@ -30,7 +30,7 @@ public class CozinhaService {
 
     public Cozinha atualizar(Long id, Cozinha cozinhaAtual) {
 
-        var cozinha = this.consultarPorIdOuLancarException(id);
+        var cozinha = this.consultarPorId(id);
         BeanUtils.copyProperties(cozinhaAtual, cozinha, "id");
 
         return this.criar(cozinha);
@@ -49,20 +49,7 @@ public class CozinhaService {
         }
     }
 
-    public List<Cozinha> buscarTodos() {
-
-        var cozinhas = this.cozinhaRepository.findAll()
-                .stream()
-                .sorted(Comparator.comparing(Cozinha::getId).reversed())
-                .toList();
-
-        if(cozinhas.isEmpty())
-            throw new EntidadeNaoEncontradaException(String.format(NAO_EXISTEM_COZINHAS_CADASTRADAS));
-
-        return cozinhas;
-    }
-
-    public Cozinha consultarPorIdOuLancarException(Long id) {
+    public Cozinha consultarPorId(Long id) {
 
         return this.cozinhaRepository.findById(id)
                 .orElseThrow(() -> new EntidadeNaoEncontradaException(
@@ -78,4 +65,18 @@ public class CozinhaService {
 
         return cozinhas;
     }
+
+    public List<Cozinha> listar() {
+
+        var cozinhas = this.cozinhaRepository.findAll()
+                .stream()
+                .sorted(Comparator.comparing(Cozinha::getId).reversed())
+                .toList();
+
+        if(cozinhas.isEmpty())
+            throw new EntidadeNaoEncontradaException(String.format(NAO_EXISTEM_COZINHAS_CADASTRADAS));
+
+        return cozinhas;
+    }
 }
+
