@@ -70,7 +70,6 @@ public final class Restaurante implements Serializable {
     @JoinColumn(name = "cozinha_id", referencedColumnName = "id", nullable = false)
     private Cozinha cozinha;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "restaurante", fetch = FetchType.LAZY)
     private List<Produto> produtos = new ArrayList<>();
 
@@ -83,7 +82,6 @@ public final class Restaurante implements Serializable {
     @OneToMany(mappedBy = "restaurante", fetch = FetchType.LAZY)
     private List<Pedido> pedidos = new ArrayList<>();
 
-    @JsonIgnore
     @Embedded
     private Endereco endereco;
 }
