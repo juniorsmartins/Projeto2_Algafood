@@ -2,6 +2,7 @@ package io.algafoodapi.domain.service;
 
 import io.algafoodapi.domain.exception.EntidadeEmUsoException;
 import io.algafoodapi.domain.exception.EntidadeNaoEncontradaException;
+import io.algafoodapi.domain.exception.RequisicaoMalFormuladaException;
 import io.algafoodapi.domain.model.Cozinha;
 import io.algafoodapi.domain.repository.CozinhaRepository;
 import org.springframework.beans.BeanUtils;
@@ -45,7 +46,7 @@ public class CozinhaService {
             throw new EntidadeNaoEncontradaException(String.format(NAO_ENCONTRADA_COZINHA_COM_ID, id));
 
         } catch (DataIntegrityViolationException dataIntegrityViolationException) {
-            throw new EntidadeEmUsoException(String.format(PROIBIDO_APAGAR_COZINHA_EM_USO_COM_ID, id));
+            throw new RequisicaoMalFormuladaException(String.format(PROIBIDO_APAGAR_COZINHA_EM_USO_COM_ID, id));
         }
     }
 
@@ -58,7 +59,10 @@ public class CozinhaService {
 
     public List<Cozinha> consultarPorNome(String nome) {
 
-        var cozinhas = this.cozinhaRepository.findTodasByNomeContaining(nome);
+        var cozinhas = this.cozinhaRepository.findTodasByNomeContaining(nome)
+                .stream()
+                .sorted(Comparator.comparing(Cozinha::getId).reversed())
+                .toList();
 
         if (cozinhas.isEmpty())
             throw new EntidadeNaoEncontradaException(String.format(NÃO_ENCONTRADA_COZINHA_COM_NOME, nome));

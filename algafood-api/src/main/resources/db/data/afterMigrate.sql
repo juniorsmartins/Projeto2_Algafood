@@ -46,3 +46,20 @@ INSERT INTO restaurantes(id, nome, taxa_frete, data_cadastro, cozinha_id, endere
     (2, 'Narisawa', 42.90, now(), 2, '78000002', 'Zona Norte', 'Rua Central', 2500, 2),
     (3, 'White Rabbit', 80, now(), 4, '78000003', 'Alameda Vermelha', 'Avenida R', 4750, 6)
     On CONFLICT(id) DO NOTHING;
+
+INSERT INTO formas_pagamento(id, descricao) VALUES
+    (1, 'DINHEIRO'),
+    (2, 'PIX'),
+    (3, 'DEBITO'),
+    (4, 'BOLETO'),
+    (5, 'CREDITO')
+    On CONFLICT DO NOTHING;
+
+INSERT INTO restaurantes_formas_pagamento(restaurante_id, forma_pagamento_id) VALUES
+    (1, 1),
+    (1, 2),
+    (2, 3),
+    (2, 4),
+    (3, 5)
+    On CONFLICT DO NOTHING;
+

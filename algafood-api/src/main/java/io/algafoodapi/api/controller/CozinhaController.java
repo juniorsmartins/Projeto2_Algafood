@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
-@RequestMapping(value = "/cozinhas")
+@RequestMapping(path = "/cozinhas")
 public class CozinhaController {
 
     @Autowired
@@ -27,7 +27,7 @@ public class CozinhaController {
                 .body(cozinha);
     }
 
-    @PutMapping(value = "/{id}")
+    @PutMapping(path = "/{id}")
     public ResponseEntity<?> atualizar(@PathVariable(name = "id") Long id, @RequestBody Cozinha cozinhaAtual) {
 
         cozinhaAtual = this.cozinhaService.atualizar(id, cozinhaAtual);
@@ -37,7 +37,7 @@ public class CozinhaController {
                 .body(cozinhaAtual);
     }
 
-    @DeleteMapping(value = "/{id}")
+    @DeleteMapping(path = "/{id}")
     public ResponseEntity<?> excluirPorId(@PathVariable(name = "id") Long id) {
 
         this.cozinhaService.excluirPorId(id);
@@ -47,7 +47,7 @@ public class CozinhaController {
                 .build();
     }
 
-    @GetMapping(value = "/{id}")
+    @GetMapping(path = "/{id}")
     public ResponseEntity<?> consultarPorId(@PathVariable(name = "id") Long id) {
 
         var cozinha = this.cozinhaService.consultarPorId(id);
@@ -57,7 +57,7 @@ public class CozinhaController {
                 .body(cozinha);
     }
 
-    @GetMapping(value = "/porNome")
+    @GetMapping(path = "/porNome")
     public ResponseEntity<?> consultarPorNome(@RequestParam(name = "gastronomia") String nome) {
 
         var cozinhas = this.cozinhaService.consultarPorNome(nome);
@@ -77,3 +77,4 @@ public class CozinhaController {
                 .body(cozinhas);
     }
 }
+

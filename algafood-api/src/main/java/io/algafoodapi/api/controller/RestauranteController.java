@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 import java.util.Map;
 
 @RestController
-@RequestMapping(value = "/restaurantes")
+@RequestMapping(path = "/restaurantes")
 public class RestauranteController {
 
     @Autowired
@@ -24,44 +24,27 @@ public class RestauranteController {
     @PostMapping
     public ResponseEntity<?> criar(@RequestBody Restaurante restaurante, UriComponentsBuilder uriComponentsBuilder) {
 
-        try {
-            restaurante = this.restauranteService.criar(restaurante);
-            return ResponseEntity
-                    .created(uriComponentsBuilder
-                            .path("restaurantes/{id}")
-                            .buildAndExpand(restaurante.getId())
-                            .toUri())
-                    .body(restaurante);
+        restaurante = this.restauranteService.criar(restaurante);
 
-        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(naoEncontradaException.getMessage());
-        }
+        return ResponseEntity
+                .created(uriComponentsBuilder
+                        .path("restaurantes/{id}")
+                        .buildAndExpand(restaurante.getId())
+                        .toUri())
+                .body(restaurante);
     }
 
-    @PutMapping(value = "/{id}")
-    public ResponseEntity<?> atualizar(@PathVariable(name = "id") Long id, @RequestBody Restaurante restaurante) {
+    @PutMapping(path = "/{id}")
+    public ResponseEntity<?> atualizar(@PathVariable(name = "id") Long id, @RequestBody Restaurante restauranteAtual) {
 
-        try {
-            restaurante = this.restauranteService.atualizar(id, restaurante);
-            return ResponseEntity
-                    .ok()
-                    .body(restaurante);
+        restauranteAtual = this.restauranteService.atualizar(id, restauranteAtual);
 
-        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(naoEncontradaException.getMessage());
-
-        } catch (RequisicaoMalFormuladaException malFormuladaException) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(malFormuladaException.getMessage());
-        }
+        return ResponseEntity
+                .ok()
+                .body(restauranteAtual);
     }
 
-    @PatchMapping(value = "/{id}")
+    @PatchMapping(path = "/{id}")
     public ResponseEntity<?> atualizarParcial(@PathVariable(name = "id") Long id, @RequestBody Map<String, Object> campos) {
 
         try {
@@ -82,68 +65,44 @@ public class RestauranteController {
         }
     }
 
-    @DeleteMapping(value = "/{id}")
-    public ResponseEntity<?> remover(@PathVariable(name = "id") Long id) {
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity<?> excluirPorId(@PathVariable(name = "id") Long id) {
 
-        try {
-            this.restauranteService.excluirPorId(id);
-            return ResponseEntity
-                    .noContent()
-                    .build();
+        this.restauranteService.excluirPorId(id);
 
-        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(naoEncontradaException.getMessage());
-        }
+        return ResponseEntity
+                .noContent()
+                .build();
     }
 
-    @GetMapping(value = "/{id}")
+    @GetMapping(path = "/{id}")
     public ResponseEntity<?> consultarPorId(@PathVariable(name = "id") Long id) {
 
-        try {
-            var restaurante = this.restauranteService.consultarPorId(id);
-            return ResponseEntity
-                    .ok()
-                    .body(restaurante);
+        var restaurante = this.restauranteService.consultarPorId(id);
 
-        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(naoEncontradaException.getMessage());
-        }
+        return ResponseEntity
+                .ok()
+                .body(restaurante);
     }
 
-    @GetMapping(path = "/buscarTodosPorNome")
-    public ResponseEntity<?> buscarTodosPorNome(@Param("nome") String nome) {
+    @GetMapping(path = "/porNome")
+    public ResponseEntity<?> consultarPorNome(@RequestParam(name = "nome") String nome) {
 
-        try {
-            var restaurantes = this.restauranteService.buscarTodosPorNome(nome);
-            return ResponseEntity
-                    .ok()
-                    .body(restaurantes);
+        var restaurantes = this.restauranteService.consultarPorNome(nome);
 
-        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
-            return ResponseEntity
-                    .noContent()
-                    .build();
-        }
+        return ResponseEntity
+                .ok()
+                .body(restaurantes);
     }
 
     @GetMapping
-    public ResponseEntity<?> buscarTodos() {
+    public ResponseEntity<?> listar() {
 
-        try {
-            var restaurantes = this.restauranteService.buscarTodos();
-            return ResponseEntity
-                    .ok()
-                    .body(restaurantes);
+        var restaurantes = this.restauranteService.listar();
 
-        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
-            return ResponseEntity
-                    .noContent()
-                    .build();
-        }
+        return ResponseEntity
+                .ok()
+                .body(restaurantes);
     }
 
     @GetMapping(path = "/consultarPorNomeAndTaxas")

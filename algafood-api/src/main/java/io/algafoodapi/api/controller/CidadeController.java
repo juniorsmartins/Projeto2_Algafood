@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
-@RequestMapping(value = "/cidades")
+@RequestMapping(path = "/cidades")
 public class CidadeController {
 
     @Autowired
@@ -27,7 +27,7 @@ public class CidadeController {
                 .body(cidade);
     }
 
-    @PutMapping(value = "/{id}")
+    @PutMapping(path = "/{id}")
     public ResponseEntity<?> atualizar(@PathVariable(name = "id") Long id, @RequestBody Cidade cidadeAtual) {
 
         cidadeAtual = this.cidadeService.atualizar(id, cidadeAtual);
@@ -37,7 +37,7 @@ public class CidadeController {
                 .body(cidadeAtual);
     }
 
-    @DeleteMapping(value = "/{id}")
+    @DeleteMapping(path = "/{id}")
     public ResponseEntity<?> excluirPorId(@PathVariable(name = "id") Long id) {
 
         this.cidadeService.excluirPorId(id);
@@ -47,7 +47,7 @@ public class CidadeController {
                 .build();
     }
 
-    @GetMapping(value = "/{id}")
+    @GetMapping(path = "/{id}")
     public ResponseEntity<?> consultarPorId(@PathVariable(name = "id") Long id) {
 
         var cidade = this.cidadeService.consultarPorId(id);
@@ -67,3 +67,4 @@ public class CidadeController {
                 .body(cidades);
     }
 }
+

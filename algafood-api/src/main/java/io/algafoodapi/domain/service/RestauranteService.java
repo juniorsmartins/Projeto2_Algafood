@@ -1,6 +1,7 @@
 package io.algafoodapi.domain.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.algafoodapi.domain.exception.EntidadeEmUsoException;
 import io.algafoodapi.domain.exception.EntidadeNaoEncontradaException;
 import io.algafoodapi.domain.exception.RequisicaoMalFormuladaException;
 import io.algafoodapi.domain.model.Cozinha;
@@ -8,6 +9,7 @@ import io.algafoodapi.domain.model.Restaurante;
 import io.algafoodapi.domain.repository.RestauranteRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
@@ -19,7 +21,10 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public final class RestauranteService {
+public class RestauranteService {
+
+    public static final String NÃO_ENCONTRADO_RESTAURANTE_COM_ID = "Não encontrado restaurante com código %d.";
+    public static final String PROIBIDO_APAGAR_RESTAURANTE_EM_USO_COM_ID = "Proibido apagar restaurante em uso. ID: %d.";
 
     @Autowired
     private RestauranteRepository restauranteRepository;
@@ -27,7 +32,7 @@ public final class RestauranteService {
     @Autowired
     private CozinhaService cozinhaService;
 
-    public Restaurante criar(Restaurante restaurante) throws EntidadeNaoEncontradaException {
+    public Restaurante criar(Restaurante restaurante) {
 
         var cozinha = this.cozinhaService.consultarPorId(restaurante.getCozinha().getId());
         restaurante.setCozinha(cozinha);
@@ -35,17 +40,17 @@ public final class RestauranteService {
         return this.restauranteRepository.saveAndFlush(restaurante);
     }
 
-    public Restaurante atualizar(Long id, Restaurante restauranteAtual) throws EntidadeNaoEncontradaException, RequisicaoMalFormuladaException {
+    public Restaurante atualizar(Long id, Restaurante restauranteAtual) {
 
         var restaurante = this.consultarPorId(id);
 
-        Cozinha cozinha;
         try {
-            cozinha = this.cozinhaService.consultarPorId(restauranteAtual.getCozinha().getId());
+            var cozinha = this.cozinhaService.consultarPorId(restauranteAtual.getCozinha().getId());
+            restauranteAtual.setCozinha(cozinha);
+
         } catch (EntidadeNaoEncontradaException naoEncontradaException) {
             throw new RequisicaoMalFormuladaException(naoEncontradaException.getMessage());
         }
-        restauranteAtual.setCozinha(cozinha);
 
         BeanUtils.copyProperties(restauranteAtual, restaurante, "id",
                 "formasPagamento", "endereco", "dataCadastro", "produtos");
@@ -76,33 +81,23 @@ public final class RestauranteService {
             this.restauranteRepository.deleteById(id);
 
         } catch (EmptyResultDataAccessException dataAccessException) {
-            throw new EntidadeNaoEncontradaException(String.format("Não encontrado restaurante com código %d.", id));
+            throw new EntidadeNaoEncontradaException(String.format(NÃO_ENCONTRADO_RESTAURANTE_COM_ID, id));
+
+        } catch (DataIntegrityViolationException dataIntegrityViolationException) {
+            throw new RequisicaoMalFormuladaException(String.format(PROIBIDO_APAGAR_RESTAURANTE_EM_USO_COM_ID, id));
         }
     }
 
     public Restaurante consultarPorId(Long id) {
 
         return this.restauranteRepository.findById(id)
-                .orElseThrow(() -> new EntidadeNaoEncontradaException("""
-                    Não encontrado restaurante com código %d.""".formatted(id)));
+                .orElseThrow(() -> new EntidadeNaoEncontradaException(
+                        String.format(NÃO_ENCONTRADO_RESTAURANTE_COM_ID, id)));
     }
 
-    public List<Restaurante> buscarTodosPorNome(String nome) {
+    public List<Restaurante> consultarPorNome(String nome) {
 
         var restaurantes = this.restauranteRepository.buscarTodosPorNome(nome)
-                .stream()
-                .sorted(Comparator.comparing(Restaurante::getId).reversed())
-                .toList();
-
-        if(restaurantes.isEmpty())
-            throw new EntidadeNaoEncontradaException(String.format("Não há restaurantes cadastrados no banco de dados."));
-
-        return restaurantes;
-    }
-
-    public List<Restaurante> buscarTodos() {
-
-        var restaurantes = this.restauranteRepository.findAll()
                 .stream()
                 .sorted(Comparator.comparing(Restaurante::getId).reversed())
                 .toList();
@@ -125,4 +120,18 @@ public final class RestauranteService {
 
         return restaurantes;
     }
+
+    public List<Restaurante> listar() {
+
+        var restaurantes = this.restauranteRepository.findAll()
+                .stream()
+                .sorted(Comparator.comparing(Restaurante::getId).reversed())
+                .toList();
+
+        if(restaurantes.isEmpty())
+            throw new EntidadeNaoEncontradaException(String.format("Não há restaurantes cadastrados no banco de dados."));
+
+        return restaurantes;
+    }
 }
+

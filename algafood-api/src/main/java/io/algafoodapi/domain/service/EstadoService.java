@@ -2,6 +2,7 @@ package io.algafoodapi.domain.service;
 
 import io.algafoodapi.domain.exception.EntidadeEmUsoException;
 import io.algafoodapi.domain.exception.EntidadeNaoEncontradaException;
+import io.algafoodapi.domain.exception.RequisicaoMalFormuladaException;
 import io.algafoodapi.domain.model.Estado;
 import io.algafoodapi.domain.repository.EstadoRepository;
 import org.springframework.beans.BeanUtils;
@@ -44,7 +45,7 @@ public class EstadoService {
             throw new EntidadeNaoEncontradaException(String.format(EstadoService.NÃO_ENCONTRADO_ESTADO_COM_ID, id));
 
         } catch (DataIntegrityViolationException violationException) {
-            throw new EntidadeEmUsoException(String.format(PROIBIDO_APAGAR_ESTADO_EM_USO_COM_ID, id));
+            throw new RequisicaoMalFormuladaException(String.format(PROIBIDO_APAGAR_ESTADO_EM_USO_COM_ID, id));
         }
     }
 

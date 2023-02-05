@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
-@RequestMapping(value = "/estados")
+@RequestMapping(path = "/estados")
 public class EstadoController {
 
     @Autowired
@@ -27,7 +27,7 @@ public class EstadoController {
                 .body(estado);
     }
 
-    @PutMapping(value = "/{id}")
+    @PutMapping(path = "/{id}")
     public ResponseEntity<?> atualizar(@PathVariable(name = "id") Long id, @RequestBody Estado estadoAtual) {
 
         estadoAtual = this.estadoService.atualizar(id, estadoAtual);
@@ -37,7 +37,7 @@ public class EstadoController {
                 .body(estadoAtual);
     }
 
-    @DeleteMapping(value = "/{id}")
+    @DeleteMapping(path = "/{id}")
     public ResponseEntity<?> excluirPorId(@PathVariable(name = "id") Long id) {
 
         this.estadoService.excluirPorId(id);
@@ -47,7 +47,7 @@ public class EstadoController {
                 .build();
     }
 
-    @GetMapping(value = "/{id}")
+    @GetMapping(path = "/{id}")
     public ResponseEntity<?> consultarPorId(@PathVariable(name = "id") Long id) {
 
         var estado = this.estadoService.consultarPorId(id);
@@ -67,3 +67,4 @@ public class EstadoController {
                 .body(estados);
     }
 }
+

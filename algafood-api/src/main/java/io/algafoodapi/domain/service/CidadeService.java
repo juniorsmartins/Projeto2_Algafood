@@ -47,12 +47,11 @@ public class CidadeService {
         var cidade = this.consultarPorId(id);
 
         try {
-            var estado = this.estadoService.consultarPorId(cidade.getEstado().getId());
+            var estado = this.estadoService.consultarPorId(cidadeAtual.getEstado().getId());
             cidadeAtual.setEstado(estado);
 
         } catch (EntidadeNaoEncontradaException naoEncontradaException) {
-            throw new RequisicaoMalFormuladaException(
-                    String.format(EstadoService.NÃO_ENCONTRADO_ESTADO_COM_ID, cidade.getEstado().getId()));
+            throw new RequisicaoMalFormuladaException(naoEncontradaException.getMessage());
         }
 
         BeanUtils.copyProperties(cidadeAtual, cidade, "id");
@@ -69,7 +68,7 @@ public class CidadeService {
             throw new EntidadeNaoEncontradaException(String.format(NÃO_ENCONTRADA_CIDADE_COM_ID, id));
 
         } catch (DataIntegrityViolationException dataIntegrityViolationException) {
-            throw new EntidadeEmUsoException(String.format(PROIBIDO_APAGAR_CIDADE_EM_USO_COM_ID, id));
+            throw new RequisicaoMalFormuladaException(String.format(PROIBIDO_APAGAR_CIDADE_EM_USO_COM_ID, id));
         }
     }
 
