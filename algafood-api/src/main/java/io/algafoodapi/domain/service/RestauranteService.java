@@ -34,8 +34,13 @@ public class RestauranteService {
 
     public Restaurante criar(Restaurante restaurante) {
 
-        var cozinha = this.cozinhaService.consultarPorId(restaurante.getCozinha().getId());
-        restaurante.setCozinha(cozinha);
+        try {
+            var cozinha = this.cozinhaService.consultarPorId(restaurante.getCozinha().getId());
+            restaurante.setCozinha(cozinha);
+
+        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
+            throw new RequisicaoMalFormuladaException(naoEncontradaException.getMessage());
+        }
 
         return this.restauranteRepository.saveAndFlush(restaurante);
     }

@@ -15,16 +15,16 @@ public class CidadeController {
     private CidadeService cidadeService;
 
     @PostMapping
-    public ResponseEntity<?> criar(@RequestBody Cidade cidade, UriComponentsBuilder uriComponentsBuilder) {
+    public ResponseEntity<?> criar(@RequestBody Cidade cidadeNova, UriComponentsBuilder uriComponentsBuilder) {
 
-        cidade = this.cidadeService.criar(cidade);
+        cidadeNova = this.cidadeService.criar(cidadeNova);
 
         return ResponseEntity
                 .created(uriComponentsBuilder
                         .path("cidades/{id}")
-                        .buildAndExpand(cidade.getId())
+                        .buildAndExpand(cidadeNova.getId())
                         .toUri())
-                .body(cidade);
+                .body(cidadeNova);
     }
 
     @PutMapping(path = "/{id}")

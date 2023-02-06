@@ -2,6 +2,7 @@ package io.algafoodapi.domain.service;
 
 import io.algafoodapi.domain.exception.EntidadeEmUsoException;
 import io.algafoodapi.domain.exception.EntidadeNaoEncontradaException;
+import io.algafoodapi.domain.exception.EstadoNaoEncontradoException;
 import io.algafoodapi.domain.exception.RequisicaoMalFormuladaException;
 import io.algafoodapi.domain.model.Cidade;
 import io.algafoodapi.domain.repository.CidadeRepository;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
 public class CidadeService {
 
     public static final String NÃO_ENCONTRADA_CIDADE_COM_ID = "Não encontrada cidade com código %d.";
-    public static final String PROIBIDO_APAGAR_CIDADE_EM_USO_COM_ID = "Proibido apagar cidade em uso. Código: %d.";
+    public static final String PROIBIDO_APAGAR_CIDADE_EM_USO_COM_ID = "Proibido apagar cidade em uso (ID: %d).";
     public static final String NÃO_EXISTEM_CIDADES_CADASTRADAS = "Não há cidades cadastradas.";
 
     @Autowired
@@ -34,9 +35,8 @@ public class CidadeService {
             var estado = this.estadoService.consultarPorId(cidade.getEstado().getId());
             cidade.setEstado(estado);
 
-        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
-            throw new RequisicaoMalFormuladaException(
-                    String.format(EstadoService.NÃO_ENCONTRADO_ESTADO_COM_ID, cidade.getEstado().getId()));
+        } catch (EstadoNaoEncontradoException naoEncontradoException) {
+            throw new RequisicaoMalFormuladaException(naoEncontradoException.getMessage());
         }
 
         return this.cidadeRepository.saveAndFlush(cidade);
@@ -50,7 +50,7 @@ public class CidadeService {
             var estado = this.estadoService.consultarPorId(cidadeAtual.getEstado().getId());
             cidadeAtual.setEstado(estado);
 
-        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
+        } catch (EstadoNaoEncontradoException naoEncontradaException) {
             throw new RequisicaoMalFormuladaException(naoEncontradaException.getMessage());
         }
 
@@ -68,7 +68,7 @@ public class CidadeService {
             throw new EntidadeNaoEncontradaException(String.format(NÃO_ENCONTRADA_CIDADE_COM_ID, id));
 
         } catch (DataIntegrityViolationException dataIntegrityViolationException) {
-            throw new RequisicaoMalFormuladaException(String.format(PROIBIDO_APAGAR_CIDADE_EM_USO_COM_ID, id));
+            throw new EntidadeEmUsoException(String.format(PROIBIDO_APAGAR_CIDADE_EM_USO_COM_ID, id));
         }
     }
 
