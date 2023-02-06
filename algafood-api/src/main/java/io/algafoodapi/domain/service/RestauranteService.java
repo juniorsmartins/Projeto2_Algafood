@@ -1,10 +1,8 @@
 package io.algafoodapi.domain.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.algafoodapi.domain.exception.EntidadeEmUsoException;
-import io.algafoodapi.domain.exception.EntidadeNaoEncontradaException;
-import io.algafoodapi.domain.exception.RequisicaoMalFormuladaException;
-import io.algafoodapi.domain.model.Cozinha;
+import io.algafoodapi.domain.exception.http404.EntidadeNaoEncontradaException;
+import io.algafoodapi.domain.exception.http400.RequisicaoMalFormuladaException;
 import io.algafoodapi.domain.model.Restaurante;
 import io.algafoodapi.domain.repository.RestauranteRepository;
 import org.springframework.beans.BeanUtils;

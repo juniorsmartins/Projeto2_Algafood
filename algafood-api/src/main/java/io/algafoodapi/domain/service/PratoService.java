@@ -1,10 +1,9 @@
 package io.algafoodapi.domain.service;
 
-import io.algafoodapi.domain.exception.EntidadeNaoEncontradaException;
+import io.algafoodapi.domain.exception.http404.EntidadeNaoEncontradaException;
 import io.algafoodapi.domain.model.Prato;
 import io.algafoodapi.domain.repository.PratoRepository;
 import io.algafoodapi.infraestrutura.repository.spec.PratoFactorySpecs;
-import net.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;

@@ -1,6 +1,6 @@
 package io.algafoodapi.api.controller;
 
-import io.algafoodapi.domain.exception.EntidadeNaoEncontradaException;
+import io.algafoodapi.domain.exception.http404.EntidadeNaoEncontradaException;
 import io.algafoodapi.domain.model.Prato;
 import io.algafoodapi.domain.service.PratoService;
 import org.springframework.beans.factory.annotation.Autowired;

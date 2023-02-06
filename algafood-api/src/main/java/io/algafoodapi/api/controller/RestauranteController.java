@@ -1,7 +1,7 @@
 package io.algafoodapi.api.controller;
 
-import io.algafoodapi.domain.exception.EntidadeNaoEncontradaException;
-import io.algafoodapi.domain.exception.RequisicaoMalFormuladaException;
+import io.algafoodapi.domain.exception.http404.EntidadeNaoEncontradaException;
+import io.algafoodapi.domain.exception.http400.RequisicaoMalFormuladaException;
 import io.algafoodapi.domain.model.Restaurante;
 import io.algafoodapi.domain.service.RestauranteService;
 import org.springframework.beans.factory.annotation.Autowired;

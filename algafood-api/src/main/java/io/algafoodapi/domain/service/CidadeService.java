@@ -1,9 +1,9 @@
 package io.algafoodapi.domain.service;
 
-import io.algafoodapi.domain.exception.EntidadeEmUsoException;
-import io.algafoodapi.domain.exception.EntidadeNaoEncontradaException;
-import io.algafoodapi.domain.exception.EstadoNaoEncontradoException;
-import io.algafoodapi.domain.exception.RequisicaoMalFormuladaException;
+import io.algafoodapi.domain.exception.http409.EntidadeEmUsoException;
+import io.algafoodapi.domain.exception.http404.EntidadeNaoEncontradaException;
+import io.algafoodapi.domain.exception.http404.EstadoNaoEncontradoException;
+import io.algafoodapi.domain.exception.http400.RequisicaoMalFormuladaException;
 import io.algafoodapi.domain.model.Cidade;
 import io.algafoodapi.domain.repository.CidadeRepository;
 import org.springframework.beans.BeanUtils;
