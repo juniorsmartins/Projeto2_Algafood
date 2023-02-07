@@ -11,7 +11,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/pratos", produces = {"application/json"})
+@RequestMapping(path = "/v1/pratos", produces = {"application/json"})
 public class PratoController {
 
     @Autowired

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
-@RequestMapping(path = "/cozinhas")
+@RequestMapping(path = "/v1/cozinhas")
 public class CozinhaController {
 
     @Autowired
@@ -27,37 +27,37 @@ public class CozinhaController {
                 .body(cozinha);
     }
 
-    @PutMapping(path = "/{id}")
-    public ResponseEntity<?> atualizar(@PathVariable(name = "id") Long id, @RequestBody Cozinha cozinhaAtual) {
+    @PutMapping(path = "/{cozinhaId}")
+    public ResponseEntity<?> atualizar(@PathVariable(name = "cozinhaId") Long cozinhaId, @RequestBody Cozinha cozinhaAtual) {
 
-        cozinhaAtual = this.cozinhaService.atualizar(id, cozinhaAtual);
+        cozinhaAtual = this.cozinhaService.atualizar(cozinhaId, cozinhaAtual);
 
         return ResponseEntity
                 .ok()
                 .body(cozinhaAtual);
     }
 
-    @DeleteMapping(path = "/{id}")
-    public ResponseEntity<?> excluirPorId(@PathVariable(name = "id") Long id) {
+    @DeleteMapping(path = "/{cozinhaId}")
+    public ResponseEntity<?> excluirPorId(@PathVariable(name = "cozinhaId") Long cozinhaId) {
 
-        this.cozinhaService.excluirPorId(id);
+        this.cozinhaService.excluirPorId(cozinhaId);
 
         return ResponseEntity
                 .noContent()
                 .build();
     }
 
-    @GetMapping(path = "/{id}")
-    public ResponseEntity<?> consultarPorId(@PathVariable(name = "id") Long id) {
+    @GetMapping(path = "/{cozinhaId}")
+    public ResponseEntity<?> consultarPorId(@PathVariable(name = "cozinhaId") Long cozinhaId) {
 
-        var cozinha = this.cozinhaService.consultarPorId(id);
+        var cozinha = this.cozinhaService.consultarPorId(cozinhaId);
 
         return ResponseEntity
                 .ok()
                 .body(cozinha);
     }
 
-    @GetMapping(path = "/porNome")
+    @GetMapping(path = "/por-nome")
     public ResponseEntity<?> consultarPorNome(@RequestParam(name = "gastronomia") String nome) {
 
         var cozinhas = this.cozinhaService.consultarPorNome(nome);

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
-@RequestMapping(path = "/estados")
+@RequestMapping(path = "/v1/estados")
 public class EstadoController {
 
     @Autowired
@@ -27,30 +27,30 @@ public class EstadoController {
                 .body(estado);
     }
 
-    @PutMapping(path = "/{id}")
-    public ResponseEntity<?> atualizar(@PathVariable(name = "id") Long id, @RequestBody Estado estadoAtual) {
+    @PutMapping(path = "/{estadoId}")
+    public ResponseEntity<?> atualizar(@PathVariable(name = "estadoId") Long estadoId, @RequestBody Estado estadoAtual) {
 
-        estadoAtual = this.estadoService.atualizar(id, estadoAtual);
+        estadoAtual = this.estadoService.atualizar(estadoId, estadoAtual);
 
         return ResponseEntity
                 .ok()
                 .body(estadoAtual);
     }
 
-    @DeleteMapping(path = "/{id}")
-    public ResponseEntity<?> excluirPorId(@PathVariable(name = "id") Long id) {
+    @DeleteMapping(path = "/{estadoId}")
+    public ResponseEntity<?> excluirPorId(@PathVariable(name = "estadoId") Long estadoId) {
 
-        this.estadoService.excluirPorId(id);
+        this.estadoService.excluirPorId(estadoId);
 
         return ResponseEntity
                 .noContent()
                 .build();
     }
 
-    @GetMapping(path = "/{id}")
-    public ResponseEntity<?> consultarPorId(@PathVariable(name = "id") Long id) {
+    @GetMapping(path = "/{estadoId}")
+    public ResponseEntity<?> consultarPorId(@PathVariable(name = "estadoId") Long estadoId) {
 
-        var estado = this.estadoService.consultarPorId(id);
+        var estado = this.estadoService.consultarPorId(estadoId);
 
         return ResponseEntity
                 .ok()

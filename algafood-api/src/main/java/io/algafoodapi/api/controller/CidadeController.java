@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
-@RequestMapping(path = "/cidades")
+@RequestMapping(path = "/v1/cidades")
 public class CidadeController {
 
     @Autowired
@@ -27,30 +27,30 @@ public class CidadeController {
                 .body(cidadeNova);
     }
 
-    @PutMapping(path = "/{id}")
-    public ResponseEntity<?> atualizar(@PathVariable(name = "id") Long id, @RequestBody Cidade cidadeAtual) {
+    @PutMapping(path = "/{cidadeId}")
+    public ResponseEntity<?> atualizar(@PathVariable(name = "cidadeId") Long cidadeId, @RequestBody Cidade cidadeAtual) {
 
-        cidadeAtual = this.cidadeService.atualizar(id, cidadeAtual);
+        cidadeAtual = this.cidadeService.atualizar(cidadeId, cidadeAtual);
 
         return ResponseEntity
                 .ok()
                 .body(cidadeAtual);
     }
 
-    @DeleteMapping(path = "/{id}")
-    public ResponseEntity<?> excluirPorId(@PathVariable(name = "id") Long id) {
+    @DeleteMapping(path = "/{cidadeId}")
+    public ResponseEntity<?> excluirPorId(@PathVariable(name = "cidadeId") Long cidadeId) {
 
-        this.cidadeService.excluirPorId(id);
+        this.cidadeService.excluirPorId(cidadeId);
 
         return ResponseEntity
                 .noContent()
                 .build();
     }
 
-    @GetMapping(path = "/{id}")
-    public ResponseEntity<?> consultarPorId(@PathVariable(name = "id") Long id) {
+    @GetMapping(path = "/{cidadeId}")
+    public ResponseEntity<?> consultarPorId(@PathVariable(name = "cidadeId") Long cidadeId) {
 
-        var cidade = this.cidadeService.consultarPorId(id);
+        var cidade = this.cidadeService.consultarPorId(cidadeId);
 
         return ResponseEntity
                 .ok()
