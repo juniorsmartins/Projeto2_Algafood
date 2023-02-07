@@ -17,7 +17,7 @@ public class EstadoController {
     @PostMapping
     public ResponseEntity<Estado> criar(@RequestBody Estado estado, UriComponentsBuilder uriComponentsBuilder) {
 
-        estado = this.estadoService.salvar(estado);
+        estado = this.estadoService.criar(estado);
 
         return ResponseEntity
                 .created(uriComponentsBuilder

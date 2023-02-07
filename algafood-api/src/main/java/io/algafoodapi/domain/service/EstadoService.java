@@ -21,7 +21,7 @@ public class EstadoService {
     @Autowired
     private EstadoRepository estadoRepository;
 
-    public Estado salvar(Estado estado) {
+    public Estado criar(Estado estado) {
         return this.estadoRepository.saveAndFlush(estado);
     }
 
@@ -30,7 +30,7 @@ public class EstadoService {
         var estado = this.consultarPorId(id);
         BeanUtils.copyProperties(estadoAtual, estado, "id");
 
-        return this.salvar(estado);
+        return this.criar(estado);
     }
 
     public void excluirPorId(Long id) {

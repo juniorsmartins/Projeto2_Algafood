@@ -10,4 +10,9 @@ public final class RequisicaoMalFormuladaException extends RuntimeException {
     public RequisicaoMalFormuladaException(String mensagem) {
         super(mensagem);
     }
+
+    public RequisicaoMalFormuladaException(String mensagem, Throwable causa) {
+        super(mensagem, causa);
+    }
 }
+
