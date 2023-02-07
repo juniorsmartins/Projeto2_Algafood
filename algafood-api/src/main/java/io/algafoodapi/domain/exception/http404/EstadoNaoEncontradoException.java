@@ -1,5 +1,6 @@
-package io.algafoodapi.domain.exception;
+package io.algafoodapi.domain.exception.http404;
 
+import io.algafoodapi.domain.exception.http404.EntidadeNaoEncontradaException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -9,5 +10,9 @@ public final class EstadoNaoEncontradoException extends EntidadeNaoEncontradaExc
 
     public EstadoNaoEncontradoException(String mensagem) {
         super(mensagem);
+    }
+
+    public EstadoNaoEncontradoException(Long id) {
+        this(String.format("Não encontrado estado com código %d.", id));
     }
 }

@@ -1,9 +1,11 @@
 package io.algafoodapi.domain.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.algafoodapi.domain.exception.EntidadeEmUsoException;
-import io.algafoodapi.domain.exception.EntidadeNaoEncontradaException;
-import io.algafoodapi.domain.exception.RequisicaoMalFormuladaException;
+import io.algafoodapi.domain.exception.http404.CozinhaNaoEncontradaException;
+import io.algafoodapi.domain.exception.http404.EntidadeNaoEncontradaException;
+import io.algafoodapi.domain.exception.http400.RequisicaoMalFormuladaException;
+import io.algafoodapi.domain.exception.http404.RestauranteNaoEncontradoException;
+import io.algafoodapi.domain.exception.http409.RestauranteEmUsoException;
 import io.algafoodapi.domain.model.Cozinha;
 import io.algafoodapi.domain.model.Restaurante;
 import io.algafoodapi.domain.repository.RestauranteRepository;
@@ -23,8 +25,7 @@ import java.util.Map;
 @Service
 public class RestauranteService {
 
-    public static final String NÃO_ENCONTRADO_RESTAURANTE_COM_ID = "Não encontrado restaurante com código %d.";
-    public static final String PROIBIDO_APAGAR_RESTAURANTE_EM_USO_COM_ID = "Proibido apagar restaurante em uso. ID: %d.";
+    public static final String NÃO_EXISTEM_RESTAURANTES_CADASTRADOS = "Não há restaurantes cadastrados.";
 
     @Autowired
     private RestauranteRepository restauranteRepository;
@@ -38,8 +39,8 @@ public class RestauranteService {
             var cozinha = this.cozinhaService.consultarPorId(restaurante.getCozinha().getId());
             restaurante.setCozinha(cozinha);
 
-        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
-            throw new RequisicaoMalFormuladaException(naoEncontradaException.getMessage());
+        } catch (CozinhaNaoEncontradaException naoEncontradaException) {
+            throw new RequisicaoMalFormuladaException(naoEncontradaException.getMessage(), naoEncontradaException);
         }
 
         return this.restauranteRepository.saveAndFlush(restaurante);
@@ -53,8 +54,8 @@ public class RestauranteService {
             var cozinha = this.cozinhaService.consultarPorId(restauranteAtual.getCozinha().getId());
             restauranteAtual.setCozinha(cozinha);
 
-        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
-            throw new RequisicaoMalFormuladaException(naoEncontradaException.getMessage());
+        } catch (CozinhaNaoEncontradaException naoEncontradaException) {
+            throw new RequisicaoMalFormuladaException(naoEncontradaException.getMessage(), naoEncontradaException);
         }
 
         BeanUtils.copyProperties(restauranteAtual, restaurante, "id",
@@ -63,7 +64,7 @@ public class RestauranteService {
         return this.restauranteRepository.saveAndFlush(restaurante);
     }
 
-    public Restaurante atualizarParcial(Long id, Map<String, Object> dadosOrigem) throws EntidadeNaoEncontradaException, RequisicaoMalFormuladaException {
+    public Restaurante atualizarParcial(Long id, Map<String, Object> dadosOrigem) {
 
         var restauranteDoDatabase = this.consultarPorId(id);
 
@@ -86,18 +87,17 @@ public class RestauranteService {
             this.restauranteRepository.deleteById(id);
 
         } catch (EmptyResultDataAccessException dataAccessException) {
-            throw new EntidadeNaoEncontradaException(String.format(NÃO_ENCONTRADO_RESTAURANTE_COM_ID, id));
+            throw new RestauranteNaoEncontradoException(id);
 
         } catch (DataIntegrityViolationException dataIntegrityViolationException) {
-            throw new RequisicaoMalFormuladaException(String.format(PROIBIDO_APAGAR_RESTAURANTE_EM_USO_COM_ID, id));
+            throw new RestauranteEmUsoException(id);
         }
     }
 
     public Restaurante consultarPorId(Long id) {
 
         return this.restauranteRepository.findById(id)
-                .orElseThrow(() -> new EntidadeNaoEncontradaException(
-                        String.format(NÃO_ENCONTRADO_RESTAURANTE_COM_ID, id)));
+                .orElseThrow(() -> new RestauranteNaoEncontradoException(id));
     }
 
     public List<Restaurante> consultarPorNome(String nome) {
@@ -108,7 +108,7 @@ public class RestauranteService {
                 .toList();
 
         if(restaurantes.isEmpty())
-            throw new EntidadeNaoEncontradaException(String.format("Não há restaurantes cadastrados no banco de dados."));
+            throw new RestauranteNaoEncontradoException(NÃO_EXISTEM_RESTAURANTES_CADASTRADOS);
 
         return restaurantes;
     }
@@ -121,7 +121,7 @@ public class RestauranteService {
                 .toList();
 
         if(restaurantes.isEmpty())
-            throw new EntidadeNaoEncontradaException(String.format("Não há restaurantes cadastrados no banco de dados."));
+            throw new RestauranteNaoEncontradoException(NÃO_EXISTEM_RESTAURANTES_CADASTRADOS);
 
         return restaurantes;
     }
@@ -134,7 +134,7 @@ public class RestauranteService {
                 .toList();
 
         if(restaurantes.isEmpty())
-            throw new EntidadeNaoEncontradaException(String.format("Não há restaurantes cadastrados no banco de dados."));
+            throw new RestauranteNaoEncontradoException(NÃO_EXISTEM_RESTAURANTES_CADASTRADOS);
 
         return restaurantes;
     }

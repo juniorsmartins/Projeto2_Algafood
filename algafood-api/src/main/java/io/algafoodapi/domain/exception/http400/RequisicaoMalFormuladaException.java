@@ -1,4 +1,4 @@
-package io.algafoodapi.domain.exception;
+package io.algafoodapi.domain.exception.http400;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -10,4 +10,9 @@ public final class RequisicaoMalFormuladaException extends RuntimeException {
     public RequisicaoMalFormuladaException(String mensagem) {
         super(mensagem);
     }
+
+    public RequisicaoMalFormuladaException(String mensagem, Throwable causa) {
+        super(mensagem, causa);
+    }
 }
+
