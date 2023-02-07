@@ -1,8 +1,9 @@
 package io.algafoodapi.domain.service;
 
-import io.algafoodapi.domain.exception.EntidadeEmUsoException;
-import io.algafoodapi.domain.exception.EntidadeNaoEncontradaException;
-import io.algafoodapi.domain.exception.RequisicaoMalFormuladaException;
+import io.algafoodapi.domain.exception.http404.CozinhaNaoEncontradaException;
+import io.algafoodapi.domain.exception.http404.EntidadeNaoEncontradaException;
+import io.algafoodapi.domain.exception.http400.RequisicaoMalFormuladaException;
+import io.algafoodapi.domain.exception.http409.CozinhaEmUsoException;
 import io.algafoodapi.domain.model.Cozinha;
 import io.algafoodapi.domain.repository.CozinhaRepository;
 import org.springframework.beans.BeanUtils;
@@ -17,10 +18,8 @@ import java.util.List;
 @Service
 public class CozinhaService {
 
-    public static final String NAO_ENCONTRADA_COZINHA_COM_ID = "Não encontrada cozinha com código %d.";
     public static final String NÃO_ENCONTRADA_COZINHA_COM_NOME = "Não encontrada cozinha com nome %s.";
     public static final String NAO_EXISTEM_COZINHAS_CADASTRADAS = "Não existem cozinhas cadastradas.";
-    public static final String PROIBIDO_APAGAR_COZINHA_EM_USO_COM_ID = "Proibido apagar cozinha em uso. ID: %d.";
 
     @Autowired
     private CozinhaRepository cozinhaRepository;
@@ -43,18 +42,17 @@ public class CozinhaService {
             this.cozinhaRepository.deleteById(id);
 
         } catch (EmptyResultDataAccessException dataAccessException) {
-            throw new EntidadeNaoEncontradaException(String.format(NAO_ENCONTRADA_COZINHA_COM_ID, id));
+            throw new CozinhaNaoEncontradaException(id);
 
         } catch (DataIntegrityViolationException dataIntegrityViolationException) {
-            throw new RequisicaoMalFormuladaException(String.format(PROIBIDO_APAGAR_COZINHA_EM_USO_COM_ID, id));
+            throw new CozinhaEmUsoException(id);
         }
     }
 
     public Cozinha consultarPorId(Long id) {
 
         return this.cozinhaRepository.findById(id)
-                .orElseThrow(() -> new EntidadeNaoEncontradaException(
-                        String.format(NAO_ENCONTRADA_COZINHA_COM_ID, id)));
+                .orElseThrow(() -> new CozinhaNaoEncontradaException(id));
     }
 
     public List<Cozinha> consultarPorNome(String nome) {
@@ -65,7 +63,7 @@ public class CozinhaService {
                 .toList();
 
         if (cozinhas.isEmpty())
-            throw new EntidadeNaoEncontradaException(String.format(NÃO_ENCONTRADA_COZINHA_COM_NOME, nome));
+            throw new CozinhaNaoEncontradaException(String.format(NÃO_ENCONTRADA_COZINHA_COM_NOME, nome));
 
         return cozinhas;
     }
@@ -78,7 +76,7 @@ public class CozinhaService {
                 .toList();
 
         if(cozinhas.isEmpty())
-            throw new EntidadeNaoEncontradaException(String.format(NAO_EXISTEM_COZINHAS_CADASTRADAS));
+            throw new CozinhaNaoEncontradaException(String.format(NAO_EXISTEM_COZINHAS_CADASTRADAS));
 
         return cozinhas;
     }

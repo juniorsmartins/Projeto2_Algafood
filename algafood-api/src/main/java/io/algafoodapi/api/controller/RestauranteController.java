@@ -1,7 +1,7 @@
 package io.algafoodapi.api.controller;
 
-import io.algafoodapi.domain.exception.EntidadeNaoEncontradaException;
-import io.algafoodapi.domain.exception.RequisicaoMalFormuladaException;
+import io.algafoodapi.domain.exception.http404.EntidadeNaoEncontradaException;
+import io.algafoodapi.domain.exception.http400.RequisicaoMalFormuladaException;
 import io.algafoodapi.domain.model.Restaurante;
 import io.algafoodapi.domain.service.RestauranteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 import java.util.Map;
 
 @RestController
-@RequestMapping(path = "/restaurantes")
+@RequestMapping(path = "/v1/restaurantes")
 public class RestauranteController {
 
     @Autowired
@@ -34,21 +34,23 @@ public class RestauranteController {
                 .body(restaurante);
     }
 
-    @PutMapping(path = "/{id}")
-    public ResponseEntity<?> atualizar(@PathVariable(name = "id") Long id, @RequestBody Restaurante restauranteAtual) {
+    @PutMapping(path = "/{restauranteId}")
+    public ResponseEntity<?> atualizar(@PathVariable(name = "restauranteId") Long restauranteId,
+                                       @RequestBody Restaurante restauranteAtual) {
 
-        restauranteAtual = this.restauranteService.atualizar(id, restauranteAtual);
+        restauranteAtual = this.restauranteService.atualizar(restauranteId, restauranteAtual);
 
         return ResponseEntity
                 .ok()
                 .body(restauranteAtual);
     }
 
-    @PatchMapping(path = "/{id}")
-    public ResponseEntity<?> atualizarParcial(@PathVariable(name = "id") Long id, @RequestBody Map<String, Object> campos) {
+    @PatchMapping(path = "/{restauranteId}")
+    public ResponseEntity<?> atualizarParcial(@PathVariable(name = "restauranteId") Long restauranteId,
+                                              @RequestBody Map<String, Object> campos) {
 
         try {
-            var restaurante = this.restauranteService.atualizarParcial(id, campos);
+            var restaurante = this.restauranteService.atualizarParcial(restauranteId, campos);
             return ResponseEntity
                     .ok()
                     .body(restaurante);
@@ -65,27 +67,27 @@ public class RestauranteController {
         }
     }
 
-    @DeleteMapping(path = "/{id}")
-    public ResponseEntity<?> excluirPorId(@PathVariable(name = "id") Long id) {
+    @DeleteMapping(path = "/{restauranteId}")
+    public ResponseEntity<?> excluirPorId(@PathVariable(name = "restauranteId") Long restauranteId) {
 
-        this.restauranteService.excluirPorId(id);
+        this.restauranteService.excluirPorId(restauranteId);
 
         return ResponseEntity
                 .noContent()
                 .build();
     }
 
-    @GetMapping(path = "/{id}")
-    public ResponseEntity<?> consultarPorId(@PathVariable(name = "id") Long id) {
+    @GetMapping(path = "/{restauranteId}")
+    public ResponseEntity<?> consultarPorId(@PathVariable(name = "restauranteId") Long restauranteId) {
 
-        var restaurante = this.restauranteService.consultarPorId(id);
+        var restaurante = this.restauranteService.consultarPorId(restauranteId);
 
         return ResponseEntity
                 .ok()
                 .body(restaurante);
     }
 
-    @GetMapping(path = "/porNome")
+    @GetMapping(path = "/por-nome")
     public ResponseEntity<?> consultarPorNome(@RequestParam(name = "nome") String nome) {
 
         var restaurantes = this.restauranteService.consultarPorNome(nome);
@@ -105,7 +107,7 @@ public class RestauranteController {
                 .body(restaurantes);
     }
 
-    @GetMapping(path = "/consultarPorNomeAndTaxas")
+    @GetMapping(path = "/por-nome-e-taxas")
     public ResponseEntity<?> consultarPorNomeAndTaxas(@Param("nome") String nome,
                                                       @Param("freteTaxaInicial") BigDecimal freteTaxaInicial,
                                                       @Param("freteTaxaFinal") BigDecimal freteTaxaFinal) {

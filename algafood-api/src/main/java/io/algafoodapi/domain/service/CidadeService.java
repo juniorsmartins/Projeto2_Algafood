@@ -1,8 +1,9 @@
 package io.algafoodapi.domain.service;
 
-import io.algafoodapi.domain.exception.EntidadeEmUsoException;
-import io.algafoodapi.domain.exception.EntidadeNaoEncontradaException;
-import io.algafoodapi.domain.exception.RequisicaoMalFormuladaException;
+import io.algafoodapi.domain.exception.http400.RequisicaoMalFormuladaException;
+import io.algafoodapi.domain.exception.http404.CidadeNaoEncontradaException;
+import io.algafoodapi.domain.exception.http404.EstadoNaoEncontradoException;
+import io.algafoodapi.domain.exception.http409.CidadeEmUsoException;
 import io.algafoodapi.domain.model.Cidade;
 import io.algafoodapi.domain.repository.CidadeRepository;
 import org.springframework.beans.BeanUtils;
@@ -18,8 +19,6 @@ import java.util.stream.Collectors;
 @Service
 public class CidadeService {
 
-    public static final String NÃO_ENCONTRADA_CIDADE_COM_ID = "Não encontrada cidade com código %d.";
-    public static final String PROIBIDO_APAGAR_CIDADE_EM_USO_COM_ID = "Proibido apagar cidade em uso. Código: %d.";
     public static final String NÃO_EXISTEM_CIDADES_CADASTRADAS = "Não há cidades cadastradas.";
 
     @Autowired
@@ -34,9 +33,8 @@ public class CidadeService {
             var estado = this.estadoService.consultarPorId(cidade.getEstado().getId());
             cidade.setEstado(estado);
 
-        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
-            throw new RequisicaoMalFormuladaException(
-                    String.format(EstadoService.NÃO_ENCONTRADO_ESTADO_COM_ID, cidade.getEstado().getId()));
+        } catch (EstadoNaoEncontradoException naoEncontradoException) {
+            throw new RequisicaoMalFormuladaException(naoEncontradoException.getMessage(), naoEncontradoException);
         }
 
         return this.cidadeRepository.saveAndFlush(cidade);
@@ -50,8 +48,8 @@ public class CidadeService {
             var estado = this.estadoService.consultarPorId(cidadeAtual.getEstado().getId());
             cidadeAtual.setEstado(estado);
 
-        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
-            throw new RequisicaoMalFormuladaException(naoEncontradaException.getMessage());
+        } catch (EstadoNaoEncontradoException naoEncontradaException) {
+            throw new RequisicaoMalFormuladaException(naoEncontradaException.getMessage(), naoEncontradaException);
         }
 
         BeanUtils.copyProperties(cidadeAtual, cidade, "id");
@@ -65,18 +63,17 @@ public class CidadeService {
             this.cidadeRepository.deleteById(id);
 
         } catch (EmptyResultDataAccessException dataAccessException) {
-            throw new EntidadeNaoEncontradaException(String.format(NÃO_ENCONTRADA_CIDADE_COM_ID, id));
+            throw new CidadeNaoEncontradaException(id);
 
         } catch (DataIntegrityViolationException dataIntegrityViolationException) {
-            throw new RequisicaoMalFormuladaException(String.format(PROIBIDO_APAGAR_CIDADE_EM_USO_COM_ID, id));
+            throw new CidadeEmUsoException(id);
         }
     }
 
     public Cidade consultarPorId(Long id) {
 
         return this.cidadeRepository.findById(id)
-                .orElseThrow(() -> new EntidadeNaoEncontradaException(
-                    String.format(NÃO_ENCONTRADA_CIDADE_COM_ID, id)));
+                .orElseThrow(() -> new CidadeNaoEncontradaException(id));
     }
 
     public List<Cidade> listar() {
@@ -87,7 +84,7 @@ public class CidadeService {
                 .collect(Collectors.toList());
 
         if(cidades.isEmpty())
-            throw new EntidadeNaoEncontradaException(String.format(NÃO_EXISTEM_CIDADES_CADASTRADAS));
+            throw new CidadeNaoEncontradaException(NÃO_EXISTEM_CIDADES_CADASTRADAS);
 
         return cidades;
     }
