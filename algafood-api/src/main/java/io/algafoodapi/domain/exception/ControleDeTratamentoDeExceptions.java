@@ -3,16 +3,19 @@ package io.algafoodapi.domain.exception;
 import io.algafoodapi.domain.exception.http400.RequisicaoMalFormuladaException;
 import io.algafoodapi.domain.exception.http404.EntidadeNaoEncontradaException;
 import io.algafoodapi.domain.exception.http409.EntidadeEmUsoException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.time.LocalDateTime;
 
 @RestControllerAdvice
-public final class ControleDeTratamentoDeExceptions {
+public final class ControleDeTratamentoDeExceptions extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(EntidadeNaoEncontradaException.class)
     public ResponseEntity<MensagemDeErro> tratarEntidadeNaoEncontradaException(EntidadeNaoEncontradaException naoEncontradaException) {
@@ -63,20 +66,15 @@ public final class ControleDeTratamentoDeExceptions {
                 .body(mensagem);
     }
 
-    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
-    public ResponseEntity<MensagemDeErro> tratarHttpMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException mediaTypeNotSupportedException) {
+    @Override
+    protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
 
-        var httpStatus = HttpStatus.UNSUPPORTED_MEDIA_TYPE;
-
-        var mensagem = MensagemDeErro.builder()
-                .mensagem("Tipo de mídia não aceito!")
-                .status(httpStatus)
+        body = MensagemDeErro.builder()
+                .mensagem(status.getReasonPhrase())
                 .dataHora(LocalDateTime.now())
                 .build();
 
-        return ResponseEntity
-                .status(httpStatus)
-                .body(mensagem);
+        return super.handleExceptionInternal(ex, body, headers, status, request);
     }
 }
 
