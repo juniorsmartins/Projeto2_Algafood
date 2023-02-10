@@ -13,7 +13,7 @@ public final class CozinhaEmUsoException extends EntidadeEmUsoException {
     }
 
     public CozinhaEmUsoException(Long id) {
-        this(String.format("Proibido apagar cozinha, com ID %d, em uso.", id));
+        this(String.format("Cozinha, com ID %d, não pode ser apagada por estar em uso.", id));
     }
 }
 

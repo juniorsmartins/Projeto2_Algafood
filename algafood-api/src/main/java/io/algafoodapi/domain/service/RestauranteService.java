@@ -2,11 +2,9 @@ package io.algafoodapi.domain.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.algafoodapi.domain.exception.http404.CozinhaNaoEncontradaException;
-import io.algafoodapi.domain.exception.http404.EntidadeNaoEncontradaException;
 import io.algafoodapi.domain.exception.http400.RequisicaoMalFormuladaException;
 import io.algafoodapi.domain.exception.http404.RestauranteNaoEncontradoException;
 import io.algafoodapi.domain.exception.http409.RestauranteEmUsoException;
-import io.algafoodapi.domain.model.Cozinha;
 import io.algafoodapi.domain.model.Restaurante;
 import io.algafoodapi.domain.repository.RestauranteRepository;
 import org.springframework.beans.BeanUtils;
@@ -25,7 +23,7 @@ import java.util.Map;
 @Service
 public class RestauranteService {
 
-    public static final String NÃO_EXISTEM_RESTAURANTES_CADASTRADOS = "Não há restaurantes cadastrados.";
+    public static final String NÃO_EXISTEM_RESTAURANTES = "Não há restaurantes cadastrados.";
 
     @Autowired
     private RestauranteRepository restauranteRepository;
@@ -108,7 +106,7 @@ public class RestauranteService {
                 .toList();
 
         if(restaurantes.isEmpty())
-            throw new RestauranteNaoEncontradoException(NÃO_EXISTEM_RESTAURANTES_CADASTRADOS);
+            throw new RestauranteNaoEncontradoException(NÃO_EXISTEM_RESTAURANTES);
 
         return restaurantes;
     }
@@ -121,7 +119,7 @@ public class RestauranteService {
                 .toList();
 
         if(restaurantes.isEmpty())
-            throw new RestauranteNaoEncontradoException(NÃO_EXISTEM_RESTAURANTES_CADASTRADOS);
+            throw new RestauranteNaoEncontradoException(NÃO_EXISTEM_RESTAURANTES);
 
         return restaurantes;
     }
@@ -134,7 +132,7 @@ public class RestauranteService {
                 .toList();
 
         if(restaurantes.isEmpty())
-            throw new RestauranteNaoEncontradoException(NÃO_EXISTEM_RESTAURANTES_CADASTRADOS);
+            throw new RestauranteNaoEncontradoException(NÃO_EXISTEM_RESTAURANTES);
 
         return restaurantes;
     }
