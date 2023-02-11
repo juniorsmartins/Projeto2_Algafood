@@ -6,73 +6,54 @@ import io.algafoodapi.domain.exception.http409.EntidadeEmUsoException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-
 import java.time.LocalDateTime;
 
 @RestControllerAdvice
 public final class ControleDeTratamentoDeExceptions extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(EntidadeNaoEncontradaException.class)
-    public ResponseEntity<MensagemDeErro> tratarEntidadeNaoEncontradaException(EntidadeNaoEncontradaException naoEncontradaException) {
+    public ResponseEntity<Object> tratarEntidadeNaoEncontradaException(EntidadeNaoEncontradaException naoEncontradaException, WebRequest request) {
 
-        var httpStatus = HttpStatus.NOT_FOUND;
-
-        var mensagem = MensagemDeErro.builder()
-                .mensagem(naoEncontradaException.getMessage())
-                .status(httpStatus)
-                .dataHora(LocalDateTime.now())
-                .build();
-
-        return ResponseEntity
-                .status(httpStatus)
-                .body(mensagem);
+        return this.handleExceptionInternal(naoEncontradaException, naoEncontradaException.getMessage(),
+                new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
     @ExceptionHandler(EntidadeEmUsoException.class)
-    public ResponseEntity<MensagemDeErro> tratarEntidadeEmUsoException(EntidadeEmUsoException emUsoException) {
+    public ResponseEntity<Object> tratarEntidadeEmUsoException(EntidadeEmUsoException emUsoException, WebRequest request) {
 
-        var httpStatus = HttpStatus.CONFLICT;
-
-        var mensagem = MensagemDeErro.builder()
-                .mensagem(emUsoException.getMessage())
-                .status(httpStatus)
-                .dataHora(LocalDateTime.now())
-                .build();
-
-
-        return ResponseEntity
-                .status(httpStatus)
-                .body(mensagem);
+        return this.handleExceptionInternal(emUsoException, emUsoException.getMessage(), new HttpHeaders(),
+                HttpStatus.CONFLICT, request);
     }
 
     @ExceptionHandler(RequisicaoMalFormuladaException.class)
-    public ResponseEntity<MensagemDeErro> tratarRequisicaoMalFormuladaException(RequisicaoMalFormuladaException malFormuladaException) {
+    public ResponseEntity<Object> tratarRequisicaoMalFormuladaException(RequisicaoMalFormuladaException malFormuladaException, WebRequest request) {
 
-        var httpStatus = HttpStatus.BAD_REQUEST;
-
-        var mensagem = MensagemDeErro.builder()
-                .mensagem(malFormuladaException.getMessage())
-                .status(httpStatus)
-                .dataHora(LocalDateTime.now())
-                .build();
-
-        return ResponseEntity
-                .status(httpStatus)
-                .body(mensagem);
+        return this.handleExceptionInternal(malFormuladaException, malFormuladaException.getMessage(),
+                new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
     @Override
-    protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers,
+                                                             HttpStatus status, WebRequest request) {
 
-        body = MensagemDeErro.builder()
-                .mensagem(status.getReasonPhrase())
-                .dataHora(LocalDateTime.now())
-                .build();
+        if (body == null) {
+            body = MensagemDeErro.builder()
+                    .mensagem(status.getReasonPhrase()) // Devolve uma descrição sobre o status retornado na resposta
+                    .status(status)
+                    .dataHora(LocalDateTime.now())
+                    .build();
+
+        } else if (body instanceof String) {
+            body = MensagemDeErro.builder()
+                    .mensagem(body.toString())
+                    .status(status)
+                    .dataHora(LocalDateTime.now())
+                    .build();
+        }
 
         return super.handleExceptionInternal(ex, body, headers, status, request);
     }
