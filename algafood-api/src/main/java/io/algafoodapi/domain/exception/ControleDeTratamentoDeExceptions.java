@@ -6,6 +6,7 @@ import io.algafoodapi.domain.exception.http409.EntidadeEmUsoException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
@@ -73,6 +74,19 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
         }
 
         return super.handleExceptionInternal(ex, body, headers, status, request);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException notReadableException,
+                                                                  HttpHeaders headers, HttpStatus status,
+                                                                  WebRequest request) {
+        var tipoDeErroEnum = TipoDeErroEnum.REQUISICAO_MAL_FORMULADA;
+        var detalhe = "O corpo da requisição está inválido. Verifique erro de sintaxe.";
+
+        var mensagemDeErro = this.criarMensagemErrorBuilder(status, tipoDeErroEnum, detalhe).build();
+
+        return this.handleExceptionInternal(notReadableException, mensagemDeErro, new HttpHeaders(),
+                status, request);
     }
 
     private MensagemDeErro.MensagemDeErroBuilder criarMensagemErrorBuilder(HttpStatus httpStatus,

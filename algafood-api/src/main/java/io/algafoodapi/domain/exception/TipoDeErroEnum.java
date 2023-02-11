@@ -17,3 +17,4 @@ public enum TipoDeErroEnum {
         this.caminho = "https://algafood.com.br" + caminho;
     }
 }
+
