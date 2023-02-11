@@ -20,9 +20,9 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
 
         var httpStatus = HttpStatus.NOT_FOUND;
         var tipoDeErroEnum = TipoDeErroEnum.ENTIDADE_NAO_ENCONTRADA;
-        var detail = naoEncontradaException.getMessage();
+        var detalhe = naoEncontradaException.getMessage();
 
-        var mensagemDeErro = this.criarMensagemErrorBuilder(httpStatus, tipoDeErroEnum, detail).build();
+        var mensagemDeErro = this.criarMensagemErrorBuilder(httpStatus, tipoDeErroEnum, detalhe).build();
 
         return this.handleExceptionInternal(naoEncontradaException, mensagemDeErro, new HttpHeaders(),
                 httpStatus, request);
@@ -31,36 +31,43 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
     @ExceptionHandler(EntidadeEmUsoException.class)
     public ResponseEntity<?> tratarEntidadeEmUsoException(EntidadeEmUsoException emUsoException, WebRequest request) {
 
-        return this.handleExceptionInternal(emUsoException, emUsoException.getMessage(), new HttpHeaders(),
-                HttpStatus.CONFLICT, request);
+        var httpStatus = HttpStatus.CONFLICT;
+        var tipoDeErroEnum = TipoDeErroEnum.ENTIDADE_EM_USO;
+        var detalhe = emUsoException.getMessage();
+
+        var mensagemDeErro = this.criarMensagemErrorBuilder(httpStatus, tipoDeErroEnum, detalhe).build();
+
+        return this.handleExceptionInternal(emUsoException, mensagemDeErro, new HttpHeaders(),
+                httpStatus, request);
     }
 
     @ExceptionHandler(RequisicaoMalFormuladaException.class)
     public ResponseEntity<?> tratarRequisicaoMalFormuladaException(RequisicaoMalFormuladaException malFormuladaException, WebRequest request) {
 
-        return this.handleExceptionInternal(malFormuladaException, malFormuladaException.getMessage(),
-                new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+        var httpStatus = HttpStatus.BAD_REQUEST;
+        var tipoDeErroEnum = TipoDeErroEnum.REQUISICAO_MAL_FORMULADA;
+        var detalhe = malFormuladaException.getMessage();
+
+        var mensagemDeErro = this.criarMensagemErrorBuilder(httpStatus, tipoDeErroEnum, detalhe).build();
+
+        return this.handleExceptionInternal(malFormuladaException, mensagemDeErro, new HttpHeaders(),
+                httpStatus, request);
     }
 
     @Override
     protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers,
                                                              HttpStatus status, WebRequest request) {
-
         if (body == null) {
             body = MensagemDeErro.builder()
                     .status(status.value())
-//                    .type()
-                    .title(status.getReasonPhrase()) // Devolve uma descrição sobre o status retornado na resposta
-//                    .detail()
+                    .titulo(status.getReasonPhrase()) // Devolve uma descrição sobre o status retornado na resposta
                     .dataHora(LocalDateTime.now())
                     .build();
 
         } else if (body instanceof String) {
             body = MensagemDeErro.builder()
                     .status(status.value())
-//                    .type()
-                    .title(body.toString())
-//                    .detail()
+                    .titulo(body.toString())
                     .dataHora(LocalDateTime.now())
                     .build();
         }
@@ -73,9 +80,9 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
                                                                            String details) {
         return MensagemDeErro.builder()
                 .status(httpStatus.value())
-                .type(tipoDeErroEnum.getCaminho())
-                .title(tipoDeErroEnum.getTitulo())
-                .detail(details)
+                .esclarecimento(tipoDeErroEnum.getCaminho())
+                .titulo(tipoDeErroEnum.getTitulo())
+                .detalhe(details)
                 .dataHora(LocalDateTime.now());
     }
 }
