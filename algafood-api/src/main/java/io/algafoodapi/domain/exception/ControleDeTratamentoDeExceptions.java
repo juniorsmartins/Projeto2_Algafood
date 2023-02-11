@@ -16,21 +16,27 @@ import java.time.LocalDateTime;
 public final class ControleDeTratamentoDeExceptions extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(EntidadeNaoEncontradaException.class)
-    public ResponseEntity<Object> tratarEntidadeNaoEncontradaException(EntidadeNaoEncontradaException naoEncontradaException, WebRequest request) {
+    public ResponseEntity<?> tratarEntidadeNaoEncontradaException(EntidadeNaoEncontradaException naoEncontradaException, WebRequest request) {
 
-        return this.handleExceptionInternal(naoEncontradaException, naoEncontradaException.getMessage(),
-                new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+        var httpStatus = HttpStatus.NOT_FOUND;
+        var tipoDeErroEnum = TipoDeErroEnum.ENTIDADE_NAO_ENCONTRADA;
+        var detail = naoEncontradaException.getMessage();
+
+        var mensagemDeErro = this.criarMensagemErrorBuilder(httpStatus, tipoDeErroEnum, detail).build();
+
+        return this.handleExceptionInternal(naoEncontradaException, mensagemDeErro, new HttpHeaders(),
+                httpStatus, request);
     }
 
     @ExceptionHandler(EntidadeEmUsoException.class)
-    public ResponseEntity<Object> tratarEntidadeEmUsoException(EntidadeEmUsoException emUsoException, WebRequest request) {
+    public ResponseEntity<?> tratarEntidadeEmUsoException(EntidadeEmUsoException emUsoException, WebRequest request) {
 
         return this.handleExceptionInternal(emUsoException, emUsoException.getMessage(), new HttpHeaders(),
                 HttpStatus.CONFLICT, request);
     }
 
     @ExceptionHandler(RequisicaoMalFormuladaException.class)
-    public ResponseEntity<Object> tratarRequisicaoMalFormuladaException(RequisicaoMalFormuladaException malFormuladaException, WebRequest request) {
+    public ResponseEntity<?> tratarRequisicaoMalFormuladaException(RequisicaoMalFormuladaException malFormuladaException, WebRequest request) {
 
         return this.handleExceptionInternal(malFormuladaException, malFormuladaException.getMessage(),
                 new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
@@ -42,20 +48,35 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
 
         if (body == null) {
             body = MensagemDeErro.builder()
-                    .mensagem(status.getReasonPhrase()) // Devolve uma descrição sobre o status retornado na resposta
-                    .status(status)
+                    .status(status.value())
+//                    .type()
+                    .title(status.getReasonPhrase()) // Devolve uma descrição sobre o status retornado na resposta
+//                    .detail()
                     .dataHora(LocalDateTime.now())
                     .build();
 
         } else if (body instanceof String) {
             body = MensagemDeErro.builder()
-                    .mensagem(body.toString())
-                    .status(status)
+                    .status(status.value())
+//                    .type()
+                    .title(body.toString())
+//                    .detail()
                     .dataHora(LocalDateTime.now())
                     .build();
         }
 
         return super.handleExceptionInternal(ex, body, headers, status, request);
+    }
+
+    private MensagemDeErro.MensagemDeErroBuilder criarMensagemErrorBuilder(HttpStatus httpStatus,
+                                                                           TipoDeErroEnum tipoDeErroEnum,
+                                                                           String details) {
+        return MensagemDeErro.builder()
+                .status(httpStatus.value())
+                .type(tipoDeErroEnum.getCaminho())
+                .title(tipoDeErroEnum.getTitulo())
+                .detail(details)
+                .dataHora(LocalDateTime.now());
     }
 }
 
