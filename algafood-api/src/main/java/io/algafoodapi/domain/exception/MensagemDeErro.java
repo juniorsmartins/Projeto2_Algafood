@@ -1,17 +1,22 @@
 package io.algafoodapi.domain.exception;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 
 @Builder
 @Getter
-public class MensagemDeErro {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public final class MensagemDeErro {
 
-    private String mensagem;
-    private HttpStatus status;
+    // Padrão RFC 7807
+
+    private Integer status; // Código Http
+    private String titulo; // Descrição do problema para humanos
+    private String detalhe; // Descrição detalhada e específica sobre a ocorrência do erro
+    private String esclarecimento; // URI para especificar o tipo do problema
     private LocalDateTime dataHora;
 }
 
