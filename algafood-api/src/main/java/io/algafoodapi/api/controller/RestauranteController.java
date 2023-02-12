@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.Map;
 
@@ -47,10 +48,10 @@ public class RestauranteController {
 
     @PatchMapping(path = "/{restauranteId}")
     public ResponseEntity<?> atualizarParcial(@PathVariable(name = "restauranteId") Long restauranteId,
-                                              @RequestBody Map<String, Object> campos) {
-
+                                              @RequestBody Map<String, Object> campos,
+                                              HttpServletRequest request) {
         try {
-            var restaurante = this.restauranteService.atualizarParcial(restauranteId, campos);
+            var restaurante = this.restauranteService.atualizarParcial(restauranteId, campos, request);
             return ResponseEntity
                     .ok()
                     .body(restaurante);

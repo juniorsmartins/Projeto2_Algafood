@@ -73,6 +73,7 @@ public final class Restaurante implements Serializable {
     @OneToMany(mappedBy = "restaurante", fetch = FetchType.LAZY)
     private List<Produto> produtos = new ArrayList<>();
 
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "restaurantes_formas_pagamento",
             joinColumns = @JoinColumn(name = "restaurante_id"),
@@ -82,6 +83,8 @@ public final class Restaurante implements Serializable {
     @OneToMany(mappedBy = "restaurante", fetch = FetchType.LAZY)
     private List<Pedido> pedidos = new ArrayList<>();
 
+    @JsonIgnore
     @Embedded
     private Endereco endereco;
 }
+
