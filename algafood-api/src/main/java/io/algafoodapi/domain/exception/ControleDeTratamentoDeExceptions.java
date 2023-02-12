@@ -6,17 +6,19 @@ import io.algafoodapi.domain.exception.http409.EntidadeEmUsoException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
 import java.time.LocalDateTime;
 
 @RestControllerAdvice
 public final class ControleDeTratamentoDeExceptions extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(EntidadeNaoEncontradaException.class)
-    public ResponseEntity<?> tratarEntidadeNaoEncontradaException(EntidadeNaoEncontradaException naoEncontradaException, WebRequest request) {
+    public ResponseEntity<?> tratarEntidadeNaoEncontrada(EntidadeNaoEncontradaException naoEncontradaException, WebRequest request) {
 
         var httpStatus = HttpStatus.NOT_FOUND;
         var tipoDeErroEnum = TipoDeErroEnum.ENTIDADE_NAO_ENCONTRADA;
@@ -29,7 +31,7 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
     }
 
     @ExceptionHandler(EntidadeEmUsoException.class)
-    public ResponseEntity<?> tratarEntidadeEmUsoException(EntidadeEmUsoException emUsoException, WebRequest request) {
+    public ResponseEntity<?> tratarEntidadeEmUso(EntidadeEmUsoException emUsoException, WebRequest request) {
 
         var httpStatus = HttpStatus.CONFLICT;
         var tipoDeErroEnum = TipoDeErroEnum.ENTIDADE_EM_USO;
@@ -42,7 +44,7 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
     }
 
     @ExceptionHandler(RequisicaoMalFormuladaException.class)
-    public ResponseEntity<?> tratarRequisicaoMalFormuladaException(RequisicaoMalFormuladaException malFormuladaException, WebRequest request) {
+    public ResponseEntity<?> tratarRequisicaoMalFormulada(RequisicaoMalFormuladaException malFormuladaException, WebRequest request) {
 
         var httpStatus = HttpStatus.BAD_REQUEST;
         var tipoDeErroEnum = TipoDeErroEnum.REQUISICAO_MAL_FORMULADA;
@@ -52,6 +54,26 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
 
         return this.handleExceptionInternal(malFormuladaException, mensagemDeErro, new HttpHeaders(),
                 httpStatus, request);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Object> handleUncaught(Exception ex, WebRequest request) {
+
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+        var tipoDeErroEnum = TipoDeErroEnum.ERRO_DE_SISTEMA;
+        var detail = "Ocorreu um erro interno inesperado no sistema. "
+                + "Tente novamente e se o problema persistir, entre em contato "
+                + "com o administrador do sistema.";
+
+        // Importante colocar o printStackTrace (pelo menos por enquanto, que não estamos
+        // fazendo logging) para mostrar a stacktrace no console
+        // Se não fizer isso, você não vai ver a stacktrace de exceptions que seriam importantes
+        // para você durante, especialmente na fase de desenvolvimento
+        ex.printStackTrace();
+
+        var mensagemDeErro = this.criarMensagemErrorBuilder(status, tipoDeErroEnum, detail).build();
+
+        return handleExceptionInternal(ex, mensagemDeErro, new HttpHeaders(), status, request);
     }
 
     @Override
@@ -73,6 +95,19 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
         }
 
         return super.handleExceptionInternal(ex, body, headers, status, request);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException notReadableException,
+                                                                  HttpHeaders headers, HttpStatus status,
+                                                                  WebRequest request) {
+        var tipoDeErroEnum = TipoDeErroEnum.REQUISICAO_MAL_FORMULADA;
+        var detalhe = "O corpo da requisição está inválido. Verifique erro de sintaxe.";
+
+        var mensagemDeErro = this.criarMensagemErrorBuilder(status, tipoDeErroEnum, detalhe).build();
+
+        return this.handleExceptionInternal(notReadableException, mensagemDeErro, new HttpHeaders(),
+                status, request);
     }
 
     private MensagemDeErro.MensagemDeErroBuilder criarMensagemErrorBuilder(HttpStatus httpStatus,

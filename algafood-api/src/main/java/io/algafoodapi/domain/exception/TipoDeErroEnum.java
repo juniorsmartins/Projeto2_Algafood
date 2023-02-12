@@ -7,7 +7,8 @@ public enum TipoDeErroEnum {
 
     ENTIDADE_NAO_ENCONTRADA("Entidade não encontrada.", "/entidade-nao-encontrada"),
     ENTIDADE_EM_USO("Entidade em uso.", "/entidade-em-uso"),
-    REQUISICAO_MAL_FORMULADA("Requisição mal formulada.", "/requisicao-mal-formulada");
+    REQUISICAO_MAL_FORMULADA("Requisição mal formulada.", "/requisicao-mal-formulada"),
+    ERRO_DE_SISTEMA("Erro de sistema.", "/erro-de-sistema");
 
     private String titulo;
     private String caminho;
@@ -17,3 +18,4 @@ public enum TipoDeErroEnum {
         this.caminho = "https://algafood.com.br" + caminho;
     }
 }
+
