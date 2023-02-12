@@ -23,6 +23,9 @@ import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.JoinTable;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -48,6 +51,7 @@ public final class Restaurante implements Serializable {
     @Column(name = "id")
     private Long id;
 
+    @NotBlank
     @Column(name = "nome", length = 100, nullable = false)
     private String nome;
 
@@ -66,6 +70,8 @@ public final class Restaurante implements Serializable {
 
 //    @JsonIgnoreProperties("hibernateLazyInitializer")
 //    @JsonIgnore
+    @NotNull
+    @Valid
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cozinha_id", referencedColumnName = "id", nullable = false)
     private Cozinha cozinha;
@@ -83,7 +89,6 @@ public final class Restaurante implements Serializable {
     @OneToMany(mappedBy = "restaurante", fetch = FetchType.LAZY)
     private List<Pedido> pedidos = new ArrayList<>();
 
-    @JsonIgnore
     @Embedded
     private Endereco endereco;
 }

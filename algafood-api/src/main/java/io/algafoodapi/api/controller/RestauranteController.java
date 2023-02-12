@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.Map;
 
@@ -23,7 +24,7 @@ public class RestauranteController {
     private RestauranteService restauranteService;
 
     @PostMapping
-    public ResponseEntity<?> criar(@RequestBody Restaurante restaurante, UriComponentsBuilder uriComponentsBuilder) {
+    public ResponseEntity<?> criar(@RequestBody @Valid Restaurante restaurante, UriComponentsBuilder uriComponentsBuilder) {
 
         restaurante = this.restauranteService.criar(restaurante);
 
