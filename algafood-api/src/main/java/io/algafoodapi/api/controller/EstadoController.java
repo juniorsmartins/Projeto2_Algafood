@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping(path = "/v1/estados")
 public class EstadoController {
@@ -15,7 +17,7 @@ public class EstadoController {
     private EstadoService estadoService;
 
     @PostMapping
-    public ResponseEntity<Estado> criar(@RequestBody Estado estado, UriComponentsBuilder uriComponentsBuilder) {
+    public ResponseEntity<Estado> criar(@RequestBody @Valid Estado estado, UriComponentsBuilder uriComponentsBuilder) {
 
         estado = this.estadoService.criar(estado);
 
@@ -28,7 +30,7 @@ public class EstadoController {
     }
 
     @PutMapping(path = "/{estadoId}")
-    public ResponseEntity<?> atualizar(@PathVariable(name = "estadoId") Long estadoId, @RequestBody Estado estadoAtual) {
+    public ResponseEntity<?> atualizar(@PathVariable(name = "estadoId") Long estadoId, @RequestBody @Valid Estado estadoAtual) {
 
         estadoAtual = this.estadoService.atualizar(estadoId, estadoAtual);
 

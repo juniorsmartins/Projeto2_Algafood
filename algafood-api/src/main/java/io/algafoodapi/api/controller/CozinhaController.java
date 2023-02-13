@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping(path = "/v1/cozinhas")
 public class CozinhaController {
@@ -15,7 +17,7 @@ public class CozinhaController {
     private CozinhaService cozinhaService;
 
     @PostMapping
-    public ResponseEntity<Cozinha> criar(@RequestBody Cozinha cozinha, UriComponentsBuilder uriComponentsBuilder) {
+    public ResponseEntity<Cozinha> criar(@RequestBody @Valid Cozinha cozinha, UriComponentsBuilder uriComponentsBuilder) {
 
         cozinha = this.cozinhaService.criar(cozinha);
 
@@ -28,7 +30,7 @@ public class CozinhaController {
     }
 
     @PutMapping(path = "/{cozinhaId}")
-    public ResponseEntity<?> atualizar(@PathVariable(name = "cozinhaId") Long cozinhaId, @RequestBody Cozinha cozinhaAtual) {
+    public ResponseEntity<?> atualizar(@PathVariable(name = "cozinhaId") Long cozinhaId, @RequestBody @Valid Cozinha cozinhaAtual) {
 
         cozinhaAtual = this.cozinhaService.atualizar(cozinhaId, cozinhaAtual);
 
