@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping(path = "/v1/cidades")
 public class CidadeController {
@@ -15,7 +17,7 @@ public class CidadeController {
     private CidadeService cidadeService;
 
     @PostMapping
-    public ResponseEntity<?> criar(@RequestBody Cidade cidadeNova, UriComponentsBuilder uriComponentsBuilder) {
+    public ResponseEntity<?> criar(@RequestBody @Valid Cidade cidadeNova, UriComponentsBuilder uriComponentsBuilder) {
 
         cidadeNova = this.cidadeService.criar(cidadeNova);
 
@@ -28,7 +30,7 @@ public class CidadeController {
     }
 
     @PutMapping(path = "/{cidadeId}")
-    public ResponseEntity<?> atualizar(@PathVariable(name = "cidadeId") Long cidadeId, @RequestBody Cidade cidadeAtual) {
+    public ResponseEntity<?> atualizar(@PathVariable(name = "cidadeId") Long cidadeId, @RequestBody @Valid Cidade cidadeAtual) {
 
         cidadeAtual = this.cidadeService.atualizar(cidadeId, cidadeAtual);
 

@@ -8,10 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.Map;
 
@@ -23,7 +25,8 @@ public class RestauranteController {
     private RestauranteService restauranteService;
 
     @PostMapping
-    public ResponseEntity<?> criar(@RequestBody Restaurante restaurante, UriComponentsBuilder uriComponentsBuilder) {
+    public ResponseEntity<?> criar(@RequestBody @Valid Restaurante restaurante,
+                                   UriComponentsBuilder uriComponentsBuilder) {
 
         restaurante = this.restauranteService.criar(restaurante);
 
@@ -37,7 +40,7 @@ public class RestauranteController {
 
     @PutMapping(path = "/{restauranteId}")
     public ResponseEntity<?> atualizar(@PathVariable(name = "restauranteId") Long restauranteId,
-                                       @RequestBody Restaurante restauranteAtual) {
+                       @RequestBody @Valid Restaurante restauranteAtual) {
 
         restauranteAtual = this.restauranteService.atualizar(restauranteId, restauranteAtual);
 

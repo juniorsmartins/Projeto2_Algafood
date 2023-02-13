@@ -8,9 +8,15 @@
 
 package io.algafoodapi.domain.model;
 
+import io.algafoodapi.api.controller.GruposValid;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.groups.ConvertGroup;
+import javax.validation.groups.Default;
 import java.io.Serializable;
 
 @Entity
@@ -32,9 +38,13 @@ public final class Cidade implements Serializable {
     @Column(name = "id")
     private Long id;
 
+    @NotBlank
     @Column(name = "nome", length = 100, unique = true, nullable = false)
     private String nome;
 
+    @Valid
+    @ConvertGroup(from = Default.class, to = GruposValid.EstadoId.class)
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "estado_id", referencedColumnName = "id", nullable = false)
     private Estado estado;

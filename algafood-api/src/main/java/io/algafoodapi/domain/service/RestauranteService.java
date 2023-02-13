@@ -114,10 +114,6 @@ public class RestauranteService {
 
     public Restaurante consultarPorId(Long id) {
 
-        if (true) {
-            throw new IllegalArgumentException("Teste");
-        }
-
         return this.restauranteRepository.findById(id)
                 .orElseThrow(() -> new RestauranteNaoEncontradoException(id));
     }
