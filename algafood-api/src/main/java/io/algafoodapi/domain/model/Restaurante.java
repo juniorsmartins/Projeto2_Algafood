@@ -1,6 +1,7 @@
 package io.algafoodapi.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.algafoodapi.api.controller.GruposValid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,6 +27,8 @@ import javax.persistence.JoinTable;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.groups.ConvertGroup;
+import javax.validation.groups.Default;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -68,14 +71,14 @@ public final class Restaurante implements Serializable {
     @Column(name = "data_atualizacao")
     private LocalDateTime dataAtualizacao;
 
-//    @JsonIgnoreProperties("hibernateLazyInitializer")
-//    @JsonIgnore
-    @NotNull
     @Valid
+    @ConvertGroup(from = Default.class, to = GruposValid.CozinhaId.class)
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cozinha_id", referencedColumnName = "id", nullable = false)
     private Cozinha cozinha;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "restaurante", fetch = FetchType.LAZY)
     private List<Produto> produtos = new ArrayList<>();
 
@@ -86,6 +89,7 @@ public final class Restaurante implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "forma_pagamento_id"))
     private List<FormaPagamento> formasPagamento = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "restaurante", fetch = FetchType.LAZY)
     private List<Pedido> pedidos = new ArrayList<>();
 
