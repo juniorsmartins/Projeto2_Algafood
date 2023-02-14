@@ -1,7 +1,7 @@
 package io.algafoodapi.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.algafoodapi.api.controller.GruposValid;
+import io.algafoodapi.domain.core.validation.GruposValid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,6 +27,7 @@ import javax.persistence.JoinTable;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 import javax.validation.groups.ConvertGroup;
 import javax.validation.groups.Default;
 import java.io.Serializable;
@@ -58,6 +59,7 @@ public final class Restaurante implements Serializable {
     @Column(name = "nome", length = 100, nullable = false)
     private String nome;
 
+    @PositiveOrZero(message = "{TaxaFrete.invalida}")
     @Column(name = "taxa_frete", columnDefinition = "decimal(10.2) default 0.00", nullable = false)
     private BigDecimal taxaFrete = BigDecimal.ZERO;
 

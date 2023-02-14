@@ -8,7 +8,7 @@
 
 package io.algafoodapi.domain.model;
 
-import io.algafoodapi.api.controller.GruposValid;
+import io.algafoodapi.domain.core.validation.GruposValid;
 import lombok.*;
 
 import javax.persistence.*;
