@@ -34,7 +34,7 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
         var tipoDeErroEnum = TipoDeErroEnum.ENTIDADE_NAO_ENCONTRADA;
         var detalhe = naoEncontradaException.getMessage();
 
-        var mensagemDeErro = this.criarMensagemDeErrorBuilderPadrao(httpStatus, tipoDeErroEnum, detalhe).build();
+        var mensagemDeErro = this.criarMensagemDeErrorBuilder(httpStatus, tipoDeErroEnum, detalhe).build();
 
         return this.handleExceptionInternal(naoEncontradaException, mensagemDeErro, new HttpHeaders(),
                 httpStatus, request);
@@ -47,7 +47,7 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
         var tipoDeErroEnum = TipoDeErroEnum.ENTIDADE_EM_USO;
         var detalhe = emUsoException.getMessage();
 
-        var mensagemDeErro = this.criarMensagemDeErrorBuilderPadrao(httpStatus, tipoDeErroEnum, detalhe).build();
+        var mensagemDeErro = this.criarMensagemDeErrorBuilder(httpStatus, tipoDeErroEnum, detalhe).build();
 
         return this.handleExceptionInternal(emUsoException, mensagemDeErro, new HttpHeaders(),
                 httpStatus, request);
@@ -61,7 +61,7 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
         var tipoDeErroEnum = TipoDeErroEnum.REQUISICAO_MAL_FORMULADA;
         var detalhe = malFormuladaException.getMessage();
 
-        var mensagemDeErro = this.criarMensagemDeErrorBuilderPadrao(httpStatus, tipoDeErroEnum, detalhe).build();
+        var mensagemDeErro = this.criarMensagemDeErrorBuilder(httpStatus, tipoDeErroEnum, detalhe).build();
 
         return this.handleExceptionInternal(malFormuladaException, mensagemDeErro, new HttpHeaders(),
                 httpStatus, request);
@@ -82,9 +82,44 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
         // para você durante, especialmente na fase de desenvolvimento
         ex.printStackTrace();
 
-        var mensagemDeErro = this.criarMensagemDeErrorBuilderPadrao(status, tipoDeErroEnum, detail).build();
+        var mensagemDeErro = this.criarMensagemDeErrorBuilder(status, tipoDeErroEnum, detail).build();
 
         return handleExceptionInternal(ex, mensagemDeErro, new HttpHeaders(), status, request);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException notReadableException,
+                                                                  HttpHeaders headers, HttpStatus status,
+                                                                  WebRequest request) {
+        var tipoDeErroEnum = TipoDeErroEnum.REQUISICAO_MAL_FORMULADA;
+        var detalhe = "O corpo da requisição está inválido. Verifique erro de sintaxe.";
+
+        var mensagemDeErro = this.criarMensagemDeErrorBuilder(status, tipoDeErroEnum, detalhe).build();
+
+        return this.handleExceptionInternal(notReadableException, mensagemDeErro, new HttpHeaders(),
+                status, request);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException argumentNotValid,
+                                                                  HttpHeaders headers, HttpStatus status,
+                                                                  WebRequest request) {
+        var tipoDeErroEnum = TipoDeErroEnum.DADOS_INVALIDOS;
+        List<MensagemDeErro> errosDeValidacao = new ArrayList<>();
+        List<FieldError> fieldErrors = argumentNotValid.getBindingResult().getFieldErrors();
+
+        fieldErrors.forEach(erro -> {
+            var mensagem = mensagemInternacionalizada.getMessage(erro, LocaleContextHolder.getLocale());
+            var erroPersonalizado = this.criarMensagemDeErrorBuilder(status, tipoDeErroEnum, mensagem)
+                    .statusHttp(status.name())
+                    .anotacaoViolada(erro.getCode())
+                    .campoDeErro(erro.getField())
+                    .build();
+            errosDeValidacao.add(erroPersonalizado);
+        });
+
+        return this.handleExceptionInternal(argumentNotValid, errosDeValidacao, new HttpHeaders(),
+                status, request);
     }
 
     @Override
@@ -108,44 +143,9 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
         return super.handleExceptionInternal(ex, body, headers, status, request);
     }
 
-    @Override
-    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException notReadableException,
-                                                                  HttpHeaders headers, HttpStatus status,
-                                                                  WebRequest request) {
-        var tipoDeErroEnum = TipoDeErroEnum.REQUISICAO_MAL_FORMULADA;
-        var detalhe = "O corpo da requisição está inválido. Verifique erro de sintaxe.";
-
-        var mensagemDeErro = this.criarMensagemDeErrorBuilderPadrao(status, tipoDeErroEnum, detalhe).build();
-
-        return this.handleExceptionInternal(notReadableException, mensagemDeErro, new HttpHeaders(),
-                status, request);
-    }
-
-    @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException argumentNotValid,
-                                                                  HttpHeaders headers, HttpStatus status,
-                                                                  WebRequest request) {
-        var tipoDeErroEnum = TipoDeErroEnum.DADOS_INVALIDOS;
-        List<MensagemDeErro> errosDeValidacao = new ArrayList<>();
-        List<FieldError> fieldErrors = argumentNotValid.getBindingResult().getFieldErrors();
-
-        fieldErrors.forEach(erro -> {
-            var mensagem = mensagemInternacionalizada.getMessage(erro, LocaleContextHolder.getLocale());
-            var erroPersonalizado = this.criarMensagemDeErrorBuilderPadrao(status, tipoDeErroEnum, mensagem)
-                    .statusHttp(status.name())
-                    .anotacaoViolada(erro.getCode())
-                    .campoDeErro(erro.getField())
-                    .build();
-            errosDeValidacao.add(erroPersonalizado);
-        });
-
-        return this.handleExceptionInternal(argumentNotValid, errosDeValidacao, new HttpHeaders(),
-                status, request);
-    }
-
-    private MensagemDeErro.MensagemDeErroBuilder criarMensagemDeErrorBuilderPadrao(HttpStatus httpStatus,
-                                                                                   TipoDeErroEnum tipoDeErroEnum,
-                                                                                   String details) {
+    private MensagemDeErro.MensagemDeErroBuilder criarMensagemDeErrorBuilder(HttpStatus httpStatus,
+                                                                             TipoDeErroEnum tipoDeErroEnum,
+                                                                             String details) {
         return MensagemDeErro.builder()
                 .codigoHttp(httpStatus.value())
                 .esclarecimento(tipoDeErroEnum.getCaminho())
