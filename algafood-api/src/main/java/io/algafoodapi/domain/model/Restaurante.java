@@ -1,6 +1,7 @@
 package io.algafoodapi.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.algafoodapi.domain.core.validation.FreteGratisObrigaDescricaoNoNomeAnotation;
 import io.algafoodapi.domain.core.validation.GruposValid;
 import io.algafoodapi.domain.core.validation.MultiploAnotation;
 import io.algafoodapi.domain.core.validation.TaxaFreteAnotation;
@@ -47,6 +48,7 @@ import java.util.List;
 @Setter
 @ToString
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@FreteGratisObrigaDescricaoNoNomeAnotation(valorField = "taxaFrete", descricaoField = "nome", descricaoObrigatoria = "Frete Grátis")
 public final class Restaurante implements Serializable {
 
     private static final long serialVersionUID = 1L;
