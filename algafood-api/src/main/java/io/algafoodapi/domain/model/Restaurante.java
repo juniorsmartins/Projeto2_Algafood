@@ -2,7 +2,8 @@ package io.algafoodapi.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.algafoodapi.domain.core.validation.GruposValid;
-import io.algafoodapi.domain.core.validation.TaxaFrete;
+import io.algafoodapi.domain.core.validation.MultiploAnotation;
+import io.algafoodapi.domain.core.validation.TaxaFreteAnotation;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -60,7 +61,8 @@ public final class Restaurante implements Serializable {
     @Column(name = "nome", length = 100, nullable = false)
     private String nome;
 
-    @TaxaFrete
+    @TaxaFreteAnotation
+    @MultiploAnotation(numero = 5)
 //    @PositiveOrZero(message = "{TaxaFrete.invalida}")
     @Column(name = "taxa_frete", columnDefinition = "decimal(10.2) default 0.00", nullable = false)
     private BigDecimal taxaFrete = BigDecimal.ZERO;

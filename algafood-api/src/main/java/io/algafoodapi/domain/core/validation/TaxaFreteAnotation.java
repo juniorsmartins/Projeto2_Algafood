@@ -15,13 +15,13 @@ import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.ElementType.TYPE_USE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-@Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
-@Retention(RUNTIME)
+@Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE}) // Locais onde a anotação pode ser usada
+@Retention(RUNTIME) // Para que o Bean Validation consiga encontrar a anotação em tempo de execução
 @Constraint(validatedBy = {})
 @PositiveOrZero
-public @interface TaxaFrete {
+public @interface TaxaFreteAnotation {
 
-    @OverridesAttribute(constraint = PositiveOrZero.class, name = "message")
+    @OverridesAttribute(constraint = PositiveOrZero.class, name = "message") // Para sobrepor a mensagem do PositiveOrZero
     String message() default "{TaxaFrete.invalida}";
 
     Class<?>[] groups() default {};
