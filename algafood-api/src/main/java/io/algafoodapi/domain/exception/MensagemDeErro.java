@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 @Getter
@@ -15,11 +16,19 @@ public final class MensagemDeErro {
 
     private Integer codigoHttp; // Código Http (Integer)
     private String statusHttp; // Nome Http (String)
-    private String anotacaoViolada; // Nome da anotação violada do Bean Validation
-    private String campoDeErro; // Nome do campo em que a anotação foi violada
-    private String titulo; // Descrição do problema para humanos
+    private String tipoDeErro; // Tipo do problema
     private String detalhe; // Descrição detalhada e específica sobre a ocorrência do erro
-    private String esclarecimento; // URI para especificar o tipo do problema
+    private String linkParaMaisEsclarecer; // URI para especificar o tipo do problema
     private LocalDateTime dataHora;
+    private List<Erro> erros;
+
+    @Builder
+    @Getter
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class Erro {
+        private String anotacaoViolada; // Nome da anotação violada do Bean Validation
+        private String localDeErro; // Nome do campo em que a anotação foi violada
+        private String explicacao;
+    }
 }
 

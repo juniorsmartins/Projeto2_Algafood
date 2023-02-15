@@ -1,4 +1,4 @@
-package io.algafoodapi.api.controller;
+package io.algafoodapi.domain.core.validation;
 
 public interface GruposValid {
 

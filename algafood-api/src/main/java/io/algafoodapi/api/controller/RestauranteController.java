@@ -1,15 +1,21 @@
 package io.algafoodapi.api.controller;
 
 import io.algafoodapi.domain.exception.http404.EntidadeNaoEncontradaException;
-import io.algafoodapi.domain.exception.http400.RequisicaoMalFormuladaException;
 import io.algafoodapi.domain.model.Restaurante;
 import io.algafoodapi.domain.service.RestauranteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
@@ -53,22 +59,13 @@ public class RestauranteController {
     public ResponseEntity<?> atualizarParcial(@PathVariable(name = "restauranteId") Long restauranteId,
                                               @RequestBody Map<String, Object> campos,
                                               HttpServletRequest request) {
-        try {
-            var restaurante = this.restauranteService.atualizarParcial(restauranteId, campos, request);
+
+            var restaurante = this.restauranteService.atualizarParcial(
+                    restauranteId, campos, request);
+
             return ResponseEntity
                     .ok()
                     .body(restaurante);
-
-        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(naoEncontradaException.getMessage());
-
-        } catch (RequisicaoMalFormuladaException malFormuladaException) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(malFormuladaException.getMessage());
-        }
     }
 
     @DeleteMapping(path = "/{restauranteId}")

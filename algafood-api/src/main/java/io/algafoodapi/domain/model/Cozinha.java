@@ -3,7 +3,7 @@ package io.algafoodapi.domain.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
-import io.algafoodapi.api.controller.GruposValid;
+import io.algafoodapi.domain.core.validation.GruposValid;
 import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
