@@ -20,12 +20,12 @@ public final class MensagemDeErro {
     private String detalhe; // Descrição detalhada e específica sobre a ocorrência do erro
     private String linkParaMaisEsclarecer; // URI para especificar o tipo do problema
     private LocalDateTime dataHora;
-    private List<Erros> erros;
+    private List<Erro> erros;
 
     @Builder
     @Getter
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class Erros {
+    public static class Erro {
         private String anotacaoViolada; // Nome da anotação violada do Bean Validation
         private String localDeErro; // Nome do campo em que a anotação foi violada
         private String explicacao;

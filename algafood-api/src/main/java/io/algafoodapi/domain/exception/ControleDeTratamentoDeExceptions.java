@@ -68,47 +68,6 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
                 httpStatus, request);
     }
 
-    @ExceptionHandler(ValidacaoException.class)
-    public ResponseEntity<Object> tratarValidacaoException(ValidacaoException validacaoException, WebRequest request) {
-
-        var httpStatus = HttpStatus.BAD_REQUEST;
-        var tipoDeErroEnum = TipoDeErroEnum.DADOS_INVALIDOS;
-        var detalhe = "A requisição contém um ou mais dados inválidos. Preencha corretamente e tente novamente.";
-        var bindingResult = validacaoException.getBindingResult();
-
-        var erros = this.capturarListaDeErros(bindingResult);
-
-        var mensagemDeErro = this.criarMensagemDeErrorBuilder(httpStatus, tipoDeErroEnum, detalhe)
-                .erros(erros)
-                .build();
-
-        return this.handleExceptionInternal(validacaoException, mensagemDeErro, new HttpHeaders(),
-                httpStatus, request);
-    }
-
-    private List<MensagemDeErro.Erros> capturarListaDeErros(BindingResult bindingResult) {
-
-        List<MensagemDeErro.Erros> erros = bindingResult.getAllErrors().stream()
-                .map(error -> {
-                    var mensagem = mensagemInternacionalizada.getMessage(error, LocaleContextHolder.getLocale());
-
-                    String name = error.getObjectName();
-                    if (error instanceof FieldError) {
-                        name = ((FieldError) error).getField();
-                    }
-
-                    return MensagemDeErro.Erros.builder()
-                            .anotacaoViolada(error.getCode())
-                            .localDeErro(name)
-                            .explicacao(mensagem)
-                            .build();
-
-                })
-                .toList();
-
-        return erros;
-    }
-
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleUncaught(Exception ex, WebRequest request) {
 
@@ -129,6 +88,23 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
         return handleExceptionInternal(ex, mensagemDeErro, new HttpHeaders(), status, request);
     }
 
+    @ExceptionHandler(ValidacaoException.class)
+    public ResponseEntity<Object> tratarValidacaoException(ValidacaoException validacaoException, WebRequest request) {
+
+        return this.construirResponseComMensagemDeErros(validacaoException, validacaoException.getBindingResult(),
+                new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException argumentNotValid,
+                                                                  HttpHeaders headers,
+                                                                  HttpStatus status,
+                                                                  WebRequest request) {
+
+        return this.construirResponseComMensagemDeErros(argumentNotValid, argumentNotValid.getBindingResult(),
+                new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException notReadableException,
                                                                   HttpHeaders headers, HttpStatus status,
@@ -139,41 +115,6 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
         var mensagemDeErro = this.criarMensagemDeErrorBuilder(status, tipoDeErroEnum, detalhe).build();
 
         return this.handleExceptionInternal(notReadableException, mensagemDeErro, new HttpHeaders(),
-                status, request);
-    }
-
-    @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException argumentNotValid,
-                                                                  HttpHeaders headers, HttpStatus status, WebRequest request) {
-
-        var tipoDeErroEnum = TipoDeErroEnum.DADOS_INVALIDOS;
-        var detalhe = "A requisição contém um ou mais dados inválidos. Preencha corretamente e tente novamente.";
-        var bindingResult = argumentNotValid.getBindingResult();
-
-        var erros = this.capturarListaDeErros(bindingResult);
-//        List<MensagemDeErro.Erros> mensagensDeErro = bindingResult.getAllErrors().stream()
-//                .map(error -> {
-//                    var mensagem = mensagemInternacionalizada.getMessage(error, LocaleContextHolder.getLocale());
-//
-//                    String name = error.getObjectName();
-//                    if (error instanceof FieldError) {
-//                        name = ((FieldError) error).getField();
-//                    }
-//
-//                    return MensagemDeErro.Erros.builder()
-//                            .anotacaoViolada(error.getCode())
-//                            .localDeErro(name)
-//                            .explicacao(mensagem)
-//                            .build();
-//
-//                })
-//                .collect(Collectors.toList());
-
-        var corpoDeErros = this.criarMensagemDeErrorBuilder(status, tipoDeErroEnum, detalhe)
-                .erros(erros)
-                .build();
-
-        return this.handleExceptionInternal(argumentNotValid, corpoDeErros, new HttpHeaders(),
                 status, request);
     }
 
@@ -196,6 +137,40 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
         }
 
         return super.handleExceptionInternal(ex, body, headers, status, request);
+    }
+
+    private ResponseEntity<Object> construirResponseComMensagemDeErros(Exception exception,
+                                                                       BindingResult bindingResult,
+                                                                       HttpHeaders headers,
+                                                                       HttpStatus status,
+                                                                       WebRequest request) {
+
+        var tipoDeErroEnum = TipoDeErroEnum.DADOS_INVALIDOS;
+        var detalhe = "A requisição contém um ou mais dados inválidos. Preencha corretamente e tente novamente.";
+
+        List<MensagemDeErro.Erro> erros = bindingResult.getAllErrors().stream()
+                .map(error -> {
+                    var mensagem = mensagemInternacionalizada.getMessage(error, LocaleContextHolder.getLocale());
+
+                    var name = error.getObjectName();
+
+                    if (error instanceof FieldError) {
+                        name = ((FieldError) error).getField();
+                    }
+
+                    return MensagemDeErro.Erro.builder()
+                            .anotacaoViolada(error.getCode())
+                            .localDeErro(name)
+                            .explicacao(mensagem)
+                            .build();
+                })
+                .toList();
+
+        var problema = this.criarMensagemDeErrorBuilder(status, tipoDeErroEnum, detalhe)
+                .erros(erros)
+                .build();
+
+        return handleExceptionInternal(exception, problema, headers, status, request);
     }
 
     private MensagemDeErro.MensagemDeErroBuilder criarMensagemDeErrorBuilder(HttpStatus httpStatus,
