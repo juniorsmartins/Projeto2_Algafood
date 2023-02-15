@@ -2,8 +2,9 @@ package io.algafoodapi.domain.service;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.algafoodapi.domain.exception.http404.CozinhaNaoEncontradaException;
+import io.algafoodapi.domain.core.validation.ValidacaoException;
 import io.algafoodapi.domain.exception.http400.RequisicaoMalFormuladaException;
+import io.algafoodapi.domain.exception.http404.CozinhaNaoEncontradaException;
 import io.algafoodapi.domain.exception.http404.RestauranteNaoEncontradoException;
 import io.algafoodapi.domain.exception.http409.RestauranteEmUsoException;
 import io.algafoodapi.domain.model.Restaurante;
@@ -16,6 +17,8 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.SmartValidator;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Field;
@@ -33,9 +36,12 @@ public class RestauranteService {
 
     private final CozinhaService cozinhaService;
 
-    public RestauranteService(RestauranteRepository restauranteRepository, CozinhaService cozinhaService) {
+    private final SmartValidator smartValidator;
+
+    public RestauranteService(RestauranteRepository restauranteRepository, CozinhaService cozinhaService, SmartValidator smartValidator) {
         this.restauranteRepository = restauranteRepository;
         this.cozinhaService = cozinhaService;
+        this.smartValidator = smartValidator;
     }
 
     public Restaurante criar(Restaurante restaurante) {
@@ -75,6 +81,8 @@ public class RestauranteService {
 
         this.merge(dadosOrigem, restauranteDoDatabase, request);
 
+        this.validarValoresAtualizadosDeRestaurante(restauranteDoDatabase, "restaurante");
+
         return this.atualizar(id, restauranteDoDatabase);
     }
 
@@ -96,19 +104,6 @@ public class RestauranteService {
         } catch (IllegalArgumentException illegalArgumentException) {
             Throwable causaRaiz = ExceptionUtils.getRootCause(illegalArgumentException);
             throw new HttpMessageNotReadableException(illegalArgumentException.getMessage(), causaRaiz, serverHttpRequest);
-        }
-    }
-
-    public void excluirPorId(Long id) {
-
-        try {
-            this.restauranteRepository.deleteById(id);
-
-        } catch (EmptyResultDataAccessException dataAccessException) {
-            throw new RestauranteNaoEncontradoException(id);
-
-        } catch (DataIntegrityViolationException dataIntegrityViolationException) {
-            throw new RestauranteEmUsoException(id);
         }
     }
 
@@ -155,6 +150,29 @@ public class RestauranteService {
             throw new RestauranteNaoEncontradoException(NÃO_EXISTEM_RESTAURANTES);
 
         return restaurantes;
+    }
+
+    private void validarValoresAtualizadosDeRestaurante(Restaurante restaurante, String nomeDoObjeto) {
+        var beanPropertyBindingResult = new BeanPropertyBindingResult(restaurante, nomeDoObjeto);
+
+        smartValidator.validate(restaurante, beanPropertyBindingResult);
+
+        if (beanPropertyBindingResult.hasErrors()) { // O BeanPropertyBindingResult armazena os erros, em caso de existirem. Pois isso verificamos se existem.
+            throw new ValidacaoException(beanPropertyBindingResult);
+        }
+    }
+
+    public void excluirPorId(Long id) {
+
+        try {
+            this.restauranteRepository.deleteById(id);
+
+        } catch (EmptyResultDataAccessException dataAccessException) {
+            throw new RestauranteNaoEncontradoException(id);
+
+        } catch (DataIntegrityViolationException dataIntegrityViolationException) {
+            throw new RestauranteEmUsoException(id);
+        }
     }
 }
 

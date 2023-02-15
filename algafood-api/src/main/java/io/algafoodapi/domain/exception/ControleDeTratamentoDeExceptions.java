@@ -1,5 +1,6 @@
 package io.algafoodapi.domain.exception;
 
+import io.algafoodapi.domain.core.validation.ValidacaoException;
 import io.algafoodapi.domain.exception.http400.RequisicaoMalFormuladaException;
 import io.algafoodapi.domain.exception.http404.EntidadeNaoEncontradaException;
 import io.algafoodapi.domain.exception.http409.EntidadeEmUsoException;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -19,7 +21,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public final class ControleDeTratamentoDeExceptions extends ResponseEntityExceptionHandler {
@@ -67,6 +68,47 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
                 httpStatus, request);
     }
 
+    @ExceptionHandler(ValidacaoException.class)
+    public ResponseEntity<Object> tratarValidacaoException(ValidacaoException validacaoException, WebRequest request) {
+
+        var httpStatus = HttpStatus.BAD_REQUEST;
+        var tipoDeErroEnum = TipoDeErroEnum.DADOS_INVALIDOS;
+        var detalhe = "A requisição contém um ou mais dados inválidos. Preencha corretamente e tente novamente.";
+        var bindingResult = validacaoException.getBindingResult();
+
+        var erros = this.capturarListaDeErros(bindingResult);
+
+        var mensagemDeErro = this.criarMensagemDeErrorBuilder(httpStatus, tipoDeErroEnum, detalhe)
+                .erros(erros)
+                .build();
+
+        return this.handleExceptionInternal(validacaoException, mensagemDeErro, new HttpHeaders(),
+                httpStatus, request);
+    }
+
+    private List<MensagemDeErro.Erros> capturarListaDeErros(BindingResult bindingResult) {
+
+        List<MensagemDeErro.Erros> erros = bindingResult.getAllErrors().stream()
+                .map(error -> {
+                    var mensagem = mensagemInternacionalizada.getMessage(error, LocaleContextHolder.getLocale());
+
+                    String name = error.getObjectName();
+                    if (error instanceof FieldError) {
+                        name = ((FieldError) error).getField();
+                    }
+
+                    return MensagemDeErro.Erros.builder()
+                            .anotacaoViolada(error.getCode())
+                            .localDeErro(name)
+                            .explicacao(mensagem)
+                            .build();
+
+                })
+                .toList();
+
+        return erros;
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleUncaught(Exception ex, WebRequest request) {
 
@@ -108,26 +150,28 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
         var detalhe = "A requisição contém um ou mais dados inválidos. Preencha corretamente e tente novamente.";
         var bindingResult = argumentNotValid.getBindingResult();
 
-        List<MensagemDeErro.Erros> mensagensDeErro = bindingResult.getAllErrors().stream()
-                .map(error -> {
-                    var mensagem = mensagemInternacionalizada.getMessage(error, LocaleContextHolder.getLocale());
-
-                    String name = error.getObjectName();
-                    if (error instanceof FieldError) {
-                        name = ((FieldError) error).getField();
-                    }
-
-                    return MensagemDeErro.Erros.builder()
-                            .anotacaoViolada(error.getCode())
-                            .localDeErro(name)
-                            .explicacao(mensagem)
-                            .build();
-
-                })
-                .collect(Collectors.toList());
+        var erros = this.capturarListaDeErros(bindingResult);
+//        List<MensagemDeErro.Erros> mensagensDeErro = bindingResult.getAllErrors().stream()
+//                .map(error -> {
+//                    var mensagem = mensagemInternacionalizada.getMessage(error, LocaleContextHolder.getLocale());
+//
+//                    String name = error.getObjectName();
+//                    if (error instanceof FieldError) {
+//                        name = ((FieldError) error).getField();
+//                    }
+//
+//                    return MensagemDeErro.Erros.builder()
+//                            .anotacaoViolada(error.getCode())
+//                            .localDeErro(name)
+//                            .explicacao(mensagem)
+//                            .build();
+//
+//                })
+//                .collect(Collectors.toList());
 
         var corpoDeErros = this.criarMensagemDeErrorBuilder(status, tipoDeErroEnum, detalhe)
-                .erros(mensagensDeErro).build();
+                .erros(erros)
+                .build();
 
         return this.handleExceptionInternal(argumentNotValid, corpoDeErros, new HttpHeaders(),
                 status, request);
