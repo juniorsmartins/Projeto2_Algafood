@@ -18,8 +18,8 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public final class ControleDeTratamentoDeExceptions extends ResponseEntityExceptionHandler {
@@ -102,23 +102,34 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException argumentNotValid,
-                                                                  HttpHeaders headers, HttpStatus status,
-                                                                  WebRequest request) {
+                                                                  HttpHeaders headers, HttpStatus status, WebRequest request) {
+
         var tipoDeErroEnum = TipoDeErroEnum.DADOS_INVALIDOS;
-        List<MensagemDeErro> errosDeValidacao = new ArrayList<>();
-        List<FieldError> fieldErrors = argumentNotValid.getBindingResult().getFieldErrors();
+        var detalhe = "A requisição contém um ou mais dados inválidos. Preencha corretamente e tente novamente.";
+        var bindingResult = argumentNotValid.getBindingResult();
 
-        fieldErrors.forEach(erro -> {
-            var mensagem = mensagemInternacionalizada.getMessage(erro, LocaleContextHolder.getLocale());
-            var erroPersonalizado = this.criarMensagemDeErrorBuilder(status, tipoDeErroEnum, mensagem)
-                    .statusHttp(status.name())
-                    .anotacaoViolada(erro.getCode())
-                    .campoDeErro(erro.getField())
-                    .build();
-            errosDeValidacao.add(erroPersonalizado);
-        });
+        List<MensagemDeErro.Erros> mensagensDeErro = bindingResult.getAllErrors().stream()
+                .map(error -> {
+                    var mensagem = mensagemInternacionalizada.getMessage(error, LocaleContextHolder.getLocale());
 
-        return this.handleExceptionInternal(argumentNotValid, errosDeValidacao, new HttpHeaders(),
+                    String name = error.getObjectName();
+                    if (error instanceof FieldError) {
+                        name = ((FieldError) error).getField();
+                    }
+
+                    return MensagemDeErro.Erros.builder()
+                            .anotacaoViolada(error.getCode())
+                            .localDeErro(name)
+                            .explicacao(mensagem)
+                            .build();
+
+                })
+                .collect(Collectors.toList());
+
+        var corpoDeErros = this.criarMensagemDeErrorBuilder(status, tipoDeErroEnum, detalhe)
+                .erros(mensagensDeErro).build();
+
+        return this.handleExceptionInternal(argumentNotValid, corpoDeErros, new HttpHeaders(),
                 status, request);
     }
 
@@ -128,14 +139,14 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
         if (body == null) {
             body = MensagemDeErro.builder()
                     .codigoHttp(status.value())
-                    .titulo(status.getReasonPhrase()) // Devolve uma descrição sobre o status retornado na resposta
+                    .tipoDeErro(status.getReasonPhrase()) // Devolve uma descrição sobre o status retornado na resposta
                     .dataHora(LocalDateTime.now())
                     .build();
 
         } else if (body instanceof String) {
             body = MensagemDeErro.builder()
                     .codigoHttp(status.value())
-                    .titulo(body.toString())
+                    .tipoDeErro(body.toString())
                     .dataHora(LocalDateTime.now())
                     .build();
         }
@@ -148,8 +159,9 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
                                                                              String details) {
         return MensagemDeErro.builder()
                 .codigoHttp(httpStatus.value())
-                .esclarecimento(tipoDeErroEnum.getCaminho())
-                .titulo(tipoDeErroEnum.getTitulo())
+                .statusHttp(httpStatus.name())
+                .linkParaMaisEsclarecer(tipoDeErroEnum.getCaminho())
+                .tipoDeErro(tipoDeErroEnum.getTitulo())
                 .detalhe(details)
                 .dataHora(LocalDateTime.now());
     }

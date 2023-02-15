@@ -13,14 +13,16 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Constraint(validatedBy = { FreteGratisObrigaDescricaoNoNomeValidator.class })
 public @interface FreteGratisObrigaDescricaoNoNomeAnotation {
 
-    String message() default "descrição obrigatória inválida.";
+    String message() default "Taxa frete grátis requer descrição (Frete Grátis) obrigatória no nome. Esta descrição está ausente.";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
 
-    String valorField();
-    String descricaoField();
+    String valorTaxaFrete();
+
+    String descricaoNome();
+
     String descricaoObrigatoria();
 }
 

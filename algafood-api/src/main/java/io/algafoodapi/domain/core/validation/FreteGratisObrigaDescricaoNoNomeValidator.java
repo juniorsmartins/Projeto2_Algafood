@@ -1,5 +1,6 @@
 package io.algafoodapi.domain.core.validation;
 
+import io.algafoodapi.domain.model.Restaurante;
 import org.springframework.beans.BeanUtils;
 
 import javax.validation.ConstraintValidator;
@@ -7,42 +8,39 @@ import javax.validation.ConstraintValidatorContext;
 import javax.validation.ValidationException;
 import java.math.BigDecimal;
 
-public final class FreteGratisObrigaDescricaoNoNomeValidator implements ConstraintValidator<FreteGratisObrigaDescricaoNoNomeAnotation, Object> {
+public final class FreteGratisObrigaDescricaoNoNomeValidator implements ConstraintValidator<FreteGratisObrigaDescricaoNoNomeAnotation, Restaurante> {
 
-    private String valorField;
-    private String descricaoField;
+    private String valorTaxaFrete;
+    private String descricaoNome;
     private String descricaoObrigatoria;
 
     @Override
     public void initialize(final FreteGratisObrigaDescricaoNoNomeAnotation constraintAnnotation) {
-        this.valorField = constraintAnnotation.valorField();
-        this.descricaoField = constraintAnnotation.descricaoField();
+        this.valorTaxaFrete = constraintAnnotation.valorTaxaFrete();
+        this.descricaoNome = constraintAnnotation.descricaoNome();
         this.descricaoObrigatoria = constraintAnnotation.descricaoObrigatoria();
     }
 
     @Override
-    public boolean isValid(final Object objetoParaValidacao, final ConstraintValidatorContext constraintValidatorContext) {
+    public boolean isValid(final Restaurante restaurante, final ConstraintValidatorContext constraintValidatorContext) {
+        var isValido = true;
 
         try {
-            var valor = (BigDecimal) BeanUtils.getPropertyDescriptor(objetoParaValidacao.getClass(), valorField)
-                    .getReadMethod().invoke(objetoParaValidacao);
+            var valorDoFrete = (BigDecimal) BeanUtils.getPropertyDescriptor(restaurante.getClass(), valorTaxaFrete)
+                    .getReadMethod().invoke(restaurante);
 
-            if (valor == null) {
-                return false;
-            }
+            var descricao = (String) BeanUtils.getPropertyDescriptor(restaurante.getClass(), descricaoNome)
+                    .getReadMethod().invoke(restaurante);
 
-            var descricao = (String) BeanUtils.getPropertyDescriptor(objetoParaValidacao.getClass(), descricaoField)
-                    .getReadMethod().invoke(objetoParaValidacao);
-
-            if (BigDecimal.ZERO.compareTo(valor) == 0 && descricao != null) {
-                return descricao.toLowerCase().contains(this.descricaoObrigatoria.toLowerCase());
+            if (valorDoFrete != null && BigDecimal.ZERO.compareTo(valorDoFrete) == 0 && descricao != null) {
+                isValido = descricao.toLowerCase().contains(this.descricaoObrigatoria.toLowerCase());
             }
 
         } catch (Exception e) {
             throw new ValidationException(e);
         }
 
-        return false;
+        return isValido;
     }
 }
 
