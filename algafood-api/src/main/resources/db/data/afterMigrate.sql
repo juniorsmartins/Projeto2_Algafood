@@ -10,10 +10,9 @@ alter table estados enable trigger all;
 alter table cidades enable trigger all;
 alter table cozinhas enable trigger all;
 
-alter sequence estados_id_seq restart with 1;
-alter sequence cidades_id_seq restart with 1;
-alter sequence cozinhas_id_seq restart with 1;
-
+alter sequence estados_id_seq restart with 10;
+alter sequence cidades_id_seq restart with 10;
+alter sequence cozinhas_id_seq restart with 10;
 
 INSERT INTO estados(id, nome) VALUES
     (1, 'Rio Grande do Sul'),

@@ -1,8 +1,7 @@
 package io.algafoodapi.domain.service;
 
+import io.algafoodapi.domain.core.Constantes;
 import io.algafoodapi.domain.exception.http404.CozinhaNaoEncontradaException;
-import io.algafoodapi.domain.exception.http404.EntidadeNaoEncontradaException;
-import io.algafoodapi.domain.exception.http400.RequisicaoMalFormuladaException;
 import io.algafoodapi.domain.exception.http409.CozinhaEmUsoException;
 import io.algafoodapi.domain.model.Cozinha;
 import io.algafoodapi.domain.repository.CozinhaRepository;
@@ -17,9 +16,6 @@ import java.util.List;
 
 @Service
 public class CozinhaService {
-
-    public static final String NÃO_ENCONTRADA_COZINHA_COM_NOME = "Não encontrada cozinha com nome %s.";
-    public static final String NAO_EXISTEM_COZINHAS_CADASTRADAS = "Não existem cozinhas cadastradas.";
 
     @Autowired
     private CozinhaRepository cozinhaRepository;
@@ -63,7 +59,7 @@ public class CozinhaService {
                 .toList();
 
         if (cozinhas.isEmpty())
-            throw new CozinhaNaoEncontradaException(String.format(NÃO_ENCONTRADA_COZINHA_COM_NOME, nome));
+            throw new CozinhaNaoEncontradaException(String.format(Constantes.NÃO_ENCONTRADA_COZINHA_COM_NOME, nome));
 
         return cozinhas;
     }
@@ -76,7 +72,7 @@ public class CozinhaService {
                 .toList();
 
         if(cozinhas.isEmpty())
-            throw new CozinhaNaoEncontradaException(String.format(NAO_EXISTEM_COZINHAS_CADASTRADAS));
+            throw new CozinhaNaoEncontradaException(Constantes.NAO_EXISTEM_COZINHAS_CADASTRADAS);
 
         return cozinhas;
     }
