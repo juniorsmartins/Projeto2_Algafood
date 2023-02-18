@@ -2,6 +2,7 @@ package io.algafoodapi;
 
 import io.algafoodapi.domain.model.Cozinha;
 import io.algafoodapi.domain.repository.CozinhaRepository;
+import io.algafoodapi.util.CriadorDeJsons;
 import io.algafoodapi.util.DatabaseCleaner;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -13,6 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestPropertySource;
+
+import java.util.Random;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource({"/application-test.properties"})
@@ -28,6 +31,10 @@ class CrudCozinhaAPITests {
     private CozinhaRepository cozinhaRepository;
 
     private Cozinha cozinha1;
+    private int totalCozinhas;
+    private int cozinhaIdInexistente = new Random().nextInt(1000) * 10000;
+    private final String cozinhaBrasileira = "Brasileira";
+    private final String cozinhaAmericana = "Americana";
 
 //    @Autowired
 //    private Flyway flyway;
@@ -54,14 +61,14 @@ class CrudCozinhaAPITests {
                 .get("/{cozinhaId}")
             .then()
                 .statusCode(200)
-                .body("gastronomia", Matchers.equalTo("Brasileira"));
+                .body("gastronomia", Matchers.equalTo(cozinha1.getNome()));
     }
 
     @Test
     void deveRetornarStatus404_quandoConsultarCozinhaPorIdInexistente() {
         RestAssured
             .given()
-                .pathParam("cozinhaId", 50000)
+                .pathParam("cozinhaId", cozinhaIdInexistente)
                 .accept(ContentType.JSON)
             .when()
                 .get("/{cozinhaId}")
@@ -70,7 +77,7 @@ class CrudCozinhaAPITests {
     }
 
     @Test
-    void deveConterDuasCozinhas_quandoListarCozinhas() {
+    void deveConterNumeroCorretoDeCozinhas_quandoListarCozinhas() {
         RestAssured
             .given()
                 .accept(ContentType.JSON)
@@ -78,15 +85,16 @@ class CrudCozinhaAPITests {
                 .get()
             .then()
                 .statusCode(200)
-                .body("", Matchers.hasSize(2))
-                .body("gastronomia", Matchers.hasItems("Brasileira", "Americana"));
+                .body("", Matchers.hasSize(totalCozinhas))
+                .body("gastronomia", Matchers.hasItems(cozinhaBrasileira, cozinhaAmericana));
     }
 
     @Test
     public void deveRetornarStatus201_quandoCadastrarCozinha() {
         RestAssured
             .given()
-                .body("{ \"gastronomia\": \"Síria\" }")
+//                .body("{ \"gastronomia\": \"Síria\" }")
+                .body(CriadorDeJsons.jsonDeCozinha("Síria"))
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
             .when()
@@ -97,15 +105,16 @@ class CrudCozinhaAPITests {
 
     private void criarDadosNoBancoParaTeste() {
         cozinha1 = Cozinha.builder()
-                .nome("Brasileira")
+                .nome(cozinhaBrasileira)
                 .build();
 
         var cozinha2 = Cozinha.builder()
-                .nome("Americana")
+                .nome(cozinhaAmericana)
                 .build();
 
         cozinha1 = this.cozinhaRepository.save(cozinha1);
         this.cozinhaRepository.save(cozinha2);
+        totalCozinhas = this.cozinhaRepository.findAll().size();
     }
 }
 
