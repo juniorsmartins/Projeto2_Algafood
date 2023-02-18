@@ -179,7 +179,7 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
         return MensagemDeErro.builder()
                 .codigoHttp(httpStatus.value())
                 .statusHttp(httpStatus.name())
-                .linkParaMaisEsclarecer(tipoDeErroEnum.getCaminho())
+                .linkParaEsclarecer(tipoDeErroEnum.getCaminho())
                 .tipoDeErro(tipoDeErroEnum.getTitulo())
                 .detalhe(details)
                 .dataHora(LocalDateTime.now());

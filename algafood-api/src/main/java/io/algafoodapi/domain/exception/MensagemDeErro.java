@@ -18,7 +18,7 @@ public final class MensagemDeErro {
     private String statusHttp; // Nome Http (String)
     private String tipoDeErro; // Tipo do problema
     private String detalhe; // Descrição detalhada e específica sobre a ocorrência do erro
-    private String linkParaMaisEsclarecer; // URI para especificar o tipo do problema
+    private String linkParaEsclarecer; // URI para especificar o tipo do problema
     private LocalDateTime dataHora;
     private List<Erro> erros;
 

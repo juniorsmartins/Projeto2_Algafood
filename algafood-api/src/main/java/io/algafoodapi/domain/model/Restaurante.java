@@ -1,6 +1,7 @@
 package io.algafoodapi.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.algafoodapi.domain.core.validation.FreteGratisObrigaDescricaoNoNomeAnotation;
 import io.algafoodapi.domain.core.validation.GruposValid;
 import io.algafoodapi.domain.core.validation.MultiploAnotation;
@@ -79,6 +80,7 @@ public final class Restaurante implements Serializable {
     @Column(name = "data_atualizacao")
     private LocalDateTime dataAtualizacao;
 
+    @JsonIgnoreProperties(value = "nome", allowGetters = true) // Ignora o nome da cozinha a partir do restaurante (apenas na deserialização). Dá para ignorar vários nomes se colocar um array de nomes
     @Valid
     @ConvertGroup(from = Default.class, to = GruposValid.CozinhaId.class)
     @NotNull
