@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
@@ -27,6 +30,7 @@ public class CidadeService {
     @Autowired
     private EstadoService estadoService;
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
     public Cidade criar(Cidade cidade) {
 
         try {
@@ -40,6 +44,7 @@ public class CidadeService {
         return this.cidadeRepository.saveAndFlush(cidade);
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
     public Cidade atualizar(Long id, Cidade cidadeAtual) {
 
         var cidade = this.consultarPorId(id);
@@ -57,6 +62,7 @@ public class CidadeService {
         return this.cidadeRepository.saveAndFlush(cidade);
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
     public void excluirPorId(Long id) {
 
         try {
@@ -70,12 +76,14 @@ public class CidadeService {
         }
     }
 
+    @Transactional(readOnly = true)
     public Cidade consultarPorId(Long id) {
 
         return this.cidadeRepository.findById(id)
                 .orElseThrow(() -> new CidadeNaoEncontradaException(id));
     }
 
+    @Transactional(readOnly = true)
     public List<Cidade> listar() {
 
         var cidades = this.cidadeRepository.findAll()

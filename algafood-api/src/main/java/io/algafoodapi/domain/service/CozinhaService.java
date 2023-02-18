@@ -10,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
@@ -20,10 +23,12 @@ public class CozinhaService {
     @Autowired
     private CozinhaRepository cozinhaRepository;
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
     public Cozinha criar(Cozinha cozinha) {
         return this.cozinhaRepository.saveAndFlush(cozinha);
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
     public Cozinha atualizar(Long id, Cozinha cozinhaAtual) {
 
         var cozinha = this.consultarPorId(id);
@@ -32,6 +37,7 @@ public class CozinhaService {
         return this.criar(cozinha);
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
     public void excluirPorId(Long id) {
 
         try {
@@ -45,12 +51,14 @@ public class CozinhaService {
         }
     }
 
+    @Transactional(readOnly = true)
     public Cozinha consultarPorId(Long id) {
 
         return this.cozinhaRepository.findById(id)
                 .orElseThrow(() -> new CozinhaNaoEncontradaException(id));
     }
 
+    @Transactional(readOnly = true)
     public List<Cozinha> consultarPorNome(String nome) {
 
         var cozinhas = this.cozinhaRepository.findTodasByNomeContaining(nome)
@@ -64,6 +72,7 @@ public class CozinhaService {
         return cozinhas;
     }
 
+    @Transactional(readOnly = true)
     public List<Cozinha> listar() {
 
         var cozinhas = this.cozinhaRepository.findAll()
