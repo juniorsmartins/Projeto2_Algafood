@@ -1,7 +1,7 @@
 package io.algafoodapi;
 
 import io.algafoodapi.domain.exception.http404.CozinhaNaoEncontradaException;
-import io.algafoodapi.domain.exception.http409.EntidadeEmUsoException;
+import io.algafoodapi.domain.exception.http409.CozinhaEmUsoException;
 import io.algafoodapi.domain.model.Cozinha;
 import io.algafoodapi.domain.repository.CidadeRepository;
 import io.algafoodapi.domain.repository.CozinhaRepository;
@@ -33,7 +33,7 @@ class CrudCozinhaIntegrationTests {
 	private CidadeRepository cidadeRepository;
 
 	@Test
-	@DisplayName("Post - Criar com sucesso")
+	@DisplayName("Post - Criar cozinha com sucesso")
 	public void deveAtribuirId_quandoCadastrarCozinhaComSucesso() {
 
 		// Cenário
@@ -50,7 +50,7 @@ class CrudCozinhaIntegrationTests {
 	}
 
 	@Test
-	@DisplayName("Post - Lançar exception ao cadastrar sem nome")
+	@DisplayName("Post - Lançar exception ao cadastrar cozinha sem nome")
 	public void deveLancarException_quandoCadastrarCozinhaSemNome() {
 		var novaCozinha = Cozinha.builder()
 				.nome(null)
@@ -65,7 +65,7 @@ class CrudCozinhaIntegrationTests {
 	}
 
 	@Test
-	@DisplayName("Delete - Lançar exception ao excluir não encontrado")
+	@DisplayName("Delete - Lançar exception ao excluir cozinha não encontrado")
 	void deveLancarException_quandoExcluirCozinhaNaoEncontradaPorId() {
 		var cozinhaId = 555L;
 
@@ -78,12 +78,12 @@ class CrudCozinhaIntegrationTests {
 	}
 
 	@Test
-	@DisplayName("Delete - Lançar Exception ao excluir em uso")
+	@DisplayName("Delete - Lançar Exception ao excluir cozinha em uso")
 	void deveLancarException_quandoExcluirCozinhaEmUso() {
 		var cozinhaId = 1L;
 
 		var erroEsperado = Assertions
-				.assertThrows(EntidadeEmUsoException.class, () -> {
+				.assertThrows(CozinhaEmUsoException.class, () -> {
 					this.cozinhaService.excluirPorId(cozinhaId);
 				});
 
