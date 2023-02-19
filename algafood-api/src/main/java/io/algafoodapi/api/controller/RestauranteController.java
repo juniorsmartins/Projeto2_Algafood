@@ -60,12 +60,12 @@ public class RestauranteController {
                                               @RequestBody Map<String, Object> campos,
                                               HttpServletRequest request) {
 
-            var restaurante = this.restauranteService.atualizarParcial(
-                    restauranteId, campos, request);
+        var restaurante = this.restauranteService.atualizarParcial(
+                restauranteId, campos, request);
 
-            return ResponseEntity
-                    .ok()
-                    .body(restaurante);
+        return ResponseEntity
+                .ok()
+                .body(restaurante);
     }
 
     @DeleteMapping(path = "/{restauranteId}")

@@ -1,11 +1,23 @@
 package io.algafoodapi.domain.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import io.algafoodapi.domain.core.validation.GruposValid;
-import lombok.*;
-import javax.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -32,12 +44,10 @@ public final class Cozinha implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @JsonProperty("gastronomia")
     @NotBlank
     @Column(name = "nome", length = 100, nullable = false)
     private String nome;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "cozinha", fetch = FetchType.LAZY)
     private List<Restaurante> restaurantes = new ArrayList<>();
 }

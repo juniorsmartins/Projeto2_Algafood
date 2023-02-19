@@ -16,6 +16,9 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.SmartValidator;
@@ -44,6 +47,7 @@ public class RestauranteService {
         this.smartValidator = smartValidator;
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
     public Restaurante criar(Restaurante restaurante) {
 
         try {
@@ -57,6 +61,7 @@ public class RestauranteService {
         return this.restauranteRepository.saveAndFlush(restaurante);
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
     public Restaurante atualizar(Long id, Restaurante restauranteAtual) {
 
         var restaurante = this.consultarPorId(id);
@@ -75,6 +80,7 @@ public class RestauranteService {
         return this.restauranteRepository.saveAndFlush(restaurante);
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
     public Restaurante atualizarParcial(Long id, Map<String, Object> dadosOrigem, HttpServletRequest request) {
 
         var restauranteDoDatabase = this.consultarPorId(id);
@@ -84,6 +90,69 @@ public class RestauranteService {
         this.validarValoresAtualizadosDeRestaurante(restauranteDoDatabase, "restaurante");
 
         return this.atualizar(id, restauranteDoDatabase);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
+    public void excluirPorId(Long id) {
+
+        try {
+            this.restauranteRepository.deleteById(id);
+
+        } catch (EmptyResultDataAccessException dataAccessException) {
+            throw new RestauranteNaoEncontradoException(id);
+
+        } catch (DataIntegrityViolationException dataIntegrityViolationException) {
+            throw new RestauranteEmUsoException(id);
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public Restaurante consultarPorId(Long id) {
+
+        return this.restauranteRepository.findById(id)
+                .orElseThrow(() -> new RestauranteNaoEncontradoException(id));
+    }
+
+    @Transactional(readOnly = true)
+    public List<Restaurante> consultarPorNome(String nome) {
+
+        var restaurantes = this.restauranteRepository.buscarTodosPorNome(nome)
+                .stream()
+                .sorted(Comparator.comparing(Restaurante::getId).reversed())
+                .toList();
+
+        if(restaurantes.isEmpty())
+            throw new RestauranteNaoEncontradoException(NÃO_EXISTEM_RESTAURANTES);
+
+        return restaurantes;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Restaurante> consultarPorNomeAndTaxas(String nome, BigDecimal freteTaxaInicial, BigDecimal freteTaxaFinal) {
+
+        var restaurantes = this.restauranteRepository.findPorCriteria(nome, freteTaxaInicial, freteTaxaFinal)
+                .stream()
+                .sorted(Comparator.comparing(Restaurante::getId).reversed())
+                .toList();
+
+        if(restaurantes.isEmpty())
+            throw new RestauranteNaoEncontradoException(NÃO_EXISTEM_RESTAURANTES);
+
+        return restaurantes;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Restaurante> listar() {
+
+        var restaurantes = this.restauranteRepository.findAll()
+                .stream()
+                .sorted(Comparator.comparing(Restaurante::getId).reversed())
+                .toList();
+
+        if(restaurantes.isEmpty())
+            throw new RestauranteNaoEncontradoException(NÃO_EXISTEM_RESTAURANTES);
+
+        return restaurantes;
     }
 
     private void merge(Map<String, Object> dadosOrigem, Restaurante restauranteDoDatabase, HttpServletRequest request) {
@@ -107,51 +176,6 @@ public class RestauranteService {
         }
     }
 
-    public Restaurante consultarPorId(Long id) {
-
-        return this.restauranteRepository.findById(id)
-                .orElseThrow(() -> new RestauranteNaoEncontradoException(id));
-    }
-
-    public List<Restaurante> consultarPorNome(String nome) {
-
-        var restaurantes = this.restauranteRepository.buscarTodosPorNome(nome)
-                .stream()
-                .sorted(Comparator.comparing(Restaurante::getId).reversed())
-                .toList();
-
-        if(restaurantes.isEmpty())
-            throw new RestauranteNaoEncontradoException(NÃO_EXISTEM_RESTAURANTES);
-
-        return restaurantes;
-    }
-
-    public List<Restaurante> consultarPorNomeAndTaxas(String nome, BigDecimal freteTaxaInicial, BigDecimal freteTaxaFinal) {
-
-        var restaurantes = this.restauranteRepository.findPorCriteria(nome, freteTaxaInicial, freteTaxaFinal)
-                .stream()
-                .sorted(Comparator.comparing(Restaurante::getId).reversed())
-                .toList();
-
-        if(restaurantes.isEmpty())
-            throw new RestauranteNaoEncontradoException(NÃO_EXISTEM_RESTAURANTES);
-
-        return restaurantes;
-    }
-
-    public List<Restaurante> listar() {
-
-        var restaurantes = this.restauranteRepository.findAll()
-                .stream()
-                .sorted(Comparator.comparing(Restaurante::getId).reversed())
-                .toList();
-
-        if(restaurantes.isEmpty())
-            throw new RestauranteNaoEncontradoException(NÃO_EXISTEM_RESTAURANTES);
-
-        return restaurantes;
-    }
-
     private void validarValoresAtualizadosDeRestaurante(Restaurante restaurante, String nomeDoObjeto) {
         var beanPropertyBindingResult = new BeanPropertyBindingResult(restaurante, nomeDoObjeto);
 
@@ -159,19 +183,6 @@ public class RestauranteService {
 
         if (beanPropertyBindingResult.hasErrors()) { // O BeanPropertyBindingResult armazena os erros, em caso de existirem. Pois isso verificamos se existem.
             throw new ValidacaoException(beanPropertyBindingResult);
-        }
-    }
-
-    public void excluirPorId(Long id) {
-
-        try {
-            this.restauranteRepository.deleteById(id);
-
-        } catch (EmptyResultDataAccessException dataAccessException) {
-            throw new RestauranteNaoEncontradoException(id);
-
-        } catch (DataIntegrityViolationException dataIntegrityViolationException) {
-            throw new RestauranteEmUsoException(id);
         }
     }
 }
