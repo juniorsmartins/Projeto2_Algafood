@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Builder
@@ -19,7 +19,7 @@ public final class MensagemDeErro {
     private String tipoDeErro; // Tipo do problema
     private String detalhe; // Descrição detalhada e específica sobre a ocorrência do erro
     private String linkParaEsclarecer; // URI para especificar o tipo do problema
-    private LocalDateTime dataHora;
+    private OffsetDateTime dataHora;
     private List<Erro> erros;
 
     @Builder

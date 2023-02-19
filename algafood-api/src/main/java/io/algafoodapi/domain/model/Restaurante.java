@@ -34,7 +34,7 @@ import javax.validation.groups.ConvertGroup;
 import javax.validation.groups.Default;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,12 +69,12 @@ public final class Restaurante implements Serializable {
     private BigDecimal taxaFrete = BigDecimal.ZERO;
 
     @CreationTimestamp
-    @Column(name = "data_cadastro", nullable = false)
-    private LocalDateTime dataCadastro;
+    @Column(name = "data_cadastro", columnDefinition = "datetime", nullable = false)
+    private OffsetDateTime dataCadastro;
 
     @UpdateTimestamp
-    @Column(name = "data_atualizacao")
-    private LocalDateTime dataAtualizacao;
+    @Column(name = "data_atualizacao", columnDefinition = "datetime")
+    private OffsetDateTime dataAtualizacao;
 
     @Valid
     @ConvertGroup(from = Default.class, to = GruposValid.CozinhaId.class)
