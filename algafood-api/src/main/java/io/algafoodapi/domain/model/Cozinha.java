@@ -1,7 +1,5 @@
 package io.algafoodapi.domain.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import io.algafoodapi.domain.core.validation.GruposValid;
 import lombok.AllArgsConstructor;
@@ -46,12 +44,10 @@ public final class Cozinha implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @JsonProperty("gastronomia")
     @NotBlank
     @Column(name = "nome", length = 100, nullable = false)
     private String nome;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "cozinha", fetch = FetchType.LAZY)
     private List<Restaurante> restaurantes = new ArrayList<>();
 }

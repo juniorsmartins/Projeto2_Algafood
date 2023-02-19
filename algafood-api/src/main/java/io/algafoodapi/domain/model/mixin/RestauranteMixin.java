@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RestauranteMixin { // Classe para configurações do Jackson.annotation
+public final class RestauranteMixin { // Classe para configurações do Jackson.annotation
 
     @JsonIgnoreProperties(value = "nome", allowGetters = true) // Ignora o nome da cozinha a partir do restaurante (apenas na deserialização). Dá para ignorar vários nomes se colocar um array de nomes
     private Cozinha cozinha;
