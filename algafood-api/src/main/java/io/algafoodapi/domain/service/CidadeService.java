@@ -37,33 +37,36 @@ public class CidadeService {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
-    public Cidade atualizar(final Long idCidade, Cidade cidade) {
+    public Cidade atualizar(final Long idCidade, final Cidade cidade) {
 
-        this.validarEstado(cidade);
-        var cidadeParaAtualizar = this.consultarPorId(idCidade);
-        BeanUtils.copyProperties(cidade, cidadeParaAtualizar, "id");
-        return this.cidadeRepository.saveAndFlush(cidadeParaAtualizar);
+        return this.cidadeRepository.findById(idCidade)
+                .map(city -> {
+                    this.validarEstado(cidade);
+                    BeanUtils.copyProperties(cidade, city, "id");
+                    return city;
+                })
+                .orElseThrow(() -> new CidadeNaoEncontradaException(idCidade));
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
-    public void excluirPorId(final Long id) {
+    public void excluirPorId(final Long idCidade) {
 
         try {
-            this.cidadeRepository.deleteById(id);
+            this.cidadeRepository.deleteById(idCidade);
 
         } catch (EmptyResultDataAccessException dataAccessException) {
-            throw new CidadeNaoEncontradaException(id);
+            throw new CidadeNaoEncontradaException(idCidade);
 
         } catch (DataIntegrityViolationException dataIntegrityViolationException) {
-            throw new CidadeEmUsoException(id); // TODO - BUG - Não captura e não lança
+            throw new CidadeEmUsoException(idCidade); // TODO - BUG - Não captura e não lança
         }
     }
 
     @Transactional(readOnly = true)
-    public Cidade consultarPorId(final Long id) {
+    public Cidade consultarPorId(final Long idCidade) {
 
-        return this.cidadeRepository.findById(id)
-                .orElseThrow(() -> new CidadeNaoEncontradaException(id));
+        return this.cidadeRepository.findById(idCidade)
+                .orElseThrow(() -> new CidadeNaoEncontradaException(idCidade));
     }
 
     @Transactional(readOnly = true)

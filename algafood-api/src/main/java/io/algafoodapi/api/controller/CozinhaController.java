@@ -3,7 +3,6 @@ package io.algafoodapi.api.controller;
 import io.algafoodapi.api.dto.request.CozinhaDtoRequest;
 import io.algafoodapi.api.dto.response.CozinhaDtoResponse;
 import io.algafoodapi.domain.core.mapper.CozinhaMapper;
-import io.algafoodapi.domain.model.Cozinha;
 import io.algafoodapi.domain.service.CozinhaService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -50,13 +49,18 @@ public final class CozinhaController {
     }
 
     @PutMapping(path = "/{cozinhaId}")
-    public ResponseEntity<?> atualizar(@PathVariable(name = "cozinhaId") Long cozinhaId, @RequestBody @Valid Cozinha cozinhaAtual) {
+    public ResponseEntity<CozinhaDtoResponse> atualizar(@PathVariable(name = "cozinhaId") final Long cozinhaId,
+                                                        @RequestBody @Valid final CozinhaDtoRequest cozinhaDtoRequest) {
 
-        cozinhaAtual = this.cozinhaService.atualizar(cozinhaId, cozinhaAtual);
+        var response = Optional.of(cozinhaDtoRequest)
+                .map(this.cozinhaMapper::converterDtoRequestParaEntidade)
+                .map(cozinha -> this.cozinhaService.atualizar(cozinhaId, cozinha))
+                .map(this.cozinhaMapper::converterEntidadeParaDtoResponse)
+                .orElseThrow();
 
         return ResponseEntity
                 .ok()
-                .body(cozinhaAtual);
+                .body(response);
     }
 
     @DeleteMapping(path = "/{cozinhaId}")
