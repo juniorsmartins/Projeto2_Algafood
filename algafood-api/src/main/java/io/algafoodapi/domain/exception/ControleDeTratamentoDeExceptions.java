@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @RestControllerAdvice
@@ -28,7 +28,7 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
     @Autowired
     private MessageSource mensagemInternacionalizada;
 
-    @ExceptionHandler(EntidadeNaoEncontradaException.class)
+    @ExceptionHandler(value = EntidadeNaoEncontradaException.class)
     public ResponseEntity<Object> tratarEntidadeNaoEncontrada(EntidadeNaoEncontradaException naoEncontradaException,
                                                          WebRequest request) {
         var httpStatus = HttpStatus.NOT_FOUND;
@@ -41,7 +41,7 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
                 httpStatus, request);
     }
 
-    @ExceptionHandler(EntidadeEmUsoException.class)
+    @ExceptionHandler(value = EntidadeEmUsoException.class)
     public ResponseEntity<Object> tratarEntidadeEmUso(EntidadeEmUsoException emUsoException, WebRequest request) {
 
         var httpStatus = HttpStatus.CONFLICT;
@@ -54,7 +54,7 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
                 httpStatus, request);
     }
 
-    @ExceptionHandler(RequisicaoMalFormuladaException.class)
+    @ExceptionHandler(value = RequisicaoMalFormuladaException.class)
     public ResponseEntity<Object> tratarRequisicaoMalFormulada(RequisicaoMalFormuladaException malFormuladaException,
                                                           WebRequest request) {
 
@@ -68,7 +68,7 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
                 httpStatus, request);
     }
 
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler(value = Exception.class)
     public ResponseEntity<Object> handleUncaught(Exception ex, WebRequest request) {
 
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -88,7 +88,7 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
         return handleExceptionInternal(ex, mensagemDeErro, new HttpHeaders(), status, request);
     }
 
-    @ExceptionHandler(ValidacaoException.class)
+    @ExceptionHandler(value = ValidacaoException.class)
     public ResponseEntity<Object> tratarValidacaoException(ValidacaoException validacaoException, WebRequest request) {
 
         return this.construirResponseComMensagemDeErros(validacaoException, validacaoException.getBindingResult(),
@@ -109,6 +109,7 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException notReadableException,
                                                                   HttpHeaders headers, HttpStatus status,
                                                                   WebRequest request) {
+
         var tipoDeErroEnum = TipoDeErroEnum.REQUISICAO_MAL_FORMULADA;
         var detalhe = "O corpo da requisição está inválido. Verifique erro de sintaxe.";
 
@@ -121,18 +122,19 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
     @Override
     protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers,
                                                              HttpStatus status, WebRequest request) {
+
         if (body == null) {
             body = MensagemDeErro.builder()
                     .codigoHttp(status.value())
                     .tipoDeErro(status.getReasonPhrase()) // Devolve uma descrição sobre o status retornado na resposta
-                    .dataHora(LocalDateTime.now())
+                    .dataHora(OffsetDateTime.now())
                     .build();
 
         } else if (body instanceof String) {
             body = MensagemDeErro.builder()
                     .codigoHttp(status.value())
                     .tipoDeErro(body.toString())
-                    .dataHora(LocalDateTime.now())
+                    .dataHora(OffsetDateTime.now())
                     .build();
         }
 
@@ -182,7 +184,7 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
                 .linkParaEsclarecer(tipoDeErroEnum.getCaminho())
                 .tipoDeErro(tipoDeErroEnum.getTitulo())
                 .detalhe(details)
-                .dataHora(LocalDateTime.now());
+                .dataHora(OffsetDateTime.now());
     }
 }
 

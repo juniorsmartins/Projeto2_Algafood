@@ -1,6 +1,6 @@
 package io.algafoodapi.domain.core.validation;
 
-import io.algafoodapi.domain.model.Restaurante;
+import io.algafoodapi.api.dto.request.RestauranteDtoRequest;
 import org.springframework.beans.BeanUtils;
 
 import javax.validation.ConstraintValidator;
@@ -8,7 +8,7 @@ import javax.validation.ConstraintValidatorContext;
 import javax.validation.ValidationException;
 import java.math.BigDecimal;
 
-public final class FreteGratisObrigaDescricaoNoNomeValidator implements ConstraintValidator<FreteGratisObrigaDescricaoNoNomeAnotation, Restaurante> {
+public final class FreteGratisObrigaDescricaoNoNomeValidator implements ConstraintValidator<FreteGratisObrigaDescricaoNoNomeAnotation, RestauranteDtoRequest> {
 
     private String valorTaxaFrete;
     private String descricaoNome;
@@ -22,15 +22,17 @@ public final class FreteGratisObrigaDescricaoNoNomeValidator implements Constrai
     }
 
     @Override
-    public boolean isValid(final Restaurante restaurante, final ConstraintValidatorContext constraintValidatorContext) {
+    public boolean isValid(final RestauranteDtoRequest restauranteDtoRequest,
+                           final ConstraintValidatorContext constraintValidatorContext) {
+
         var isValido = true;
 
         try {
-            var valorDoFrete = (BigDecimal) BeanUtils.getPropertyDescriptor(restaurante.getClass(), valorTaxaFrete)
-                    .getReadMethod().invoke(restaurante);
+            var valorDoFrete = (BigDecimal) BeanUtils.getPropertyDescriptor(restauranteDtoRequest.getClass(), valorTaxaFrete)
+                    .getReadMethod().invoke(restauranteDtoRequest);
 
-            var descricao = (String) BeanUtils.getPropertyDescriptor(restaurante.getClass(), descricaoNome)
-                    .getReadMethod().invoke(restaurante);
+            var descricao = (String) BeanUtils.getPropertyDescriptor(restauranteDtoRequest.getClass(), descricaoNome)
+                    .getReadMethod().invoke(restauranteDtoRequest);
 
             if (valorDoFrete != null && BigDecimal.ZERO.compareTo(valorDoFrete) == 0 && descricao != null) {
                 isValido = descricao.toLowerCase().contains(this.descricaoObrigatoria.toLowerCase());

@@ -1,68 +1,98 @@
 package io.algafoodapi.api.controller;
 
-import io.algafoodapi.domain.model.Estado;
+import io.algafoodapi.api.dto.request.EstadoDtoRequest;
+import io.algafoodapi.api.dto.response.EstadoDtoResponse;
+import io.algafoodapi.domain.core.mapper.EstadoMapper;
 import io.algafoodapi.domain.service.EstadoService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/v1/estados")
-public class EstadoController {
+public final class EstadoController {
 
-    @Autowired
-    private EstadoService estadoService;
+    private final EstadoMapper estadoMapper;
+    private final EstadoService estadoService;
+
+    public EstadoController(final EstadoMapper estadoMapper, final EstadoService estadoService) {
+        this.estadoMapper = estadoMapper;
+        this.estadoService = estadoService;
+    }
 
     @PostMapping
-    public ResponseEntity<Estado> criar(@RequestBody @Valid Estado estado, UriComponentsBuilder uriComponentsBuilder) {
+    public ResponseEntity<EstadoDtoResponse> criar(@RequestBody @Valid final EstadoDtoRequest estadoDtoRequest,
+                                                   final UriComponentsBuilder uriComponentsBuilder) {
 
-        estado = this.estadoService.criar(estado);
+        var response = Optional.of(estadoDtoRequest)
+                .map(this.estadoMapper::converterDtoRequestParaEntidade)
+                .map(this.estadoService::criar)
+                .map(this.estadoMapper::converterEntidadeParaDtoResponse)
+                .orElseThrow();
 
         return ResponseEntity
                 .created(uriComponentsBuilder
-                        .path("estados/{id}")
-                        .buildAndExpand(estado.getId())
-                        .toUri())
-                .body(estado);
+                    .path("estados/{id}")
+                    .buildAndExpand(response.id())
+                    .toUri())
+                .body(response);
     }
 
-    @PutMapping(path = "/{estadoId}")
-    public ResponseEntity<?> atualizar(@PathVariable(name = "estadoId") Long estadoId, @RequestBody @Valid Estado estadoAtual) {
+    @PutMapping(path = "/{idEstado}")
+    public ResponseEntity<EstadoDtoResponse> atualizar(@PathVariable(name = "idEstado") final Long idEstado,
+                                       @RequestBody @Valid final EstadoDtoRequest estadoDtoRequest) {
 
-        estadoAtual = this.estadoService.atualizar(estadoId, estadoAtual);
+        var response = Optional.of(estadoDtoRequest)
+                .map(this.estadoMapper::converterDtoRequestParaEntidade)
+                .map(state -> this.estadoService.atualizar(idEstado, state))
+                .map(this.estadoMapper::converterEntidadeParaDtoResponse)
+                .orElseThrow();
 
         return ResponseEntity
                 .ok()
-                .body(estadoAtual);
+                .body(response);
     }
 
-    @DeleteMapping(path = "/{estadoId}")
-    public ResponseEntity<?> excluirPorId(@PathVariable(name = "estadoId") Long estadoId) {
+    @DeleteMapping(path = "/{idEstado}")
+    public ResponseEntity excluirPorId(@PathVariable(name = "idEstado") final Long idEstado) {
 
-        this.estadoService.excluirPorId(estadoId);
+        this.estadoService.excluirPorId(idEstado);
 
         return ResponseEntity
                 .noContent()
                 .build();
     }
 
-    @GetMapping(path = "/{estadoId}")
-    public ResponseEntity<?> consultarPorId(@PathVariable(name = "estadoId") Long estadoId) {
+    @GetMapping(path = "/{idEstado}")
+    public ResponseEntity<EstadoDtoResponse> consultarPorId(@PathVariable(name = "idEstado") final Long idEstado) {
 
-        var estado = this.estadoService.consultarPorId(estadoId);
+        var response = Optional.of(this.estadoService.consultarPorId(idEstado))
+                .map(this.estadoMapper::converterEntidadeParaDtoResponse)
+                .get();
 
         return ResponseEntity
                 .ok()
-                .body(estado);
+                .body(response);
     }
 
     @GetMapping
-    public ResponseEntity<?> listar() {
+    public ResponseEntity<List<EstadoDtoResponse>> listar() {
 
-        var estados = this.estadoService.listar();
+        var estados = this.estadoService.listar()
+                .stream()
+                .map(this.estadoMapper::converterEntidadeParaDtoResponse)
+                .toList();
 
         return ResponseEntity
                 .ok()

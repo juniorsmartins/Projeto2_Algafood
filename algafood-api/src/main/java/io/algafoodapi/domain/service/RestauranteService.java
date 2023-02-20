@@ -2,6 +2,7 @@ package io.algafoodapi.domain.service;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.algafoodapi.domain.core.Constantes;
 import io.algafoodapi.domain.core.validation.ValidacaoException;
 import io.algafoodapi.domain.exception.http400.RequisicaoMalFormuladaException;
 import io.algafoodapi.domain.exception.http404.CozinhaNaoEncontradaException;
@@ -33,22 +34,21 @@ import java.util.Map;
 @Service
 public class RestauranteService {
 
-    public static final String NÃO_EXISTEM_RESTAURANTES = "Não há restaurantes cadastrados.";
-
     private final RestauranteRepository restauranteRepository;
 
     private final CozinhaService cozinhaService;
 
     private final SmartValidator smartValidator;
 
-    public RestauranteService(RestauranteRepository restauranteRepository, CozinhaService cozinhaService, SmartValidator smartValidator) {
+    public RestauranteService(final RestauranteRepository restauranteRepository, final CozinhaService cozinhaService,
+                              final SmartValidator smartValidator) {
         this.restauranteRepository = restauranteRepository;
         this.cozinhaService = cozinhaService;
         this.smartValidator = smartValidator;
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
-    public Restaurante criar(Restaurante restaurante) {
+    public Restaurante criar(final Restaurante restaurante) {
 
         try {
             var cozinha = this.cozinhaService.consultarPorId(restaurante.getCozinha().getId());
@@ -121,8 +121,9 @@ public class RestauranteService {
                 .sorted(Comparator.comparing(Restaurante::getId).reversed())
                 .toList();
 
-        if(restaurantes.isEmpty())
-            throw new RestauranteNaoEncontradoException(NÃO_EXISTEM_RESTAURANTES);
+        if (restaurantes.isEmpty()) {
+            throw new RestauranteNaoEncontradoException(Constantes.NÃO_EXISTEM_RESTAURANTES);
+        }
 
         return restaurantes;
     }
@@ -135,8 +136,9 @@ public class RestauranteService {
                 .sorted(Comparator.comparing(Restaurante::getId).reversed())
                 .toList();
 
-        if(restaurantes.isEmpty())
-            throw new RestauranteNaoEncontradoException(NÃO_EXISTEM_RESTAURANTES);
+        if (restaurantes.isEmpty()) {
+            throw new RestauranteNaoEncontradoException(Constantes.NÃO_EXISTEM_RESTAURANTES);
+        }
 
         return restaurantes;
     }
@@ -149,8 +151,9 @@ public class RestauranteService {
                 .sorted(Comparator.comparing(Restaurante::getId).reversed())
                 .toList();
 
-        if(restaurantes.isEmpty())
-            throw new RestauranteNaoEncontradoException(NÃO_EXISTEM_RESTAURANTES);
+        if (restaurantes.isEmpty()) {
+            throw new RestauranteNaoEncontradoException(Constantes.NÃO_EXISTEM_RESTAURANTES);
+        }
 
         return restaurantes;
     }
