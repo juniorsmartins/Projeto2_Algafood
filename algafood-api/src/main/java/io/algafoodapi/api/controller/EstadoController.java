@@ -1,7 +1,7 @@
 package io.algafoodapi.api.controller;
 
-import io.algafoodapi.api.dto.request.EstadoDTORequest;
-import io.algafoodapi.api.dto.response.EstadoDTOResponse;
+import io.algafoodapi.api.dto.request.EstadoDtoRequest;
+import io.algafoodapi.api.dto.response.EstadoDtoResponse;
 import io.algafoodapi.domain.core.mapper.EstadoMapper;
 import io.algafoodapi.domain.service.EstadoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/v1/estados")
-public class EstadoController {
+public final class EstadoController {
 
     @Autowired
     private EstadoMapper estadoMapper;
@@ -30,35 +31,28 @@ public class EstadoController {
     private EstadoService estadoService;
 
     @PostMapping
-    public ResponseEntity<EstadoDTOResponse> criar(@RequestBody @Valid EstadoDTORequest estadoDTORequest, UriComponentsBuilder uriComponentsBuilder) {
+    public ResponseEntity<EstadoDtoResponse> criar(@RequestBody @Valid final EstadoDtoRequest estadoDtoRequest,
+                                                   final UriComponentsBuilder uriComponentsBuilder) {
 
-        System.out.println(estadoDTORequest.nome());
-
-        var response = Optional.of(estadoDTORequest)
+        var response = Optional.of(estadoDtoRequest)
                 .map(this.estadoMapper::converterDTORequestParaEntidade)
-                .map(state -> {
-                    System.out.println(state.getNome());
-                    var estadoSalvo = this.estadoService.criar(state);
-                    System.out.println(estadoSalvo.getNome());
-                    return estadoSalvo;
-                })
+                .map(this.estadoService::criar)
                 .map(this.estadoMapper::converterEntidadeParaDTOResponse)
                 .orElseThrow();
 
-        System.out.println(response.nome());
-
         return ResponseEntity
                 .created(uriComponentsBuilder
-                        .path("estados/{id}")
-                        .buildAndExpand(response.id())
-                        .toUri())
+                    .path("estados/{id}")
+                    .buildAndExpand(response.id())
+                    .toUri())
                 .body(response);
     }
 
     @PutMapping(path = "/{estadoId}")
-    public ResponseEntity<?> atualizar(@PathVariable(name = "estadoId") Long estadoId, @RequestBody @Valid EstadoDTORequest estadoDTORequest) {
+    public ResponseEntity<EstadoDtoResponse> atualizar(@PathVariable(name = "estadoId") final Long estadoId,
+                                       @RequestBody @Valid final EstadoDtoRequest estadoDtoRequest) {
 
-        var response = Optional.of(estadoDTORequest)
+        var response = Optional.of(estadoDtoRequest)
                 .map(this.estadoMapper::converterDTORequestParaEntidade)
                 .map(state -> this.estadoService.atualizar(estadoId, state))
                 .map(this.estadoMapper::converterEntidadeParaDTOResponse)
@@ -70,7 +64,7 @@ public class EstadoController {
     }
 
     @DeleteMapping(path = "/{estadoId}")
-    public ResponseEntity<?> excluirPorId(@PathVariable(name = "estadoId") Long estadoId) {
+    public ResponseEntity excluirPorId(@PathVariable(name = "estadoId") final Long estadoId) {
 
         this.estadoService.excluirPorId(estadoId);
 
@@ -80,9 +74,11 @@ public class EstadoController {
     }
 
     @GetMapping(path = "/{estadoId}")
-    public ResponseEntity<?> consultarPorId(@PathVariable(name = "estadoId") Long estadoId) {
+    public ResponseEntity<EstadoDtoResponse> consultarPorId(@PathVariable(name = "estadoId") final Long estadoId) {
 
-        var response = this.estadoService.consultarPorId(estadoId);
+        var response = Optional.of(this.estadoService.consultarPorId(estadoId))
+                .map(this.estadoMapper::converterEntidadeParaDTOResponse)
+                .get();
 
         return ResponseEntity
                 .ok()
@@ -90,9 +86,12 @@ public class EstadoController {
     }
 
     @GetMapping
-    public ResponseEntity<?> listar() {
+    public ResponseEntity<List<EstadoDtoResponse>> listar() {
 
-        var estados = this.estadoService.listar();
+        var estados = this.estadoService.listar()
+                .stream()
+                .map(this.estadoMapper::converterEntidadeParaDTOResponse)
+                .toList();
 
         return ResponseEntity
                 .ok()

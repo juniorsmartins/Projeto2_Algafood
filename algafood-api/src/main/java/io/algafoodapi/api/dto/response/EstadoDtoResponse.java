@@ -3,7 +3,7 @@ package io.algafoodapi.api.dto.response;
 import lombok.Builder;
 
 @Builder
-public record EstadoDTOResponse
+public record EstadoDtoResponse
     (
         Long id,
         String nome
