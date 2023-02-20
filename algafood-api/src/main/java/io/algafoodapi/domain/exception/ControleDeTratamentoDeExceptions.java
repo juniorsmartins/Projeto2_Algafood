@@ -28,7 +28,7 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
     @Autowired
     private MessageSource mensagemInternacionalizada;
 
-    @ExceptionHandler(EntidadeNaoEncontradaException.class)
+    @ExceptionHandler(value = EntidadeNaoEncontradaException.class)
     public ResponseEntity<Object> tratarEntidadeNaoEncontrada(EntidadeNaoEncontradaException naoEncontradaException,
                                                          WebRequest request) {
         var httpStatus = HttpStatus.NOT_FOUND;
@@ -41,7 +41,7 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
                 httpStatus, request);
     }
 
-    @ExceptionHandler(EntidadeEmUsoException.class)
+    @ExceptionHandler(value = EntidadeEmUsoException.class)
     public ResponseEntity<Object> tratarEntidadeEmUso(EntidadeEmUsoException emUsoException, WebRequest request) {
 
         var httpStatus = HttpStatus.CONFLICT;
@@ -54,7 +54,7 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
                 httpStatus, request);
     }
 
-    @ExceptionHandler(RequisicaoMalFormuladaException.class)
+    @ExceptionHandler(value = RequisicaoMalFormuladaException.class)
     public ResponseEntity<Object> tratarRequisicaoMalFormulada(RequisicaoMalFormuladaException malFormuladaException,
                                                           WebRequest request) {
 
@@ -68,7 +68,7 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
                 httpStatus, request);
     }
 
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler(value = Exception.class)
     public ResponseEntity<Object> handleUncaught(Exception ex, WebRequest request) {
 
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -88,7 +88,7 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
         return handleExceptionInternal(ex, mensagemDeErro, new HttpHeaders(), status, request);
     }
 
-    @ExceptionHandler(ValidacaoException.class)
+    @ExceptionHandler(value = ValidacaoException.class)
     public ResponseEntity<Object> tratarValidacaoException(ValidacaoException validacaoException, WebRequest request) {
 
         return this.construirResponseComMensagemDeErros(validacaoException, validacaoException.getBindingResult(),

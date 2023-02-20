@@ -44,11 +44,11 @@ public class EstadoService {
         try {
             this.estadoRepository.deleteById(id);
 
-        } catch (EmptyResultDataAccessException dataAccessException) {
+        } catch (EmptyResultDataAccessException emptyResultDataAccessException) {
             throw new EstadoNaoEncontradoException(id);
 
         } catch (DataIntegrityViolationException violationException) {
-            throw new EstadoEmUsoException(id);
+            throw new EstadoEmUsoException(id); // TODO - BUG - Não captura e não lança
         }
     }
 
