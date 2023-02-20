@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @RestControllerAdvice
@@ -109,6 +109,7 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException notReadableException,
                                                                   HttpHeaders headers, HttpStatus status,
                                                                   WebRequest request) {
+
         var tipoDeErroEnum = TipoDeErroEnum.REQUISICAO_MAL_FORMULADA;
         var detalhe = "O corpo da requisição está inválido. Verifique erro de sintaxe.";
 
@@ -121,18 +122,19 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
     @Override
     protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers,
                                                              HttpStatus status, WebRequest request) {
+
         if (body == null) {
             body = MensagemDeErro.builder()
                     .codigoHttp(status.value())
                     .tipoDeErro(status.getReasonPhrase()) // Devolve uma descrição sobre o status retornado na resposta
-                    .dataHora(LocalDateTime.now())
+                    .dataHora(OffsetDateTime.now())
                     .build();
 
         } else if (body instanceof String) {
             body = MensagemDeErro.builder()
                     .codigoHttp(status.value())
                     .tipoDeErro(body.toString())
-                    .dataHora(LocalDateTime.now())
+                    .dataHora(OffsetDateTime.now())
                     .build();
         }
 
@@ -182,7 +184,7 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
                 .linkParaEsclarecer(tipoDeErroEnum.getCaminho())
                 .tipoDeErro(tipoDeErroEnum.getTitulo())
                 .detalhe(details)
-                .dataHora(LocalDateTime.now());
+                .dataHora(OffsetDateTime.now());
     }
 }
 
