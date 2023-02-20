@@ -30,16 +30,15 @@ public class EstadoService {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
-    public Estado atualizar(Long id, Estado estadoAtual) {
+    public Estado atualizar(final Long idEstado, Estado estado) {
 
-        var estado = this.consultarPorId(id);
-        BeanUtils.copyProperties(estadoAtual, estado, "id");
-
-        return this.criar(estado);
+        var estadoParaAtualizar = this.consultarPorId(idEstado);
+        BeanUtils.copyProperties(estado, estadoParaAtualizar, "id");
+        return this.estadoRepository.saveAndFlush(estadoParaAtualizar);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
-    public void excluirPorId(Long id) {
+    public void excluirPorId(final Long id) {
 
         try {
             this.estadoRepository.deleteById(id);
@@ -53,7 +52,7 @@ public class EstadoService {
     }
 
     @Transactional(readOnly = true)
-    public Estado consultarPorId(Long id) {
+    public Estado consultarPorId(final Long id) {
 
         return this.estadoRepository.findById(id)
                 .orElseThrow(() -> new EstadoNaoEncontradoException(id));
@@ -67,8 +66,9 @@ public class EstadoService {
                 .sorted(Comparator.comparing(Estado::getId).reversed())
                 .toList();
 
-        if(estados.isEmpty())
+        if (estados.isEmpty()) {
             throw new EstadoNaoEncontradoException(String.format(NAO_EXISTEM_ESTADOS_CADASTRADOS));
+        }
 
         return estados;
     }

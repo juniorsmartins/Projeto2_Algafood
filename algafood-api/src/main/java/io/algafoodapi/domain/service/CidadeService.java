@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CidadeService {
@@ -34,32 +33,20 @@ public class CidadeService {
     public Cidade criar(Cidade cidade) {
 
         this.validarEstado(cidade);
-
         return this.cidadeRepository.saveAndFlush(cidade);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
-    public Cidade atualizar(Long idCidade, Cidade cidade) {
+    public Cidade atualizar(final Long idCidade, Cidade cidade) {
 
         this.validarEstado(cidade);
-
         var cidadeParaAtualizar = this.consultarPorId(idCidade);
-
         BeanUtils.copyProperties(cidade, cidadeParaAtualizar, "id");
-
         return this.cidadeRepository.saveAndFlush(cidadeParaAtualizar);
     }
 
-    private void validarEstado(Cidade cidade) {
-        var idEstado = cidade.getEstado().getId();
-        var estado = this.estadoRepository.findById(idEstado)
-                .orElseThrow(() ->
-                        new RequisicaoMalFormuladaException(String.format(Constantes.ESTADO_NAO_ENCONTRADO, idEstado)));
-        cidade.setEstado(estado);
-    }
-
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
-    public void excluirPorId(Long id) {
+    public void excluirPorId(final Long id) {
 
         try {
             this.cidadeRepository.deleteById(id);
@@ -68,12 +55,12 @@ public class CidadeService {
             throw new CidadeNaoEncontradaException(id);
 
         } catch (DataIntegrityViolationException dataIntegrityViolationException) {
-            throw new CidadeEmUsoException(id);
+            throw new CidadeEmUsoException(id); // TODO - BUG - Não captura e não lança
         }
     }
 
     @Transactional(readOnly = true)
-    public Cidade consultarPorId(Long id) {
+    public Cidade consultarPorId(final Long id) {
 
         return this.cidadeRepository.findById(id)
                 .orElseThrow(() -> new CidadeNaoEncontradaException(id));
@@ -85,12 +72,21 @@ public class CidadeService {
         var cidades = this.cidadeRepository.findAll()
                 .stream()
                 .sorted(Comparator.comparing(Cidade::getId).reversed())
-                .collect(Collectors.toList());
+                .toList();
 
-        if(cidades.isEmpty())
+        if (cidades.isEmpty()) {
             throw new CidadeNaoEncontradaException(Constantes.NÃO_EXISTEM_CIDADES_CADASTRADAS);
+        }
 
         return cidades;
+    }
+
+    private void validarEstado(Cidade cidade) {
+        var idEstado = cidade.getEstado().getId();
+        var estado = this.estadoRepository.findById(idEstado)
+                .orElseThrow(() ->
+                        new RequisicaoMalFormuladaException(String.format(Constantes.ESTADO_NAO_ENCONTRADO, idEstado)));
+        cidade.setEstado(estado);
     }
 }
 
