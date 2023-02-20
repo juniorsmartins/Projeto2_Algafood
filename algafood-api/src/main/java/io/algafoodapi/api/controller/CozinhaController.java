@@ -1,32 +1,52 @@
 package io.algafoodapi.api.controller;
 
+import io.algafoodapi.api.dto.request.CozinhaDtoRequest;
+import io.algafoodapi.api.dto.response.CozinhaDtoResponse;
+import io.algafoodapi.domain.core.mapper.CozinhaMapper;
 import io.algafoodapi.domain.model.Cozinha;
 import io.algafoodapi.domain.service.CozinhaService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/v1/cozinhas")
-public class CozinhaController {
+public final class CozinhaController {
 
-    @Autowired
-    private CozinhaService cozinhaService;
+    private final CozinhaMapper cozinhaMapper;
+    private final CozinhaService cozinhaService;
 
+    public CozinhaController(final CozinhaMapper cozinhaMapper, final CozinhaService cozinhaService) {
+        this.cozinhaMapper = cozinhaMapper;
+        this.cozinhaService = cozinhaService;
+    }
     @PostMapping
-    public ResponseEntity<Cozinha> criar(@RequestBody @Valid Cozinha cozinha, UriComponentsBuilder uriComponentsBuilder) {
+    public ResponseEntity<CozinhaDtoResponse> criar(@RequestBody @Valid final CozinhaDtoRequest cozinhaDtoRequest,
+                                                    final UriComponentsBuilder uriComponentsBuilder) {
 
-        cozinha = this.cozinhaService.criar(cozinha);
+        var response = Optional.of(cozinhaDtoRequest)
+                .map(this.cozinhaMapper::converterDtoRequestParaEntidade)
+                .map(this.cozinhaService::criar)
+                .map(this.cozinhaMapper::converterEntidadeParaDtoResponse)
+                .orElseThrow();
 
         return ResponseEntity
                 .created(uriComponentsBuilder
                         .path("cozinhas/{id}")
-                        .buildAndExpand(cozinha.getId())
+                        .buildAndExpand(response.id())
                         .toUri())
-                .body(cozinha);
+                .body(response);
     }
 
     @PutMapping(path = "/{cozinhaId}")
