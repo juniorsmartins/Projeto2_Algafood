@@ -6,7 +6,6 @@ import io.algafoodapi.domain.exception.http409.CozinhaEmUsoException;
 import io.algafoodapi.domain.model.Cozinha;
 import io.algafoodapi.domain.repository.CozinhaRepository;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -20,25 +19,30 @@ import java.util.List;
 @Service
 public class CozinhaService {
 
-    @Autowired
-    private CozinhaRepository cozinhaRepository;
+    private final CozinhaRepository cozinhaRepository;
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
-    public Cozinha criar(Cozinha cozinha) {
-        return this.cozinhaRepository.saveAndFlush(cozinha);
+    public CozinhaService(final CozinhaRepository cozinhaRepository) {
+        this.cozinhaRepository = cozinhaRepository;
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
-    public Cozinha atualizar(Long id, Cozinha cozinhaAtual) {
-
-        var cozinha = this.consultarPorId(id);
-        BeanUtils.copyProperties(cozinhaAtual, cozinha, "id");
-
-        return this.criar(cozinha);
+    public Cozinha criar(final Cozinha cozinha) {
+        return this.cozinhaRepository.save(cozinha);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
-    public void excluirPorId(Long id) {
+    public Cozinha atualizar(final Long idCozinha, final Cozinha cozinha) {
+
+        return this.cozinhaRepository.findById(idCozinha)
+                .map(kitchen -> {
+                    BeanUtils.copyProperties(cozinha, kitchen, "id");
+                    return kitchen;
+                })
+                .orElseThrow(() -> new CozinhaNaoEncontradaException(idCozinha));
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
+    public void excluirPorId(final Long id) {
 
         try {
             this.cozinhaRepository.deleteById(id);
@@ -47,27 +51,28 @@ public class CozinhaService {
             throw new CozinhaNaoEncontradaException(id);
 
         } catch (DataIntegrityViolationException dataIntegrityViolationException) {
-            throw new CozinhaEmUsoException(id);
+            throw new CozinhaEmUsoException(id); // TODO - BUG - Não captura e não lança
         }
     }
 
     @Transactional(readOnly = true)
-    public Cozinha consultarPorId(Long id) {
+    public Cozinha consultarPorId(final Long idCozinha) {
 
-        return this.cozinhaRepository.findById(id)
-                .orElseThrow(() -> new CozinhaNaoEncontradaException(id));
+        return this.cozinhaRepository.findById(idCozinha)
+                .orElseThrow(() -> new CozinhaNaoEncontradaException(idCozinha));
     }
 
     @Transactional(readOnly = true)
-    public List<Cozinha> consultarPorNome(String nome) {
+    public List<Cozinha> consultarPorNome(final String nome) {
 
         var cozinhas = this.cozinhaRepository.findTodasByNomeContaining(nome)
                 .stream()
                 .sorted(Comparator.comparing(Cozinha::getId).reversed())
                 .toList();
 
-        if (cozinhas.isEmpty())
+        if (cozinhas.isEmpty()) {
             throw new CozinhaNaoEncontradaException(String.format(Constantes.NÃO_ENCONTRADA_COZINHA_COM_NOME, nome));
+        }
 
         return cozinhas;
     }
@@ -80,8 +85,9 @@ public class CozinhaService {
                 .sorted(Comparator.comparing(Cozinha::getId).reversed())
                 .toList();
 
-        if(cozinhas.isEmpty())
+        if (cozinhas.isEmpty()) {
             throw new CozinhaNaoEncontradaException(Constantes.NAO_EXISTEM_COZINHAS_CADASTRADAS);
+        }
 
         return cozinhas;
     }

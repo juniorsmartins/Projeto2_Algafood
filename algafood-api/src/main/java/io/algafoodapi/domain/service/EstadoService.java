@@ -1,11 +1,11 @@
 package io.algafoodapi.domain.service;
 
+import io.algafoodapi.domain.core.Constantes;
 import io.algafoodapi.domain.exception.http404.EstadoNaoEncontradoException;
 import io.algafoodapi.domain.exception.http409.EstadoEmUsoException;
 import io.algafoodapi.domain.model.Estado;
 import io.algafoodapi.domain.repository.EstadoRepository;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -19,44 +19,47 @@ import java.util.List;
 @Service
 public class EstadoService {
 
-    public static final String NAO_EXISTEM_ESTADOS_CADASTRADOS = "Não há estados cadastrados no banco de dados.";
+    private final EstadoRepository estadoRepository;
 
-    @Autowired
-    private EstadoRepository estadoRepository;
+    public EstadoService(final EstadoRepository estadoRepository) {
+        this.estadoRepository = estadoRepository;
+    }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
-    public Estado criar(Estado estado) {
+    public Estado criar(final Estado estado) {
         return this.estadoRepository.saveAndFlush(estado);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
-    public Estado atualizar(Long id, Estado estadoAtual) {
+    public Estado atualizar(final Long idEstado, final Estado estado) {
 
-        var estado = this.consultarPorId(id);
-        BeanUtils.copyProperties(estadoAtual, estado, "id");
-
-        return this.criar(estado);
+        return this.estadoRepository.findById(idEstado)
+                .map(state -> {
+                    BeanUtils.copyProperties(estado, state, "id");
+                    return state;
+                })
+                .orElseThrow(() -> new EstadoNaoEncontradoException(idEstado));
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
-    public void excluirPorId(Long id) {
+    public void excluirPorId(final Long idEstado) {
 
         try {
-            this.estadoRepository.deleteById(id);
+            this.estadoRepository.deleteById(idEstado);
 
-        } catch (EmptyResultDataAccessException dataAccessException) {
-            throw new EstadoNaoEncontradoException(id);
+        } catch (EmptyResultDataAccessException emptyResultDataAccessException) {
+            throw new EstadoNaoEncontradoException(idEstado);
 
         } catch (DataIntegrityViolationException violationException) {
-            throw new EstadoEmUsoException(id);
+            throw new EstadoEmUsoException(idEstado); // TODO - BUG - Não captura e não lança
         }
     }
 
     @Transactional(readOnly = true)
-    public Estado consultarPorId(Long id) {
+    public Estado consultarPorId(final Long idEstado) {
 
-        return this.estadoRepository.findById(id)
-                .orElseThrow(() -> new EstadoNaoEncontradoException(id));
+        return this.estadoRepository.findById(idEstado)
+                .orElseThrow(() -> new EstadoNaoEncontradoException(idEstado));
     }
 
     @Transactional(readOnly = true)
@@ -67,8 +70,9 @@ public class EstadoService {
                 .sorted(Comparator.comparing(Estado::getId).reversed())
                 .toList();
 
-        if(estados.isEmpty())
-            throw new EstadoNaoEncontradoException(String.format(NAO_EXISTEM_ESTADOS_CADASTRADOS));
+        if (estados.isEmpty()) {
+            throw new EstadoNaoEncontradoException(Constantes.NAO_EXISTEM_ESTADOS_CADASTRADOS);
+        }
 
         return estados;
     }
