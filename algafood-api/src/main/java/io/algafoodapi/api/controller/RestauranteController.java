@@ -4,7 +4,6 @@ import io.algafoodapi.api.dto.request.RestauranteDtoRequest;
 import io.algafoodapi.api.dto.response.RestauranteDtoResponse;
 import io.algafoodapi.domain.core.mapper.RestauranteMapper;
 import io.algafoodapi.domain.exception.http404.EntidadeNaoEncontradaException;
-import io.algafoodapi.domain.model.Restaurante;
 import io.algafoodapi.domain.service.RestauranteService;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
@@ -56,24 +55,28 @@ public final class RestauranteController {
                 .body(response);
     }
 
-    @PutMapping(path = "/{restauranteId}")
-    public ResponseEntity<?> atualizar(@PathVariable(name = "restauranteId") Long restauranteId,
-                       @RequestBody @Valid Restaurante restauranteAtual) {
+    @PutMapping(path = "/{idRestaurante}")
+    public ResponseEntity<RestauranteDtoResponse> atualizar(@PathVariable(name = "idRestaurante") final Long idRestaurante,
+                       @RequestBody @Valid final RestauranteDtoRequest restauranteDtoRequest) {
 
-        restauranteAtual = this.restauranteService.atualizar(restauranteId, restauranteAtual);
+        var response = Optional.of(restauranteDtoRequest)
+                .map(this.restauranteMapper::converterDtoRequestParaEntidade)
+                .map(restaurant -> this.restauranteService.atualizar(idRestaurante, restaurant))
+                .map(this.restauranteMapper::converterEntidadeParaDtoResponse)
+                .orElseThrow();
 
         return ResponseEntity
                 .ok()
-                .body(restauranteAtual);
+                .body(response);
     }
 
-    @PatchMapping(path = "/{restauranteId}")
-    public ResponseEntity<?> atualizarParcial(@PathVariable(name = "restauranteId") Long restauranteId,
+    @PatchMapping(path = "/{idRestaurante}")
+    public ResponseEntity<?> atualizarParcial(@PathVariable(name = "idRestaurante") final Long idRestaurante,
                                               @RequestBody Map<String, Object> campos,
                                               HttpServletRequest request) {
 
         var restaurante = this.restauranteService.atualizarParcial(
-                restauranteId, campos, request);
+                idRestaurante, campos, request);
 
         return ResponseEntity
                 .ok()

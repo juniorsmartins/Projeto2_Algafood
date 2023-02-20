@@ -3,7 +3,6 @@ package io.algafoodapi.api.controller;
 import io.algafoodapi.api.dto.request.CidadeDtoRequest;
 import io.algafoodapi.api.dto.response.CidadeDtoResponse;
 import io.algafoodapi.domain.core.mapper.CidadeMapper;
-import io.algafoodapi.domain.model.Cidade;
 import io.algafoodapi.domain.service.CidadeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -49,40 +49,50 @@ public final class CidadeController {
                 .body(response);
     }
 
-    @PutMapping(path = "/{cidadeId}")
-    public ResponseEntity<?> atualizar(@PathVariable(name = "cidadeId") Long cidadeId, @RequestBody @Valid Cidade cidadeAtual) {
+    @PutMapping(path = "/{idCidade}")
+    public ResponseEntity<CidadeDtoResponse> atualizar(@PathVariable(name = "idCidade") final Long idCidade,
+                                       @RequestBody @Valid final CidadeDtoRequest cidadeDtoRequest) {
 
-        cidadeAtual = this.cidadeService.atualizar(cidadeId, cidadeAtual);
+        var response = Optional.of(cidadeDtoRequest)
+                .map(this.cidadeMapper::converterDtoRequestParaEntidade)
+                .map(city -> this.cidadeService.atualizar(idCidade, city))
+                .map(this.cidadeMapper::converterEntidadeParaDtoResponse)
+                .orElseThrow();
 
         return ResponseEntity
                 .ok()
-                .body(cidadeAtual);
+                .body(response);
     }
 
-    @DeleteMapping(path = "/{cidadeId}")
-    public ResponseEntity<?> excluirPorId(@PathVariable(name = "cidadeId") Long cidadeId) {
+    @DeleteMapping(path = "/{idCidade}")
+    public ResponseEntity excluirPorId(@PathVariable(name = "idCidade") final Long idCidade) {
 
-        this.cidadeService.excluirPorId(cidadeId);
+        this.cidadeService.excluirPorId(idCidade);
 
         return ResponseEntity
                 .noContent()
                 .build();
     }
 
-    @GetMapping(path = "/{cidadeId}")
-    public ResponseEntity<?> consultarPorId(@PathVariable(name = "cidadeId") Long cidadeId) {
+    @GetMapping(path = "/{idCidade}")
+    public ResponseEntity<CidadeDtoResponse> consultarPorId(@PathVariable(name = "idCidade") final Long idCidade) {
 
-        var cidade = this.cidadeService.consultarPorId(cidadeId);
+        var response = Optional.of(this.cidadeService.consultarPorId(idCidade))
+                .map(this.cidadeMapper::converterEntidadeParaDtoResponse)
+                .get();
 
         return ResponseEntity
                 .ok()
-                .body(cidade);
+                .body(response);
     }
 
     @GetMapping
-    public ResponseEntity<?> listar() {
+    public ResponseEntity<List<CidadeDtoResponse>> listar() {
 
-        var cidades = this.cidadeService.listar();
+        var cidades = this.cidadeService.listar()
+                .stream()
+                .map(this.cidadeMapper::converterEntidadeParaDtoResponse)
+                .toList();
 
         return ResponseEntity
                 .ok()

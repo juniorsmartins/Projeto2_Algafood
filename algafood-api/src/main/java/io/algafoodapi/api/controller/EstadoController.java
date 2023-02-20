@@ -49,13 +49,13 @@ public final class EstadoController {
                 .body(response);
     }
 
-    @PutMapping(path = "/{estadoId}")
-    public ResponseEntity<EstadoDtoResponse> atualizar(@PathVariable(name = "estadoId") final Long estadoId,
+    @PutMapping(path = "/{idEstado}")
+    public ResponseEntity<EstadoDtoResponse> atualizar(@PathVariable(name = "idEstado") final Long idEstado,
                                        @RequestBody @Valid final EstadoDtoRequest estadoDtoRequest) {
 
         var response = Optional.of(estadoDtoRequest)
                 .map(this.estadoMapper::converterDtoRequestParaEntidade)
-                .map(state -> this.estadoService.atualizar(estadoId, state))
+                .map(state -> this.estadoService.atualizar(idEstado, state))
                 .map(this.estadoMapper::converterEntidadeParaDtoResponse)
                 .orElseThrow();
 
@@ -64,20 +64,20 @@ public final class EstadoController {
                 .body(response);
     }
 
-    @DeleteMapping(path = "/{estadoId}")
-    public ResponseEntity excluirPorId(@PathVariable(name = "estadoId") final Long estadoId) {
+    @DeleteMapping(path = "/{idEstado}")
+    public ResponseEntity excluirPorId(@PathVariable(name = "idEstado") final Long idEstado) {
 
-        this.estadoService.excluirPorId(estadoId);
+        this.estadoService.excluirPorId(idEstado);
 
         return ResponseEntity
                 .noContent()
                 .build();
     }
 
-    @GetMapping(path = "/{estadoId}")
-    public ResponseEntity<EstadoDtoResponse> consultarPorId(@PathVariable(name = "estadoId") final Long estadoId) {
+    @GetMapping(path = "/{idEstado}")
+    public ResponseEntity<EstadoDtoResponse> consultarPorId(@PathVariable(name = "idEstado") final Long idEstado) {
 
-        var response = Optional.of(this.estadoService.consultarPorId(estadoId))
+        var response = Optional.of(this.estadoService.consultarPorId(idEstado))
                 .map(this.estadoMapper::converterEntidadeParaDtoResponse)
                 .get();
 
