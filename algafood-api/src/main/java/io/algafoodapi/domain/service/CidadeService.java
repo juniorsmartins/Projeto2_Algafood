@@ -1,5 +1,6 @@
 package io.algafoodapi.domain.service;
 
+import io.algafoodapi.domain.core.Constantes;
 import io.algafoodapi.domain.exception.http400.RequisicaoMalFormuladaException;
 import io.algafoodapi.domain.exception.http404.CidadeNaoEncontradaException;
 import io.algafoodapi.domain.exception.http404.EstadoNaoEncontradoException;
@@ -7,7 +8,6 @@ import io.algafoodapi.domain.exception.http409.CidadeEmUsoException;
 import io.algafoodapi.domain.model.Cidade;
 import io.algafoodapi.domain.repository.CidadeRepository;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -17,29 +17,28 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class CidadeService {
 
-    public static final String NÃO_EXISTEM_CIDADES_CADASTRADAS = "Não há cidades cadastradas.";
+    private final CidadeRepository cidadeRepository;
+    private final EstadoService estadoService;
 
-    @Autowired
-    private CidadeRepository cidadeRepository;
-
-    @Autowired
-    private EstadoService estadoService;
+    public CidadeService(final CidadeRepository cidadeRepository, final EstadoService estadoService) {
+        this.cidadeRepository = cidadeRepository;
+        this.estadoService = estadoService;
+    }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
     public Cidade criar(Cidade cidade) {
 
-        try {
-            var estado = this.estadoService.consultarPorId(cidade.getEstado().getId());
-            cidade.setEstado(estado);
-
-        } catch (EstadoNaoEncontradoException naoEncontradoException) {
-            throw new RequisicaoMalFormuladaException(naoEncontradoException.getMessage(), naoEncontradoException);
-        }
+        var idEstado = cidade.getEstado().getId();
+        var estado = Optional.of(this.estadoService.consultarPorId(idEstado))
+            .orElseThrow(() ->
+                new RequisicaoMalFormuladaException(String.format(Constantes.ESTADO_NAO_ENCONTRADO, idEstado)));
+        cidade.setEstado(estado);
 
         return this.cidadeRepository.saveAndFlush(cidade);
     }
@@ -92,7 +91,7 @@ public class CidadeService {
                 .collect(Collectors.toList());
 
         if(cidades.isEmpty())
-            throw new CidadeNaoEncontradaException(NÃO_EXISTEM_CIDADES_CADASTRADAS);
+            throw new CidadeNaoEncontradaException(Constantes.NÃO_EXISTEM_CIDADES_CADASTRADAS);
 
         return cidades;
     }

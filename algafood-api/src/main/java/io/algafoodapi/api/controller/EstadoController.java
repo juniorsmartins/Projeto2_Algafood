@@ -4,7 +4,6 @@ import io.algafoodapi.api.dto.request.EstadoDtoRequest;
 import io.algafoodapi.api.dto.response.EstadoDtoResponse;
 import io.algafoodapi.domain.core.mapper.EstadoMapper;
 import io.algafoodapi.domain.service.EstadoService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,20 +23,22 @@ import java.util.Optional;
 @RequestMapping(path = "/v1/estados")
 public final class EstadoController {
 
-    @Autowired
-    private EstadoMapper estadoMapper;
+    private final EstadoMapper estadoMapper;
+    private final EstadoService estadoService;
 
-    @Autowired
-    private EstadoService estadoService;
+    public EstadoController(final EstadoMapper estadoMapper, final EstadoService estadoService) {
+        this.estadoMapper = estadoMapper;
+        this.estadoService = estadoService;
+    }
 
     @PostMapping
     public ResponseEntity<EstadoDtoResponse> criar(@RequestBody @Valid final EstadoDtoRequest estadoDtoRequest,
                                                    final UriComponentsBuilder uriComponentsBuilder) {
 
         var response = Optional.of(estadoDtoRequest)
-                .map(this.estadoMapper::converterDTORequestParaEntidade)
+                .map(this.estadoMapper::converterDtoRequestParaEntidade)
                 .map(this.estadoService::criar)
-                .map(this.estadoMapper::converterEntidadeParaDTOResponse)
+                .map(this.estadoMapper::converterEntidadeParaDtoResponse)
                 .orElseThrow();
 
         return ResponseEntity
@@ -53,9 +54,9 @@ public final class EstadoController {
                                        @RequestBody @Valid final EstadoDtoRequest estadoDtoRequest) {
 
         var response = Optional.of(estadoDtoRequest)
-                .map(this.estadoMapper::converterDTORequestParaEntidade)
+                .map(this.estadoMapper::converterDtoRequestParaEntidade)
                 .map(state -> this.estadoService.atualizar(estadoId, state))
-                .map(this.estadoMapper::converterEntidadeParaDTOResponse)
+                .map(this.estadoMapper::converterEntidadeParaDtoResponse)
                 .orElseThrow();
 
         return ResponseEntity
@@ -77,7 +78,7 @@ public final class EstadoController {
     public ResponseEntity<EstadoDtoResponse> consultarPorId(@PathVariable(name = "estadoId") final Long estadoId) {
 
         var response = Optional.of(this.estadoService.consultarPorId(estadoId))
-                .map(this.estadoMapper::converterEntidadeParaDTOResponse)
+                .map(this.estadoMapper::converterEntidadeParaDtoResponse)
                 .get();
 
         return ResponseEntity
@@ -90,7 +91,7 @@ public final class EstadoController {
 
         var estados = this.estadoService.listar()
                 .stream()
-                .map(this.estadoMapper::converterEntidadeParaDTOResponse)
+                .map(this.estadoMapper::converterEntidadeParaDtoResponse)
                 .toList();
 
         return ResponseEntity

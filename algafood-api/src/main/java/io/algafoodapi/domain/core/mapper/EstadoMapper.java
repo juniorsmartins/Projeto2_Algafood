@@ -4,22 +4,24 @@ import io.algafoodapi.api.dto.request.EstadoDtoRequest;
 import io.algafoodapi.api.dto.response.EstadoDtoResponse;
 import io.algafoodapi.domain.model.Estado;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class EstadoMapper {
 
-    @Autowired
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
 
-    public Estado converterDTORequestParaEntidade( EstadoDtoRequest dto) {
+    public EstadoMapper(final ModelMapper modelMapper) {
+        this.modelMapper = modelMapper;
+    }
+
+    public Estado converterDtoRequestParaEntidade(final EstadoDtoRequest dto) {
         return Estado.builder()
                 .nome(dto.nome())
                 .build();
     }
 
-    public EstadoDtoResponse converterEntidadeParaDTOResponse(Estado estado) {
+    public EstadoDtoResponse converterEntidadeParaDtoResponse(final Estado estado) {
         return EstadoDtoResponse.builder()
                 .id(estado.getId())
                 .nome(estado.getNome())
