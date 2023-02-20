@@ -1,6 +1,5 @@
 package io.algafoodapi.domain.model;
 
-import io.algafoodapi.domain.core.validation.FreteGratisObrigaDescricaoNoNomeAnotation;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -8,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -36,39 +37,30 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@FreteGratisObrigaDescricaoNoNomeAnotation(valorTaxaFrete = "taxaFrete", descricaoNome = "nome", descricaoObrigatoria = "Frete Grátis")
+@EqualsAndHashCode(of = "id")
 public final class Restaurante implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-//    @NotBlank
     @Column(name = "nome", length = 100, nullable = false)
     private String nome;
 
-//    @TaxaFreteAnotation
-//    @MultiploAnotation(numero = 5)
-//    @PositiveOrZero(message = "{TaxaFrete.invalida}")
     @Column(name = "taxa_frete", columnDefinition = "decimal(10.2) default 0.00", nullable = false)
     private BigDecimal taxaFrete = BigDecimal.ZERO;
 
-//    @CreationTimestamp
+    @CreationTimestamp
     @Column(name = "data_hora_utc_cadastro", columnDefinition = "datetime", nullable = false)
     private OffsetDateTime dataHoraUTCCadastro;
 
-//    @UpdateTimestamp
+    @UpdateTimestamp
     @Column(name = "data_hora_utc_atualizacao", columnDefinition = "datetime")
     private OffsetDateTime dataHoraUTCAtualizacao;
 
-//    @Valid
-//    @ConvertGroup(from = Default.class, to = GruposValid.CozinhaId.class)
-//    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cozinha_id", referencedColumnName = "id", nullable = false)
     private Cozinha cozinha;

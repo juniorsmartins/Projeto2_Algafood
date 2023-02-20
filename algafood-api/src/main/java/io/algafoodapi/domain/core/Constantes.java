@@ -7,5 +7,6 @@ public final class Constantes {
     public static final String NÃO_EXISTEM_CIDADES_CADASTRADAS = "Não existem cidades cadastradas.";
     public static final String NÃO_ENCONTRADA_COZINHA_COM_NOME = "Não encontrada cozinha com nome %s.";
     public static final String NAO_EXISTEM_COZINHAS_CADASTRADAS = "Não existem cozinhas cadastradas.";
+    public static final String NÃO_EXISTEM_RESTAURANTES = "Não existem restaurantes cadastrados.";
 }
 
