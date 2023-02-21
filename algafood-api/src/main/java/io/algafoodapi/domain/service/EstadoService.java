@@ -27,7 +27,7 @@ public class EstadoService {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
     public Estado criar(final Estado estado) {
-        return this.estadoRepository.saveAndFlush(estado);
+        return this.estadoRepository.save(estado);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)

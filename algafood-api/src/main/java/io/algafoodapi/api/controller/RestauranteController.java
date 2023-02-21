@@ -3,7 +3,6 @@ package io.algafoodapi.api.controller;
 import io.algafoodapi.api.dto.request.RestauranteDtoRequest;
 import io.algafoodapi.api.dto.response.RestauranteDtoResponse;
 import io.algafoodapi.domain.core.mapper.RestauranteMapper;
-import io.algafoodapi.domain.exception.http404.EntidadeNaoEncontradaException;
 import io.algafoodapi.domain.service.RestauranteService;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +21,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -71,22 +71,24 @@ public final class RestauranteController {
     }
 
     @PatchMapping(path = "/{idRestaurante}")
-    public ResponseEntity<?> atualizarParcial(@PathVariable(name = "idRestaurante") final Long idRestaurante,
+    public ResponseEntity<RestauranteDtoResponse> atualizarParcial(@PathVariable(name = "idRestaurante") final Long idRestaurante,
                                               @RequestBody Map<String, Object> campos,
-                                              HttpServletRequest request) {
+                                              final HttpServletRequest request) {
 
-        var restaurante = this.restauranteService.atualizarParcial(
-                idRestaurante, campos, request);
+        var response = Optional.of(this.restauranteService.atualizarParcial(
+                idRestaurante, campos, request))
+                .map(this.restauranteMapper::converterEntidadeParaDtoResponse)
+                .get();
 
         return ResponseEntity
                 .ok()
-                .body(restaurante);
+                .body(response);
     }
 
     @DeleteMapping(path = "/{restauranteId}")
-    public ResponseEntity<?> excluirPorId(@PathVariable(name = "restauranteId") Long restauranteId) {
+    public ResponseEntity excluirPorId(@PathVariable(name = "restauranteId") final Long idRestaurante) {
 
-        this.restauranteService.excluirPorId(restauranteId);
+        this.restauranteService.excluirPorId(idRestaurante);
 
         return ResponseEntity
                 .noContent()
@@ -94,51 +96,56 @@ public final class RestauranteController {
     }
 
     @GetMapping(path = "/{restauranteId}")
-    public ResponseEntity<?> consultarPorId(@PathVariable(name = "restauranteId") Long restauranteId) {
+    public ResponseEntity<RestauranteDtoResponse> consultarPorId(@PathVariable(name = "restauranteId") final Long idRestaurante) {
 
-        var restaurante = this.restauranteService.consultarPorId(restauranteId);
+        var response = Optional.of(this.restauranteService.consultarPorId(idRestaurante))
+                .map(this.restauranteMapper::converterEntidadeParaDtoResponse)
+                .get();
 
         return ResponseEntity
                 .ok()
-                .body(restaurante);
+                .body(response);
     }
 
     @GetMapping(path = "/por-nome")
-    public ResponseEntity<?> consultarPorNome(@RequestParam(name = "nome") String nome) {
+    public ResponseEntity<List<RestauranteDtoResponse>> consultarPorNome(@RequestParam(name = "nome") final String nome) {
 
-        var restaurantes = this.restauranteService.consultarPorNome(nome);
+        var response = this.restauranteService.consultarPorNome(nome)
+                .stream()
+                .map(this.restauranteMapper::converterEntidadeParaDtoResponse)
+                .toList();
 
         return ResponseEntity
                 .ok()
-                .body(restaurantes);
+                .body(response);
     }
 
     @GetMapping
-    public ResponseEntity<?> listar() {
+    public ResponseEntity<List<RestauranteDtoResponse>> listar() {
 
-        var restaurantes = this.restauranteService.listar();
+        var response = this.restauranteService.listar()
+                .stream()
+                .map(this.restauranteMapper::converterEntidadeParaDtoResponse)
+                .toList();
 
         return ResponseEntity
                 .ok()
-                .body(restaurantes);
+                .body(response);
     }
 
     @GetMapping(path = "/por-nome-e-taxas")
-    public ResponseEntity<?> consultarPorNomeAndTaxas(@Param("nome") String nome,
-                                                      @Param("freteTaxaInicial") BigDecimal freteTaxaInicial,
-                                                      @Param("freteTaxaFinal") BigDecimal freteTaxaFinal) {
+    public ResponseEntity<List<RestauranteDtoResponse>> consultarPorNomeAndTaxas(@Param("nome") final String nome,
+                                                      @Param("freteTaxaInicial") final BigDecimal freteTaxaInicial,
+                                                      @Param("freteTaxaFinal") final BigDecimal freteTaxaFinal) {
 
-        try {
-            var restaurantes = this.restauranteService.consultarPorNomeAndTaxas(nome, freteTaxaInicial, freteTaxaFinal);
-            return ResponseEntity
-                    .ok()
-                    .body(restaurantes);
+        var response = this.restauranteService.consultarPorNomeAndTaxas(nome, freteTaxaInicial, freteTaxaFinal)
+                .stream()
+                .map(this.restauranteMapper::converterEntidadeParaDtoResponse)
+                .toList();
 
-        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
-            return ResponseEntity
-                    .noContent()
-                    .build();
-        }
+        return ResponseEntity
+                .ok()
+                .body(response);
     }
 }
 

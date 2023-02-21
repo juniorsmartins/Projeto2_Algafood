@@ -55,7 +55,7 @@ public final class CozinhaController {
 
         var response = Optional.of(cozinhaDtoRequest)
                 .map(this.cozinhaMapper::converterDtoRequestParaEntidade)
-                .map(cozinha -> this.cozinhaService.atualizar(idCozinha, cozinha))
+                .map(kitchen -> this.cozinhaService.atualizar(idCozinha, kitchen))
                 .map(this.cozinhaMapper::converterEntidadeParaDtoResponse)
                 .orElseThrow();
 

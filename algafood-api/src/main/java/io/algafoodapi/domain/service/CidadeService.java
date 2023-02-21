@@ -33,15 +33,16 @@ public class CidadeService {
     public Cidade criar(Cidade cidade) {
 
         this.validarEstado(cidade);
-        return this.cidadeRepository.saveAndFlush(cidade);
+        return this.cidadeRepository.save(cidade);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
-    public Cidade atualizar(final Long idCidade, final Cidade cidade) {
+    public Cidade atualizar(final Long idCidade, Cidade cidade) {
+
+        this.validarEstado(cidade);
 
         return this.cidadeRepository.findById(idCidade)
                 .map(city -> {
-                    this.validarEstado(cidade);
                     BeanUtils.copyProperties(cidade, city, "id");
                     return city;
                 })

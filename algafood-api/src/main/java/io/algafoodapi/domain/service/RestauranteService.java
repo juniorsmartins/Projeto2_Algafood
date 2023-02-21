@@ -5,10 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.algafoodapi.domain.core.Constantes;
 import io.algafoodapi.domain.core.validation.ValidacaoException;
 import io.algafoodapi.domain.exception.http400.RequisicaoMalFormuladaException;
-import io.algafoodapi.domain.exception.http404.CozinhaNaoEncontradaException;
 import io.algafoodapi.domain.exception.http404.RestauranteNaoEncontradoException;
 import io.algafoodapi.domain.exception.http409.RestauranteEmUsoException;
+import io.algafoodapi.domain.model.Cozinha;
 import io.algafoodapi.domain.model.Restaurante;
+import io.algafoodapi.domain.repository.CozinhaRepository;
 import io.algafoodapi.domain.repository.RestauranteRepository;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.BeanUtils;
@@ -35,49 +36,37 @@ import java.util.Map;
 public class RestauranteService {
 
     private final RestauranteRepository restauranteRepository;
-
-    private final CozinhaService cozinhaService;
-
+    private final CozinhaRepository cozinhaRepository;
     private final SmartValidator smartValidator;
 
-    public RestauranteService(final RestauranteRepository restauranteRepository, final CozinhaService cozinhaService,
+    public RestauranteService(final RestauranteRepository restauranteRepository,
+                              final CozinhaRepository cozinhaRepository,
                               final SmartValidator smartValidator) {
         this.restauranteRepository = restauranteRepository;
-        this.cozinhaService = cozinhaService;
+        this.cozinhaRepository = cozinhaRepository;
         this.smartValidator = smartValidator;
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
-    public Restaurante criar(final Restaurante restaurante) {
+    public Restaurante criar(Restaurante restaurante) {
 
-        try {
-            var cozinha = this.cozinhaService.consultarPorId(restaurante.getCozinha().getId());
-            restaurante.setCozinha(cozinha);
-
-        } catch (CozinhaNaoEncontradaException naoEncontradaException) {
-            throw new RequisicaoMalFormuladaException(naoEncontradaException.getMessage(), naoEncontradaException);
-        }
-
-        return this.restauranteRepository.saveAndFlush(restaurante);
+        var cozinha = this.validarCozinha(restaurante);
+        restaurante.setCozinha(cozinha);
+        return this.restauranteRepository.save(restaurante);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
-    public Restaurante atualizar(Long id, Restaurante restauranteAtual) {
+    public Restaurante atualizar(final Long idRestaurante, Restaurante restaurante) {
 
-        var restaurante = this.consultarPorId(id);
-
-        try {
-            var cozinha = this.cozinhaService.consultarPorId(restauranteAtual.getCozinha().getId());
-            restauranteAtual.setCozinha(cozinha);
-
-        } catch (CozinhaNaoEncontradaException naoEncontradaException) {
-            throw new RequisicaoMalFormuladaException(naoEncontradaException.getMessage(), naoEncontradaException);
-        }
-
-        BeanUtils.copyProperties(restauranteAtual, restaurante, "id",
-                "formasPagamento", "endereco", "dataCadastro", "produtos");
-
-        return this.restauranteRepository.saveAndFlush(restaurante);
+        return this.restauranteRepository.findById(idRestaurante)
+                .map(restaurant -> {
+                    var cozinha = this.validarCozinha(restaurante);
+                    restaurant.setCozinha(cozinha);
+                    BeanUtils.copyProperties(restaurante, restaurant, "id", "cozinha",
+                            "formasPagamento", "data_hora_utc_cadastro", "produtos", "pedidos");
+                    return restaurant;
+                })
+                .orElseThrow();
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
@@ -129,7 +118,8 @@ public class RestauranteService {
     }
 
     @Transactional(readOnly = true)
-    public List<Restaurante> consultarPorNomeAndTaxas(String nome, BigDecimal freteTaxaInicial, BigDecimal freteTaxaFinal) {
+    public List<Restaurante> consultarPorNomeAndTaxas(final String nome, final BigDecimal freteTaxaInicial,
+                                                      final BigDecimal freteTaxaFinal) {
 
         var restaurantes = this.restauranteRepository.findPorCriteria(nome, freteTaxaInicial, freteTaxaFinal)
                 .stream()
@@ -187,6 +177,13 @@ public class RestauranteService {
         if (beanPropertyBindingResult.hasErrors()) { // O BeanPropertyBindingResult armazena os erros, em caso de existirem. Pois isso verificamos se existem.
             throw new ValidacaoException(beanPropertyBindingResult);
         }
+    }
+
+    private Cozinha validarCozinha(Restaurante restaurante) {
+        var idCozinha = restaurante.getCozinha().getId();
+        return this.cozinhaRepository.findById(idCozinha)
+            .orElseThrow(() ->
+                new RequisicaoMalFormuladaException(String.format(Constantes.COZINHA_NAO_ENCONTRADA, idCozinha)));
     }
 }
 
