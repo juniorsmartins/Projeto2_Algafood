@@ -22,5 +22,9 @@ public final class RestauranteMapper {
     public RestauranteDtoResponse converterEntidadeParaDtoResponse(final Restaurante restaurante) {
         return this.modelMapper.map(restaurante, RestauranteDtoResponse.class);
     }
+
+    public void copiarValoresDaOrigemParaDestino(Restaurante restauranteUpdate, Restaurante restaurante) {
+        this.modelMapper.map(restauranteUpdate, restaurante);
+    }
 }
 
