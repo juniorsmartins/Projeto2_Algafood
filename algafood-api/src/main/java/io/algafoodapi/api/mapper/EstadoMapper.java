@@ -1,4 +1,4 @@
-package io.algafoodapi.domain.core.mapper;
+package io.algafoodapi.api.mapper;
 
 import io.algafoodapi.api.dto.request.EstadoDtoRequest;
 import io.algafoodapi.api.dto.response.EstadoDtoResponse;

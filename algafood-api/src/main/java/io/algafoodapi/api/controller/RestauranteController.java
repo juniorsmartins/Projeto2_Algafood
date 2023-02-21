@@ -2,7 +2,7 @@ package io.algafoodapi.api.controller;
 
 import io.algafoodapi.api.dto.request.RestauranteDtoRequest;
 import io.algafoodapi.api.dto.response.RestauranteDtoResponse;
-import io.algafoodapi.domain.core.mapper.RestauranteMapper;
+import io.algafoodapi.api.mapper.RestauranteMapper;
 import io.algafoodapi.domain.service.RestauranteService;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
@@ -50,7 +50,7 @@ public final class RestauranteController {
         return ResponseEntity
                 .created(uriComponentsBuilder
                         .path("restaurantes/{id}")
-                        .buildAndExpand(response.id())
+                        .buildAndExpand(response.getId())
                         .toUri())
                 .body(response);
     }

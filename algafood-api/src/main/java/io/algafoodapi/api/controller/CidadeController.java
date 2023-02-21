@@ -2,7 +2,7 @@ package io.algafoodapi.api.controller;
 
 import io.algafoodapi.api.dto.request.CidadeDtoRequest;
 import io.algafoodapi.api.dto.response.CidadeDtoResponse;
-import io.algafoodapi.domain.core.mapper.CidadeMapper;
+import io.algafoodapi.api.mapper.CidadeMapper;
 import io.algafoodapi.domain.service.CidadeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -44,7 +44,7 @@ public final class CidadeController {
         return ResponseEntity
                 .created(uriComponentsBuilder
                         .path("cidades/{id}")
-                        .buildAndExpand(response.id())
+                        .buildAndExpand(response.getId())
                         .toUri())
                 .body(response);
     }

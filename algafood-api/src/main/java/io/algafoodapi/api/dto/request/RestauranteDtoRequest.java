@@ -1,48 +1,43 @@
 package io.algafoodapi.api.dto.request;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.algafoodapi.domain.core.validation.FreteGratisObrigaDescricaoNoNomeAnotation;
 import io.algafoodapi.domain.core.validation.MultiploAnotation;
 import io.algafoodapi.domain.core.validation.TaxaFreteAnotation;
-import io.algafoodapi.domain.model.Endereco;
-import io.algafoodapi.domain.model.FormaPagamento;
-import io.algafoodapi.domain.model.Pedido;
-import io.algafoodapi.domain.model.Produto;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.util.List;
 
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode(of = {"nome", "endereco.cep"})
 @FreteGratisObrigaDescricaoNoNomeAnotation(valorTaxaFrete = "taxaFrete", descricaoNome = "nome", descricaoObrigatoria = "Frete Grátis")
-public record RestauranteDtoRequest
-    (
-        @NotBlank
-        String nome,
+public final class RestauranteDtoRequest {
+    @NotBlank
+    private String nome;
 
-        @TaxaFreteAnotation
-        @MultiploAnotation(numero = 5)
-        BigDecimal taxaFrete,
+    @TaxaFreteAnotation
+    @MultiploAnotation(numero = 5)
+    private BigDecimal taxaFrete;
 
-        @NotNull
-        @Valid
-        CozinhaIdRequest cozinha,
+    @NotNull
+    @Valid
+    private CozinhaIdRequest cozinha;
 
-        @JsonIgnore
-        List<Produto> produtos,
-
-        @JsonIgnore
-        List<FormaPagamento> formasPagamento,
-
-        @JsonIgnore
-        List<Pedido> pedidos,
-
-        @NotNull
-        @Valid
-        Endereco endereco
-    )
-{ }
+    @NotNull
+    @Valid
+    private EnderecoDtoRequest endereco;
+}
 

@@ -63,7 +63,7 @@ public class RestauranteService {
                     var cozinha = this.validarCozinha(restaurante);
                     restaurant.setCozinha(cozinha);
                     BeanUtils.copyProperties(restaurante, restaurant, "id", "cozinha",
-                            "formasPagamento", "data_hora_utc_cadastro", "produtos", "pedidos");
+                            "formasPagamento", "data_hora_utc_cadastro", "produtos", "pedidos"); // TODO - BUG - data_hora_utc_cadastro está ficando nulo na atualização
                     return restaurant;
                 })
                 .orElseThrow();
@@ -82,7 +82,7 @@ public class RestauranteService {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
-    public void excluirPorId(Long id) {
+    public void excluirPorId(final Long id) {
 
         try {
             this.restauranteRepository.deleteById(id);
@@ -91,19 +91,19 @@ public class RestauranteService {
             throw new RestauranteNaoEncontradoException(id);
 
         } catch (DataIntegrityViolationException dataIntegrityViolationException) {
-            throw new RestauranteEmUsoException(id);
+            throw new RestauranteEmUsoException(id); // TODO - BUG - Não captura e não lança
         }
     }
 
     @Transactional(readOnly = true)
-    public Restaurante consultarPorId(Long id) {
+    public Restaurante consultarPorId(final Long id) {
 
         return this.restauranteRepository.findById(id)
                 .orElseThrow(() -> new RestauranteNaoEncontradoException(id));
     }
 
     @Transactional(readOnly = true)
-    public List<Restaurante> consultarPorNome(String nome) {
+    public List<Restaurante> consultarPorNome(final String nome) {
 
         var restaurantes = this.restauranteRepository.buscarTodosPorNome(nome)
                 .stream()
