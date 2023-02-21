@@ -1,4 +1,4 @@
-package io.algafoodapi.domain.core.mapper;
+package io.algafoodapi.api.mapper;
 
 import io.algafoodapi.api.dto.request.CozinhaDtoRequest;
 import io.algafoodapi.api.dto.response.CozinhaDtoResponse;
@@ -16,15 +16,11 @@ public final class CozinhaMapper {
     }
 
     public Cozinha converterDtoRequestParaEntidade(final CozinhaDtoRequest dto) {
-        return Cozinha.builder()
-                .nome(dto.nome())
-                .build();
+        return this.modelMapper.map(dto, Cozinha.class);
     }
 
     public CozinhaDtoResponse converterEntidadeParaDtoResponse(final Cozinha cozinha) {
-        return CozinhaDtoResponse.builder()
-                .id(cozinha.getId())
-                .nome(cozinha.getNome())
-                .build();
+        return this.modelMapper.map(cozinha, CozinhaDtoResponse.class);
     }
 }
+

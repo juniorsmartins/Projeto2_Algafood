@@ -18,7 +18,7 @@ import javax.validation.constraints.Positive;
 @Setter
 @ToString
 @EqualsAndHashCode(of = "id")
-public final class CozinhaIdRequest {
+public final class CidadeIdRequest {
     @NotNull
     @Positive
     private Long id;

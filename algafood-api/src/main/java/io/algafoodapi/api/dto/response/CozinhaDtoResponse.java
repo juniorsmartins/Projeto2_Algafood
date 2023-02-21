@@ -1,17 +1,24 @@
 package io.algafoodapi.api.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode(of = "id")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public record CozinhaDtoResponse
-    (
-        Long id,
-
-        @JsonProperty("gastronomia")
-        String nome
-    )
-{ }
+public final class CozinhaDtoResponse {
+        private Long id;
+        private String nome;
+}
 

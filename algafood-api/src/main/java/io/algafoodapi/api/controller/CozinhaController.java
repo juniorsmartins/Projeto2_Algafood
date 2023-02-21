@@ -2,7 +2,7 @@ package io.algafoodapi.api.controller;
 
 import io.algafoodapi.api.dto.request.CozinhaDtoRequest;
 import io.algafoodapi.api.dto.response.CozinhaDtoResponse;
-import io.algafoodapi.domain.core.mapper.CozinhaMapper;
+import io.algafoodapi.api.mapper.CozinhaMapper;
 import io.algafoodapi.domain.service.CozinhaService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -44,7 +44,7 @@ public final class CozinhaController {
         return ResponseEntity
                 .created(uriComponentsBuilder
                         .path("cozinhas/{id}")
-                        .buildAndExpand(response.id())
+                        .buildAndExpand(response.getId())
                         .toUri())
                 .body(response);
     }
@@ -55,7 +55,7 @@ public final class CozinhaController {
 
         var response = Optional.of(cozinhaDtoRequest)
                 .map(this.cozinhaMapper::converterDtoRequestParaEntidade)
-                .map(cozinha -> this.cozinhaService.atualizar(idCozinha, cozinha))
+                .map(kitchen -> this.cozinhaService.atualizar(idCozinha, kitchen))
                 .map(this.cozinhaMapper::converterEntidadeParaDtoResponse)
                 .orElseThrow();
 

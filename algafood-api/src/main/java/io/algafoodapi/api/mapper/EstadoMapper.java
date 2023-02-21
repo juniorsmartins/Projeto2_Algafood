@@ -1,4 +1,4 @@
-package io.algafoodapi.domain.core.mapper;
+package io.algafoodapi.api.mapper;
 
 import io.algafoodapi.api.dto.request.EstadoDtoRequest;
 import io.algafoodapi.api.dto.response.EstadoDtoResponse;
@@ -16,16 +16,11 @@ public class EstadoMapper {
     }
 
     public Estado converterDtoRequestParaEntidade(final EstadoDtoRequest dto) {
-        return Estado.builder()
-                .nome(dto.nome())
-                .build();
+        return this.modelMapper.map(dto, Estado.class);
     }
 
     public EstadoDtoResponse converterEntidadeParaDtoResponse(final Estado estado) {
-        return EstadoDtoResponse.builder()
-                .id(estado.getId())
-                .nome(estado.getNome())
-                .build();
+        return this.modelMapper.map(estado, EstadoDtoResponse.class);
     }
-
 }
+
