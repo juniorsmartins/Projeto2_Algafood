@@ -46,12 +46,13 @@ public class CozinhaService {
 
         try {
             this.cozinhaRepository.deleteById(id);
+            this.cozinhaRepository.flush(); // Manda descarregar as operações antes do commit da transação
 
         } catch (EmptyResultDataAccessException dataAccessException) {
             throw new CozinhaNaoEncontradaException(id);
 
         } catch (DataIntegrityViolationException dataIntegrityViolationException) {
-            throw new CozinhaEmUsoException(id); // TODO - BUG - Não captura e não lança
+            throw new CozinhaEmUsoException(id); 
         }
     }
 

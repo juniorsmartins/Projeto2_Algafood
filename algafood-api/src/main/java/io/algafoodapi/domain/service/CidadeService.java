@@ -54,12 +54,13 @@ public class CidadeService {
 
         try {
             this.cidadeRepository.deleteById(idCidade);
+            this.cidadeRepository.flush(); // Manda descarregar as operações antes do commit da transação
 
         } catch (EmptyResultDataAccessException dataAccessException) {
             throw new CidadeNaoEncontradaException(idCidade);
 
         } catch (DataIntegrityViolationException dataIntegrityViolationException) {
-            throw new CidadeEmUsoException(idCidade); // TODO - BUG - Não captura e não lança
+            throw new CidadeEmUsoException(idCidade);
         }
     }
 

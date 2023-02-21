@@ -46,12 +46,13 @@ public class EstadoService {
 
         try {
             this.estadoRepository.deleteById(idEstado);
+            this.estadoRepository.flush(); // Manda descarregar as operações antes do commit da transação
 
         } catch (EmptyResultDataAccessException emptyResultDataAccessException) {
             throw new EstadoNaoEncontradoException(idEstado);
 
         } catch (DataIntegrityViolationException violationException) {
-            throw new EstadoEmUsoException(idEstado); // TODO - BUG - Não captura e não lança
+            throw new EstadoEmUsoException(idEstado);
         }
     }
 

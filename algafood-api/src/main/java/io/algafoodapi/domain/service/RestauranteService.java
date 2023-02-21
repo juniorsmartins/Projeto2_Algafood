@@ -85,12 +85,13 @@ public class RestauranteService {
 
         try {
             this.restauranteRepository.deleteById(id);
+//            this.restauranteRepository.flush();
 
         } catch (EmptyResultDataAccessException dataAccessException) {
             throw new RestauranteNaoEncontradoException(id);
 
         } catch (DataIntegrityViolationException dataIntegrityViolationException) {
-            throw new RestauranteEmUsoException(id); // TODO - BUG - Não captura e não lança
+            throw new RestauranteEmUsoException(id);
         }
     }
 
