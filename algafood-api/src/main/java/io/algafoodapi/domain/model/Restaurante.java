@@ -54,7 +54,7 @@ public final class Restaurante implements Serializable {
     private BigDecimal taxaFrete = BigDecimal.ZERO;
 
     @CreationTimestamp
-    @Column(name = "data_hora_utc_cadastro", columnDefinition = "datetime", nullable = false)
+    @Column(name = "data_hora_utc_cadastro", columnDefinition = "datetime", updatable = false)
     private OffsetDateTime dataHoraUTCCadastro;
 
     @UpdateTimestamp

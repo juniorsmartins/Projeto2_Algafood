@@ -1,23 +1,32 @@
 package io.algafoodapi.api.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.algafoodapi.domain.model.Endereco;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode(of = "id")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public record RestauranteDtoResponse
-    (
-            Long id,
-            String nome,
-            BigDecimal taxaFrete,
-            CozinhaDtoResponse cozinha,
-            Endereco endereco,
-            OffsetDateTime dataHoraUTCCadastro,
-            OffsetDateTime dataHoraUTCAtualizacao
-    )
-{ }
+public final class RestauranteDtoResponse {
+    private Long id;
+    private String nome;
+    private BigDecimal taxaFrete;
+    private CozinhaDtoResponse cozinha;
+    private EnderecoDtoResponse endereco;
+    private OffsetDateTime dataHoraUTCCadastro;
+    private OffsetDateTime dataHoraUTCAtualizacao;
+}
 

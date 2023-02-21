@@ -15,11 +15,14 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = {"cep", "bairro", "logradouro", "numero"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public final class CidadeDtoResponse {
-        private Long id;
-        private String nome;
-        private EstadoDtoResponse estado;
+public final class EnderecoDtoResponse {
+    private String cep;
+    private String bairro;
+    private String logradouro;
+    private String numero;
+    private String complemento;
+    private CidadeDtoResponse cidade;
 }
 

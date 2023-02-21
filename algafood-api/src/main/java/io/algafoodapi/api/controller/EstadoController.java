@@ -2,7 +2,7 @@ package io.algafoodapi.api.controller;
 
 import io.algafoodapi.api.dto.request.EstadoDtoRequest;
 import io.algafoodapi.api.dto.response.EstadoDtoResponse;
-import io.algafoodapi.domain.core.mapper.EstadoMapper;
+import io.algafoodapi.api.mapper.EstadoMapper;
 import io.algafoodapi.domain.service.EstadoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -44,7 +44,7 @@ public final class EstadoController {
         return ResponseEntity
                 .created(uriComponentsBuilder
                     .path("estados/{id}")
-                    .buildAndExpand(response.id())
+                    .buildAndExpand(response.getId())
                     .toUri())
                 .body(response);
     }

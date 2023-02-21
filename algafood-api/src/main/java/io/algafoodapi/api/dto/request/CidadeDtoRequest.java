@@ -1,20 +1,30 @@
 package io.algafoodapi.api.dto.request;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Builder
-public record CidadeDtoRequest
-    (
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode(of = {"nome", "estado"})
+public final class CidadeDtoRequest {
         @NotBlank
-        String nome,
+        private String nome;
 
         @NotNull
         @Valid
-        EstadoIdRequest estado
-    )
-{ }
+        private EstadoIdRequest estado;
+}
 
