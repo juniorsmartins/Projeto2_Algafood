@@ -140,17 +140,17 @@ public class RestauranteService {
     public void ativar(final Long idRestaurante) {
         this.restauranteRepository.findById(idRestaurante)
             .map(restaurante -> {
-                restaurante.setAtivo(true);
+                restaurante.ativar();
                 return restaurante;
             })
             .orElseThrow(() -> new RestauranteNaoEncontradoException(idRestaurante));
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
-    public void desativar(final Long idRestaurante) {
+    public void inativar(final Long idRestaurante) {
         this.restauranteRepository.findById(idRestaurante)
             .map(restaurante -> {
-                restaurante.setAtivo(true);
+                restaurante.inativar();
                 return restaurante;
             })
             .orElseThrow(() -> new RestauranteNaoEncontradoException(idRestaurante));
@@ -159,6 +159,8 @@ public class RestauranteService {
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
     public Restaurante atualizarParcial(final Long idRestaurante, Map<String, Object> dadosOrigem, final HttpServletRequest request) {
 
+        // TODO - verificar em caso de atualização para cozinha inexistente
+
         return this.restauranteRepository.findById(idRestaurante)
                 .map(restaurante -> {
                     this.merge(dadosOrigem, restaurante, request);
@@ -166,9 +168,6 @@ public class RestauranteService {
                     return restaurante;
                 })
                 .orElseThrow(() -> new RestauranteNaoEncontradoException(idRestaurante));
-
-//        this.merge(dadosOrigem, restauranteDoDatabase, request);
-//        return this.atualizar(id, restauranteDoDatabase);
     }
 
     private void merge(Map<String, Object> dadosOrigem, Restaurante restaurante, HttpServletRequest request) {
