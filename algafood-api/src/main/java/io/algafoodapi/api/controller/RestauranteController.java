@@ -147,5 +147,23 @@ public final class RestauranteController {
                 .ok()
                 .body(response);
     }
+
+    @PutMapping(path = "/{id}/ativos")
+    public ResponseEntity ativar(@PathVariable(name = "id") final Long idRestaurante) {
+        this.restauranteService.ativar(idRestaurante);
+
+        return ResponseEntity
+                .noContent()
+                .build();
+    }
+
+    @DeleteMapping(path = "/{id}/ativos")
+    public ResponseEntity inativar(@PathVariable(name = "id") final Long idRestaurante) {
+        this.restauranteService.inativar(idRestaurante);
+
+        return ResponseEntity
+                .noContent()
+                .build();
+    }
 }
 

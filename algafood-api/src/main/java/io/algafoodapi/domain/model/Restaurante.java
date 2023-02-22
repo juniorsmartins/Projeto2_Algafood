@@ -79,5 +79,16 @@ public final class Restaurante implements Serializable {
 
     @Embedded
     private Endereco endereco;
+
+    @Column(name = "ativo", columnDefinition = "boolean", nullable = false)
+    private Boolean ativo = Boolean.TRUE;
+
+    public void ativar() {
+        this.setAtivo(true);
+    }
+
+    public void inativar() {
+        this.setAtivo(false);
+    }
 }
 
