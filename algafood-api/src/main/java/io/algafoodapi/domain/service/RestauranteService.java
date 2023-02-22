@@ -60,24 +60,12 @@ public class RestauranteService {
     public Restaurante atualizar(final Long idRestaurante, Restaurante restauranteNovasInfos) {
 
         return this.restauranteRepository.findById(idRestaurante)
-                .map(restaurant -> {
-                    this.validarCozinha(restauranteNovasInfos);
-                    this.restauranteMapper.copiarValoresDaOrigemParaDestino(restauranteNovasInfos, restaurant);
-                    return restaurant;
-                })
-                .orElseThrow();
-    }
-
-    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
-    public Restaurante atualizarParcial(Long id, Map<String, Object> dadosOrigem, HttpServletRequest request) {
-
-        var restauranteDoDatabase = this.consultarPorId(id);
-
-        this.merge(dadosOrigem, restauranteDoDatabase, request);
-
-        this.validarValoresAtualizadosDeRestaurante(restauranteDoDatabase, "restaurante");
-
-        return this.atualizar(id, restauranteDoDatabase);
+            .map(restaurant -> {
+                this.validarCozinha(restauranteNovasInfos);
+                this.restauranteMapper.copiarValoresDaOrigemParaDestino(restauranteNovasInfos, restaurant);
+                return restaurant;
+            })
+            .orElseThrow(() -> new RestauranteNaoEncontradoException(idRestaurante));
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
@@ -99,16 +87,16 @@ public class RestauranteService {
     public Restaurante consultarPorId(final Long id) {
 
         return this.restauranteRepository.findById(id)
-                .orElseThrow(() -> new RestauranteNaoEncontradoException(id));
+            .orElseThrow(() -> new RestauranteNaoEncontradoException(id));
     }
 
     @Transactional(readOnly = true)
     public List<Restaurante> consultarPorNome(final String nome) {
 
         var restaurantes = this.restauranteRepository.buscarTodosPorNome(nome)
-                .stream()
-                .sorted(Comparator.comparing(Restaurante::getId).reversed())
-                .toList();
+            .stream()
+            .sorted(Comparator.comparing(Restaurante::getId).reversed())
+            .toList();
 
         if (restaurantes.isEmpty()) {
             throw new RestauranteNaoEncontradoException(Constantes.NÃO_EXISTEM_RESTAURANTES);
@@ -122,9 +110,9 @@ public class RestauranteService {
                                                       final BigDecimal freteTaxaFinal) {
 
         var restaurantes = this.restauranteRepository.findPorCriteria(nome, freteTaxaInicial, freteTaxaFinal)
-                .stream()
-                .sorted(Comparator.comparing(Restaurante::getId).reversed())
-                .toList();
+            .stream()
+            .sorted(Comparator.comparing(Restaurante::getId).reversed())
+            .toList();
 
         if (restaurantes.isEmpty()) {
             throw new RestauranteNaoEncontradoException(Constantes.NÃO_EXISTEM_RESTAURANTES);
@@ -137,9 +125,9 @@ public class RestauranteService {
     public List<Restaurante> listar() {
 
         var restaurantes = this.restauranteRepository.findAll()
-                .stream()
-                .sorted(Comparator.comparing(Restaurante::getId).reversed())
-                .toList();
+            .stream()
+            .sorted(Comparator.comparing(Restaurante::getId).reversed())
+            .toList();
 
         if (restaurantes.isEmpty()) {
             throw new RestauranteNaoEncontradoException(Constantes.NÃO_EXISTEM_RESTAURANTES);
@@ -148,7 +136,42 @@ public class RestauranteService {
         return restaurantes;
     }
 
-    private void merge(Map<String, Object> dadosOrigem, Restaurante restauranteDoDatabase, HttpServletRequest request) {
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
+    public void ativar(final Long idRestaurante) {
+        this.restauranteRepository.findById(idRestaurante)
+            .map(restaurante -> {
+                restaurante.setAtivo(true);
+                return restaurante;
+            })
+            .orElseThrow(() -> new RestauranteNaoEncontradoException(idRestaurante));
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
+    public void desativar(final Long idRestaurante) {
+        this.restauranteRepository.findById(idRestaurante)
+            .map(restaurante -> {
+                restaurante.setAtivo(true);
+                return restaurante;
+            })
+            .orElseThrow(() -> new RestauranteNaoEncontradoException(idRestaurante));
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
+    public Restaurante atualizarParcial(final Long idRestaurante, Map<String, Object> dadosOrigem, final HttpServletRequest request) {
+
+        return this.restauranteRepository.findById(idRestaurante)
+                .map(restaurante -> {
+                    this.merge(dadosOrigem, restaurante, request);
+                    this.validarValoresAtualizadosDeRestaurante(restaurante, "restaurante");
+                    return restaurante;
+                })
+                .orElseThrow(() -> new RestauranteNaoEncontradoException(idRestaurante));
+
+//        this.merge(dadosOrigem, restauranteDoDatabase, request);
+//        return this.atualizar(id, restauranteDoDatabase);
+    }
+
+    private void merge(Map<String, Object> dadosOrigem, Restaurante restaurante, HttpServletRequest request) {
         ServletServerHttpRequest serverHttpRequest = new ServletServerHttpRequest(request);
 
         try {
@@ -161,7 +184,7 @@ public class RestauranteService {
                 Field campo = ReflectionUtils.findField(Restaurante.class, nomePropriedade);
                 campo.setAccessible(true);
                 Object novoValor = ReflectionUtils.getField(campo, restauranteAtual);
-                ReflectionUtils.setField(campo, restauranteDoDatabase, novoValor);
+                ReflectionUtils.setField(campo, restaurante, novoValor);
             });
         } catch (IllegalArgumentException illegalArgumentException) {
             Throwable causaRaiz = ExceptionUtils.getRootCause(illegalArgumentException);
@@ -170,9 +193,10 @@ public class RestauranteService {
     }
 
     private void validarValoresAtualizadosDeRestaurante(Restaurante restaurante, String nomeDoObjeto) {
-        var beanPropertyBindingResult = new BeanPropertyBindingResult(restaurante, nomeDoObjeto);
 
-        smartValidator.validate(restaurante, beanPropertyBindingResult);
+        var dtoRequest = this.restauranteMapper.converterEntidadeParaDtoRequest(restaurante);
+        var beanPropertyBindingResult = new BeanPropertyBindingResult(dtoRequest, nomeDoObjeto);
+        smartValidator.validate(dtoRequest, beanPropertyBindingResult);
 
         if (beanPropertyBindingResult.hasErrors()) { // O BeanPropertyBindingResult armazena os erros, em caso de existirem. Pois isso verificamos se existem.
             throw new ValidacaoException(beanPropertyBindingResult);

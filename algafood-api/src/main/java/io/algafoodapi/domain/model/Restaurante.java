@@ -79,5 +79,8 @@ public final class Restaurante implements Serializable {
 
     @Embedded
     private Endereco endereco;
+
+    @Column(name = "ativo", columnDefinition = "boolean", nullable = false)
+    private Boolean ativo = Boolean.TRUE;
 }
 

@@ -28,5 +28,6 @@ public final class RestauranteDtoResponse {
     private EnderecoDtoResponse endereco;
     private OffsetDateTime dataHoraUTCCadastro;
     private OffsetDateTime dataHoraUTCAtualizacao;
+    private Boolean ativo;
 }
 
