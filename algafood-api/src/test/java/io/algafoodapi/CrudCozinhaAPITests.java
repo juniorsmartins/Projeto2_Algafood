@@ -114,6 +114,7 @@ class CrudCozinhaAPITests {
 
         cozinha1 = this.cozinhaRepository.save(cozinha1);
         this.cozinhaRepository.save(cozinha2);
+
         totalCozinhas = this.cozinhaRepository.findAll().size();
     }
 }
