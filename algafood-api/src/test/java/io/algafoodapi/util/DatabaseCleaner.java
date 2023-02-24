@@ -76,9 +76,9 @@ public class DatabaseCleaner {
 	private Statement buildSqlStatement(List<String> tableNames) throws SQLException {
 		Statement statement = connection.createStatement();
 
-//		statement.addBatch(sql("SET FOREIGN_KEY_CHECKS = 0"));
+//		statement.addBatch(sql("SET FOREIGN_KEY_CHECKS = 0")); // Para MySQL
 		addTruncateSatements(tableNames, statement);
-//		statement.addBatch(sql("SET FOREIGN_KEY_CHECKS = 1"));
+//		statement.addBatch(sql("SET FOREIGN_KEY_CHECKS = 1")); // Para MySQL
 
 		return statement;
 	}

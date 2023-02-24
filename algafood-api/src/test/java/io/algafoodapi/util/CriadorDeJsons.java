@@ -7,4 +7,11 @@ public class CriadorDeJsons {
                 { "gastronomia" : "%s" }
                 """.formatted(nome);
     }
+
+    public static String jsonDeFormaPagamento(String descricao) {
+        return """
+                { "descricao" : "%s" }
+                """.formatted(descricao.toUpperCase());
+    }
 }
+
