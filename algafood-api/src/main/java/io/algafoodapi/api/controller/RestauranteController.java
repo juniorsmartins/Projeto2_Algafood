@@ -49,7 +49,7 @@ public final class RestauranteController {
 
         return ResponseEntity
                 .created(uriComponentsBuilder
-                        .path("restaurantes/{id}")
+                        .path("/v1/restaurantes/{id}")
                         .buildAndExpand(response.getId())
                         .toUri())
                 .body(response);
