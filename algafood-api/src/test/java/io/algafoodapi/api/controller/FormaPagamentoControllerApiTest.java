@@ -38,6 +38,7 @@ class FormaPagamentoControllerApiTest {
     @BeforeEach
     void criadorDeCenarios() {
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails(); // Habilita logs pra quando testes falharem
+        RestAssured.baseURI = "http://localhost";
         RestAssured.port = porta;
         RestAssured.basePath = "/v1/formas-pagamento";
 //        RestAssured.authentication = basic("username", "password");
