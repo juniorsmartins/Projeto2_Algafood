@@ -32,17 +32,22 @@ public final class FormaPagamentoController {
                                                            final UriComponentsBuilder uriComponentsBuilder) {
 
         var response = Optional.of(formaPagamentoDtoRequest)
-                .map(this.formaPagamentoMapper::converterDtoRequestParaEntidade)
-                .map(this.formaPagamentoService::criar)
-                .map(this.formaPagamentoMapper::converterEntidadeParaDtoResponse)
-                .orElseThrow();
+            .map(this.formaPagamentoMapper::converterDtoRequestParaEntidade)
+            .map(this.formaPagamentoService::criar)
+            .map(this.formaPagamentoMapper::converterEntidadeParaDtoResponse)
+            .orElseThrow();
 
         return ResponseEntity
-                .created(uriComponentsBuilder
-                        .path("/v1/formas-pagamento/{id}")
-                        .buildAndExpand(response.getId())
-                        .toUri())
-                .body(response);
+            .created(uriComponentsBuilder
+                .path("/v1/formas-pagamento/{id}")
+                .buildAndExpand(response.getId())
+                .toUri())
+            .body(response);
     }
+
+//    @GetMapping
+//    public ResponseEntity<List<FormaPagamentoDtoResponse>> listar() {
+//
+//    }
 }
 

@@ -25,7 +25,6 @@ public class FormaPagamentoRepositoryImpl implements FormaPagamentoRepository {
         return this.manager.find(FormaPagamento.class, id);
     }
 
-    @Transactional
     @Override
     public FormaPagamento salvar(FormaPagamento formaPagamento) {
         return this.manager.merge(formaPagamento);
