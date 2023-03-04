@@ -15,8 +15,8 @@ public final class FormaPagamentoMapper {
         this.modelMapper = modelMapper;
     }
 
-    public FormaPagamento converterDtoRequestParaEntidade(final FormaPagamentoDtoRequest dto) {
-        return this.modelMapper.map(dto, FormaPagamento.class);
+    public FormaPagamento converterDtoRequestParaEntidade(final FormaPagamentoDtoRequest dtoRequest) {
+        return this.modelMapper.map(dtoRequest, FormaPagamento.class);
     }
 
     public FormaPagamentoDtoResponse converterEntidadeParaDtoResponse(final FormaPagamento formaPagamento) {
