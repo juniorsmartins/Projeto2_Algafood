@@ -1,6 +1,6 @@
 package io.algafoodapi.api.controller;
 
-import io.algafoodapi.domain.repository.FormaPagamentoRepository;
+import io.algafoodapi.infraestrutura.repository.jpa.FormaPagamentoRepositoryJpa;
 import io.algafoodapi.util.CriadorDeBuilders;
 import io.algafoodapi.util.CriadorDeJsons;
 import org.hamcrest.Matchers;
@@ -20,6 +20,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.List;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -32,7 +34,7 @@ class FormaPagamentoControllerIntegracaoTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private FormaPagamentoRepository formaPagamentoRepository;
+    private FormaPagamentoRepositoryJpa formaPagamentoRepositoryJpa;
 
     @BeforeEach
     void criarCenario() { }
@@ -53,7 +55,8 @@ class FormaPagamentoControllerIntegracaoTest {
                 .content(CriadorDeJsons.converterDtoRequestParaJson(dtoRequest))
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isCreated())
-            .andDo(MockMvcResultHandlers.print());
+            .andDo(MockMvcResultHandlers.print())
+            .andReturn();
     }
 
     @Test
@@ -98,7 +101,7 @@ class FormaPagamentoControllerIntegracaoTest {
     void deveRetornarHttp200_quandoAtualizar() throws Exception {
         var formaPagamentoSalva = CriadorDeBuilders.gerarFormaPagamentoBuilder()
             .build();
-        formaPagamentoSalva = this.formaPagamentoRepository.salvar(formaPagamentoSalva);
+        formaPagamentoSalva = this.formaPagamentoRepositoryJpa.save(formaPagamentoSalva);
 
         var dtoRequest = CriadorDeBuilders.gerarFormaPagamentoDtoRequestBuilder()
             .build();
@@ -118,7 +121,7 @@ class FormaPagamentoControllerIntegracaoTest {
     void deveRetornarDescricaoPadronizada_quandoAtualizar() throws Exception {
         var formaPagamentoSalva = CriadorDeBuilders.gerarFormaPagamentoBuilder()
             .build();
-        formaPagamentoSalva = this.formaPagamentoRepository.salvar(formaPagamentoSalva);
+        formaPagamentoSalva = this.formaPagamentoRepositoryJpa.save(formaPagamentoSalva);
 
         var dtoRequest = CriadorDeBuilders.gerarFormaPagamentoDtoRequestBuilder()
             .build();
@@ -151,5 +154,29 @@ class FormaPagamentoControllerIntegracaoTest {
             .andDo(MockMvcResultHandlers.print());
     }
 
+    @Test
+    @Order(10)
+    @DisplayName("Listar - Fluxo Principal I - http 200")
+    void deveRetornarHttp200_quandoListar() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(ENDPOINT))
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @Order(11)
+    @DisplayName("Listar - Fluxo principal II - dois itens")
+    void deveRetornarDoisItens_quandoListar() throws Exception {
+        var formaPagamentoUm = CriadorDeBuilders.gerarFormaPagamentoBuilder()
+            .build();
+        var formaPagamentoDois = CriadorDeBuilders.gerarFormaPagamentoBuilder()
+            .build();
+        this.formaPagamentoRepositoryJpa.saveAll(List.of(formaPagamentoUm, formaPagamentoDois));
+
+        mockMvc.perform(MockMvcRequestBuilders.get(ENDPOINT))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.size()",
+            Matchers.greaterThanOrEqualTo(2)))
+            .andDo(MockMvcResultHandlers.print());
+    }
 }
 

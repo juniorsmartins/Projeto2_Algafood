@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 public class FormaPagamentoServiceImpl implements FormaPagamentoService {
 
@@ -38,6 +40,11 @@ public class FormaPagamentoServiceImpl implements FormaPagamentoService {
             })
             .map(this::padronizarDescricao)
             .orElseThrow(() -> new FormaPagamentoNaoEncontradaException(id));
+    }
+
+    @Override
+    public List<FormaPagamento> listar() {
+        return this.formaPagamentoRepository.listar();
     }
 
     private FormaPagamento padronizarDescricao(FormaPagamento formaPagamento) {

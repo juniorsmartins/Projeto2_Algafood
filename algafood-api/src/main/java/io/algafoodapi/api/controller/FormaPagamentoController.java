@@ -5,6 +5,7 @@ import io.algafoodapi.api.dto.response.FormaPagamentoDtoResponse;
 import io.algafoodapi.api.mapper.FormaPagamentoMapper;
 import io.algafoodapi.domain.service.FormaPagamentoService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -62,9 +64,16 @@ public final class FormaPagamentoController {
             .body(response);
     }
 
-//    @GetMapping
-//    public ResponseEntity<List<FormaPagamentoDtoResponse>> listar() {
-//
-//    }
+    @GetMapping
+    public ResponseEntity<List<FormaPagamentoDtoResponse>> listar() {
+        var response = this.formaPagamentoService.listar()
+            .stream()
+            .map(this.formaPagamentoMapper::converterEntidadeParaDtoResponse)
+            .toList();
+
+        return ResponseEntity
+            .ok()
+            .body(response);
+    }
 }
 
