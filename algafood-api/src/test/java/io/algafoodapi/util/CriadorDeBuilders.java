@@ -10,14 +10,13 @@ public final class CriadorDeBuilders {
 
     public static FormaPagamento.FormaPagamentoBuilder gerarFormaPagamentoBuilder() {
         return FormaPagamento.builder()
-                .descricao(faker.lorem().characters(10, 250));
+            .descricao(faker.lorem().characters(10, 250));
     }
 
     public static FormaPagamentoDtoRequest.FormaPagamentoDtoRequestBuilder gerarFormaPagamentoDtoRequestBuilder() {
         return FormaPagamentoDtoRequest.builder()
-                .descricao(faker.lorem().characters(1, 250));
+            .descricao(faker.lorem().characters(1, 250));
     }
-
 
 }
 

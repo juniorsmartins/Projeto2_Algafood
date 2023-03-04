@@ -5,6 +5,7 @@ import io.algafoodapi.api.dto.response.FormaPagamentoDtoResponse;
 import io.algafoodapi.api.mapper.FormaPagamentoMapper;
 import io.algafoodapi.domain.service.FormaPagamentoService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -46,18 +47,19 @@ public final class FormaPagamentoController {
             .body(response);
     }
 
-    @PutMapping
-    public ResponseEntity<FormaPagamentoDtoResponse> atualizar(FormaPagamentoAtualizarDtoRequest atualizarDtoRequest) {
+    @PutMapping(path = "/{id}")
+    public ResponseEntity<FormaPagamentoDtoResponse> atualizar(@PathVariable(name = "id") final Long id,
+            @RequestBody @Valid final FormaPagamentoDtoRequest atualizarDtoRequest) {
 
         var response = Optional.of(atualizarDtoRequest)
-                .map()
-                .map()
-                .map()
-                .orElseThrow();
+            .map(this.formaPagamentoMapper::converterDtoRequestParaEntidade)
+            .map(formaPagamento -> this.formaPagamentoService.atualizar(id, formaPagamento))
+            .map(this.formaPagamentoMapper::converterEntidadeParaDtoResponse)
+            .orElseThrow();
 
         return ResponseEntity
-                .ok()
-                .body(response);
+            .ok()
+            .body(response);
     }
 
 //    @GetMapping

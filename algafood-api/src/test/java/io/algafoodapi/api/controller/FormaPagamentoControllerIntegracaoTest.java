@@ -1,5 +1,6 @@
 package io.algafoodapi.api.controller;
 
+import io.algafoodapi.domain.repository.FormaPagamentoRepository;
 import io.algafoodapi.util.CriadorDeBuilders;
 import io.algafoodapi.util.CriadorDeJsons;
 import org.hamcrest.Matchers;
@@ -29,6 +30,9 @@ class FormaPagamentoControllerIntegracaoTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private FormaPagamentoRepository formaPagamentoRepository;
 
     @BeforeEach
     void criarCenario() { }
@@ -67,7 +71,7 @@ class FormaPagamentoControllerIntegracaoTest {
                 .content(CriadorDeJsons.converterDtoRequestParaJson(dtoRequest))
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.jsonPath("$.descricao",
-                    Matchers.is(descricaoPadronizada)))
+                    Matchers.equalTo(descricaoPadronizada)))
             .andDo(MockMvcResultHandlers.print());
     }
 
@@ -85,6 +89,65 @@ class FormaPagamentoControllerIntegracaoTest {
                 .content(CriadorDeJsons.converterDtoRequestParaJson(dtoRequest))
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isBadRequest())
+            .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @Order(5)
+    @DisplayName("Atualizar - Fluxo Principal I - 200")
+    void deveRetornarHttp200_quandoAtualizar() throws Exception {
+        var formaPagamentoSalva = CriadorDeBuilders.gerarFormaPagamentoBuilder()
+            .build();
+        formaPagamentoSalva = this.formaPagamentoRepository.salvar(formaPagamentoSalva);
+
+        var dtoRequest = CriadorDeBuilders.gerarFormaPagamentoDtoRequestBuilder()
+            .build();
+
+        mockMvc.perform(MockMvcRequestBuilders.put(ENDPOINT.concat("/") + formaPagamentoSalva.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding(UTF8)
+                .content(CriadorDeJsons.converterDtoRequestParaJson(dtoRequest))
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @Order(6)
+    @DisplayName("Atualizar - Fluxo Principal II - descrição padronizada")
+    void deveRetornarDescricaoPadronizada_quandoAtualizar() throws Exception {
+        var formaPagamentoSalva = CriadorDeBuilders.gerarFormaPagamentoBuilder()
+            .build();
+        formaPagamentoSalva = this.formaPagamentoRepository.salvar(formaPagamentoSalva);
+
+        var dtoRequest = CriadorDeBuilders.gerarFormaPagamentoDtoRequestBuilder()
+            .build();
+
+        var descricaoPadronizada = dtoRequest.getDescricao().toUpperCase();
+
+        mockMvc.perform(MockMvcRequestBuilders.put(ENDPOINT.concat("/") + formaPagamentoSalva.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding(UTF8)
+                .content(CriadorDeJsons.converterDtoRequestParaJson(dtoRequest))
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.descricao", Matchers.equalTo(descricaoPadronizada)))
+            .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @Order(7)
+    @DisplayName("Atualizar - Fluxo de Exceção I - id inexistente")
+    void deveRetornarHttp404_quandoAtualizarSemId() throws Exception {
+        var idInexistente = Math.round((Math.random() + 1) * 10000);
+        var dtoRequest = CriadorDeBuilders.gerarFormaPagamentoDtoRequestBuilder()
+            .build();
+
+        mockMvc.perform(MockMvcRequestBuilders.put(ENDPOINT.concat("/") + idInexistente)
+                .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding(UTF8)
+                .content(CriadorDeJsons.converterDtoRequestParaJson(dtoRequest))
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(MockMvcResultMatchers.status().isNotFound())
             .andDo(MockMvcResultHandlers.print());
     }
 
