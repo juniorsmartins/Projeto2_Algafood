@@ -42,95 +42,95 @@ public final class RestauranteController {
                                                         final UriComponentsBuilder uriComponentsBuilder) {
 
         var response = Optional.of(restauranteDtoRequest)
-                .map(this.restauranteMapper::converterDtoRequestParaEntidade)
-                .map(this.restauranteService::criar)
-                .map(this.restauranteMapper::converterEntidadeParaDtoResponse)
-                .orElseThrow();
+            .map(this.restauranteMapper::converterDtoRequestParaEntidade)
+            .map(this.restauranteService::criar)
+            .map(this.restauranteMapper::converterEntidadeParaDtoResponse)
+            .orElseThrow();
 
         return ResponseEntity
-                .created(uriComponentsBuilder
-                        .path("/v1/restaurantes/{id}")
-                        .buildAndExpand(response.getId())
-                        .toUri())
-                .body(response);
+            .created(uriComponentsBuilder
+                .path("/v1/restaurantes/{id}")
+                .buildAndExpand(response.getId())
+                .toUri())
+            .body(response);
     }
 
-    @PutMapping(path = "/{idRestaurante}")
-    public ResponseEntity<RestauranteDtoResponse> atualizar(@PathVariable(name = "idRestaurante") final Long idRestaurante,
+    @PutMapping(path = "/{id}")
+    public ResponseEntity<RestauranteDtoResponse> atualizar(@PathVariable(name = "id") final Long idRestaurante,
                        @RequestBody @Valid final RestauranteDtoRequest restauranteDtoRequest) {
 
         var response = Optional.of(restauranteDtoRequest)
-                .map(this.restauranteMapper::converterDtoRequestParaEntidade)
-                .map(restaurant -> this.restauranteService.atualizar(idRestaurante, restaurant))
-                .map(this.restauranteMapper::converterEntidadeParaDtoResponse)
-                .orElseThrow();
+            .map(this.restauranteMapper::converterDtoRequestParaEntidade)
+            .map(restaurant -> this.restauranteService.atualizar(idRestaurante, restaurant))
+            .map(this.restauranteMapper::converterEntidadeParaDtoResponse)
+            .orElseThrow();
 
         return ResponseEntity
-                .ok()
-                .body(response);
+            .ok()
+            .body(response);
     }
 
-    @PatchMapping(path = "/{idRestaurante}")
-    public ResponseEntity<RestauranteDtoResponse> atualizarParcial(@PathVariable(name = "idRestaurante") final Long idRestaurante,
+    @PatchMapping(path = "/{id}")
+    public ResponseEntity<RestauranteDtoResponse> atualizarParcial(@PathVariable(name = "id") final Long idRestaurante,
                                               @RequestBody Map<String, Object> campos,
                                               final HttpServletRequest request) {
 
         var response = Optional.of(this.restauranteService.atualizarParcial(
-                idRestaurante, campos, request))
-                .map(this.restauranteMapper::converterEntidadeParaDtoResponse)
-                .get();
+            idRestaurante, campos, request))
+            .map(this.restauranteMapper::converterEntidadeParaDtoResponse)
+            .get();
 
         return ResponseEntity
-                .ok()
-                .body(response);
+            .ok()
+            .body(response);
     }
 
-    @DeleteMapping(path = "/{restauranteId}")
-    public ResponseEntity excluirPorId(@PathVariable(name = "restauranteId") final Long idRestaurante) {
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity excluirPorId(@PathVariable(name = "id") final Long idRestaurante) {
 
         this.restauranteService.excluirPorId(idRestaurante);
 
         return ResponseEntity
-                .noContent()
-                .build();
+            .noContent()
+            .build();
     }
 
-    @GetMapping(path = "/{restauranteId}")
-    public ResponseEntity<RestauranteDtoResponse> consultarPorId(@PathVariable(name = "restauranteId") final Long idRestaurante) {
+    @GetMapping(path = "/{id}")
+    public ResponseEntity<RestauranteDtoResponse> consultarPorId(@PathVariable(name = "id") final Long idRestaurante) {
 
         var response = Optional.of(this.restauranteService.consultarPorId(idRestaurante))
-                .map(this.restauranteMapper::converterEntidadeParaDtoResponse)
-                .get();
+            .map(this.restauranteMapper::converterEntidadeParaDtoResponse)
+            .get();
 
         return ResponseEntity
-                .ok()
-                .body(response);
+            .ok()
+            .body(response);
     }
 
     @GetMapping(path = "/por-nome")
     public ResponseEntity<List<RestauranteDtoResponse>> consultarPorNome(@RequestParam(name = "nome") final String nome) {
 
         var response = this.restauranteService.consultarPorNome(nome)
-                .stream()
-                .map(this.restauranteMapper::converterEntidadeParaDtoResponse)
-                .toList();
+            .stream()
+            .map(this.restauranteMapper::converterEntidadeParaDtoResponse)
+            .toList();
 
         return ResponseEntity
-                .ok()
-                .body(response);
+            .ok()
+            .body(response);
     }
 
     @GetMapping
     public ResponseEntity<List<RestauranteDtoResponse>> listar() {
 
         var response = this.restauranteService.listar()
-                .stream()
-                .map(this.restauranteMapper::converterEntidadeParaDtoResponse)
-                .toList();
+            .stream()
+            .map(this.restauranteMapper::converterEntidadeParaDtoResponse)
+            .toList();
 
         return ResponseEntity
-                .ok()
-                .body(response);
+            .ok()
+            .body(response);
     }
 
     @GetMapping(path = "/por-nome-e-taxas")
@@ -139,13 +139,13 @@ public final class RestauranteController {
                                                       @Param("freteTaxaFinal") final BigDecimal freteTaxaFinal) {
 
         var response = this.restauranteService.consultarPorNomeAndTaxas(nome, freteTaxaInicial, freteTaxaFinal)
-                .stream()
-                .map(this.restauranteMapper::converterEntidadeParaDtoResponse)
-                .toList();
+            .stream()
+            .map(this.restauranteMapper::converterEntidadeParaDtoResponse)
+            .toList();
 
         return ResponseEntity
-                .ok()
-                .body(response);
+            .ok()
+            .body(response);
     }
 
     @PutMapping(path = "/{id}/ativos")
@@ -153,8 +153,8 @@ public final class RestauranteController {
         this.restauranteService.ativar(idRestaurante);
 
         return ResponseEntity
-                .noContent()
-                .build();
+            .noContent()
+            .build();
     }
 
     @DeleteMapping(path = "/{id}/ativos")
@@ -162,8 +162,8 @@ public final class RestauranteController {
         this.restauranteService.inativar(idRestaurante);
 
         return ResponseEntity
-                .noContent()
-                .build();
+            .noContent()
+            .build();
     }
 }
 

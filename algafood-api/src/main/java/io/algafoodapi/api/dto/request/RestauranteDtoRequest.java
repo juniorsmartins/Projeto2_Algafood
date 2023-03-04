@@ -25,6 +25,7 @@ import java.math.BigDecimal;
 @EqualsAndHashCode(of = {"nome", "endereco.cep"})
 @FreteGratisObrigaDescricaoNoNomeAnotation(valorTaxaFrete = "taxaFrete", descricaoNome = "nome", descricaoObrigatoria = "Frete Grátis")
 public final class RestauranteDtoRequest {
+
     @NotBlank
     private String nome;
 

@@ -19,6 +19,7 @@ import javax.validation.constraints.Positive;
 @ToString
 @EqualsAndHashCode(of = "id")
 public final class EstadoIdRequest {
+
         @NotNull
         @Positive
         private Long id;
