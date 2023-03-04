@@ -18,8 +18,18 @@ public class FormaPagamentoServiceImpl implements FormaPagamentoService {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
     @Override
-    public FormaPagamento criar(FormaPagamento formaPagamento) {
+    public FormaPagamento cadastrar(FormaPagamento formaPagamento) {
+
+        formaPagamento = this.padronizarDescricao(formaPagamento);
+
         return this.formaPagamentoRepository.salvar(formaPagamento);
+    }
+
+    private FormaPagamento padronizarDescricao(FormaPagamento formaPagamento) {
+        var descricaoParaPadronizar = formaPagamento.getDescricao();
+        var descricaoPadronizada = descricaoParaPadronizar.toUpperCase();
+        formaPagamento.setDescricao(descricaoPadronizada);
+        return formaPagamento;
     }
 }
 

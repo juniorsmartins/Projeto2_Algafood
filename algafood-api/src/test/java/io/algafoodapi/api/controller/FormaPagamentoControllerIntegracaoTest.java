@@ -16,12 +16,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class FormaPagamentoControllerTest {
+class FormaPagamentoControllerIntegracaoTest {
 
     private static final String ENDPOINT = "/v1/formas-pagamento";
     private static final String UTF8 = "UTF-8";
@@ -37,32 +38,55 @@ class FormaPagamentoControllerTest {
 
     @Test
     @Order(1)
-    @DisplayName("Salvar - Fluxo Principal I - 201")
+    @DisplayName("Cadastrar - Fluxo Principal I - 201")
     void deveRetornarHttp201_quandoCadastrar() throws Exception {
-        var dtoRequest = CriadorDeBuilders.geraFormaPagamentoBuilder().build();
+        var dtoRequest = CriadorDeBuilders.gerarFormaPagamentoDtoRequestBuilder()
+            .build();
 
         mockMvc.perform(MockMvcRequestBuilders.post(ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding(UTF8)
                 .content(CriadorDeJsons.converterDtoRequestParaJson(dtoRequest))
                 .accept(MediaType.APPLICATION_JSON))
-            .andExpect(MockMvcResultMatchers.status().isCreated());
+            .andExpect(MockMvcResultMatchers.status().isCreated())
+            .andDo(MockMvcResultHandlers.print());
     }
 
     @Test
     @Order(2)
-    @DisplayName("Salvar - Fluxo Principal II - descrição igual")
-    void deveRetornarDescricaoIgual_quandoCadastrar() throws Exception {
-        var dtoRequest = CriadorDeBuilders.geraFormaPagamentoBuilder().build();
+    @DisplayName("Cadastrar - Fluxo Principal II - descrição padronizada")
+    void deveRetornarDescricaoPadronizada_quandoCadastrar() throws Exception {
+        var dtoRequest = CriadorDeBuilders.gerarFormaPagamentoDtoRequestBuilder()
+            .build();
+
+        var descricaoPadronizada = dtoRequest.getDescricao().toUpperCase();
 
         mockMvc.perform(MockMvcRequestBuilders.post(ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding(UTF8)
                 .content(CriadorDeJsons.converterDtoRequestParaJson(dtoRequest))
                 .accept(MediaType.APPLICATION_JSON))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.descricao", Matchers.is(dtoRequest.getDescricao())));
+            .andExpect(MockMvcResultMatchers.jsonPath("$.descricao",
+                    Matchers.is(descricaoPadronizada)))
+            .andDo(MockMvcResultHandlers.print());
     }
 
+    @Test
+    @Order(3)
+    @DisplayName("Cadastrar - Fluxo de Exceção I - sem descricao")
+    void deveRetornarHttp400_quandoCadastrarSemDescricao() throws Exception {
+        var dtoRequest = CriadorDeBuilders.gerarFormaPagamentoDtoRequestBuilder()
+            .descricao(null)
+            .build();
+
+        mockMvc.perform(MockMvcRequestBuilders.post(ENDPOINT.concat("/"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding(UTF8)
+                .content(CriadorDeJsons.converterDtoRequestParaJson(dtoRequest))
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(MockMvcResultMatchers.status().isBadRequest())
+            .andDo(MockMvcResultHandlers.print());
+    }
 
 }
 
