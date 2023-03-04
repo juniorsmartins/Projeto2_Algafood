@@ -21,6 +21,7 @@ import javax.validation.constraints.NotNull;
 @ToString
 @EqualsAndHashCode(of = {"cep", "bairro", "logradouro", "numero"})
 public final class EnderecoDtoRequest {
+
     @NotNull
     @Length(max = 15)
     private String cep;

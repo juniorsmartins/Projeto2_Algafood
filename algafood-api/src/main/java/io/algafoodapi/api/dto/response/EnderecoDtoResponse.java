@@ -18,11 +18,17 @@ import lombok.ToString;
 @EqualsAndHashCode(of = {"cep", "bairro", "logradouro", "numero"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public final class EnderecoDtoResponse {
+
     private String cep;
+
     private String bairro;
+
     private String logradouro;
+
     private String numero;
+
     private String complemento;
+
     private CidadeDtoResponse cidade;
 }
 

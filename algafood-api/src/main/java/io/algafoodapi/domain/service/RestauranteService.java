@@ -9,6 +9,7 @@ import io.algafoodapi.domain.exception.http400.RequisicaoMalFormuladaException;
 import io.algafoodapi.domain.exception.http404.RestauranteNaoEncontradoException;
 import io.algafoodapi.domain.exception.http409.RestauranteEmUsoException;
 import io.algafoodapi.domain.model.Restaurante;
+import io.algafoodapi.infraestrutura.repository.jpa.CidadeRepositoryJpa;
 import io.algafoodapi.domain.repository.CozinhaRepository;
 import io.algafoodapi.domain.repository.RestauranteRepository;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -30,21 +31,29 @@ import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class RestauranteService {
 
     private final RestauranteRepository restauranteRepository;
+
     private final CozinhaRepository cozinhaRepository;
+
+    private final CidadeRepositoryJpa cidadeRepositoryJpa;
+
     private final SmartValidator smartValidator;
+
     private final RestauranteMapper restauranteMapper;
 
     public RestauranteService(final RestauranteRepository restauranteRepository,
                               final CozinhaRepository cozinhaRepository,
+                              final CidadeRepositoryJpa cidadeRepositoryJpa,
                               final SmartValidator smartValidator,
                               final RestauranteMapper restauranteMapper) {
         this.restauranteRepository = restauranteRepository;
         this.cozinhaRepository = cozinhaRepository;
+        this.cidadeRepositoryJpa = cidadeRepositoryJpa;
         this.smartValidator = smartValidator;
         this.restauranteMapper = restauranteMapper;
     }
@@ -52,8 +61,11 @@ public class RestauranteService {
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
     public Restaurante criar(Restaurante restaurante) {
 
-        this.validarCozinha(restaurante);
-        return this.restauranteRepository.save(restaurante);
+        return Optional.of(restaurante)
+            .map(this::validarCozinha)
+            .map(this::validarEndereco)
+            .map(this.restauranteRepository::save)
+            .orElseThrow();
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
@@ -197,17 +209,27 @@ public class RestauranteService {
         var beanPropertyBindingResult = new BeanPropertyBindingResult(dtoRequest, nomeDoObjeto);
         smartValidator.validate(dtoRequest, beanPropertyBindingResult);
 
-        if (beanPropertyBindingResult.hasErrors()) { // O BeanPropertyBindingResult armazena os erros, em caso de existirem. Pois isso verificamos se existem.
+        if (beanPropertyBindingResult.hasErrors()) { // O BeanPropertyBindingResult armazena os erros, em caso de existirem, pois, verificamos se existem.
             throw new ValidacaoException(beanPropertyBindingResult);
         }
     }
 
-    private void validarCozinha(Restaurante restaurante) {
+    private Restaurante validarCozinha(Restaurante restaurante) {
         var idCozinha = restaurante.getCozinha().getId();
         var cozinha = this.cozinhaRepository.findById(idCozinha)
             .orElseThrow(() ->
                 new RequisicaoMalFormuladaException(String.format(Constantes.COZINHA_NAO_ENCONTRADA, idCozinha)));
         restaurante.setCozinha(cozinha);
+        return restaurante;
+    }
+
+    private Restaurante validarEndereco(Restaurante restaurante) {
+        var idCidade = restaurante.getEndereco().getCidade().getId();
+        var cidade = this.cidadeRepositoryJpa.findById(idCidade)
+            .orElseThrow(() ->
+                    new RequisicaoMalFormuladaException(String.format(Constantes.CIDADE_NAO_ENCONTRADA, idCidade)));
+        restaurante.getEndereco().setCidade(cidade);
+        return restaurante;
     }
 }
 

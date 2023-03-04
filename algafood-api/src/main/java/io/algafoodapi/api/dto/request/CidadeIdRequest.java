@@ -19,6 +19,7 @@ import javax.validation.constraints.Positive;
 @ToString
 @EqualsAndHashCode(of = "id")
 public final class CidadeIdRequest {
+
     @NotNull
     @Positive
     private Long id;

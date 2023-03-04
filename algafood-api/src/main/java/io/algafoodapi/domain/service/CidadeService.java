@@ -5,7 +5,7 @@ import io.algafoodapi.domain.exception.http400.RequisicaoMalFormuladaException;
 import io.algafoodapi.domain.exception.http404.CidadeNaoEncontradaException;
 import io.algafoodapi.domain.exception.http409.CidadeEmUsoException;
 import io.algafoodapi.domain.model.Cidade;
-import io.algafoodapi.domain.repository.CidadeRepository;
+import io.algafoodapi.infraestrutura.repository.jpa.CidadeRepositoryJpa;
 import io.algafoodapi.domain.repository.EstadoRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -21,10 +21,10 @@ import java.util.List;
 @Service
 public class CidadeService {
 
-    private final CidadeRepository cidadeRepository;
+    private final CidadeRepositoryJpa cidadeRepository;
     private final EstadoRepository estadoRepository;
 
-    public CidadeService(final CidadeRepository cidadeRepository, final EstadoRepository estadoRepository) {
+    public CidadeService(final CidadeRepositoryJpa cidadeRepository, final EstadoRepository estadoRepository) {
         this.cidadeRepository = cidadeRepository;
         this.estadoRepository = estadoRepository;
     }

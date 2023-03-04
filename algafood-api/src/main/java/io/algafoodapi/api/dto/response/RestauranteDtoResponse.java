@@ -21,13 +21,21 @@ import java.time.OffsetDateTime;
 @EqualsAndHashCode(of = "id")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public final class RestauranteDtoResponse {
+
     private Long id;
+
     private String nome;
+
     private BigDecimal taxaFrete;
+
     private CozinhaDtoResponse cozinha;
+
     private EnderecoDtoResponse endereco;
+
     private OffsetDateTime dataHoraUTCCadastro;
+
     private OffsetDateTime dataHoraUTCAtualizacao;
+
     private Boolean ativo;
 }
 
