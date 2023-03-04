@@ -11,5 +11,7 @@ public interface FormaPagamentoService {
     FormaPagamento atualizar(Long id, FormaPagamento formaPagamento);
 
     List<FormaPagamento> listar();
+
+    void deletarPorId(Long id);
 }
 

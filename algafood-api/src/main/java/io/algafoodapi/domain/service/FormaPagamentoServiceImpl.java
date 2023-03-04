@@ -42,9 +42,21 @@ public class FormaPagamentoServiceImpl implements FormaPagamentoService {
             .orElseThrow(() -> new FormaPagamentoNaoEncontradaException(id));
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<FormaPagamento> listar() {
         return this.formaPagamentoRepository.listar();
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
+    @Override
+    public void deletarPorId(final Long id) {
+        this.formaPagamentoRepository.buscar(id)
+            .map(formaPagamento -> {
+                this.formaPagamentoRepository.remover(formaPagamento);
+                return true;
+            })
+            .orElseThrow(() -> new FormaPagamentoNaoEncontradaException(id));
     }
 
     private FormaPagamento padronizarDescricao(FormaPagamento formaPagamento) {

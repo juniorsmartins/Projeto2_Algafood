@@ -5,6 +5,7 @@ import io.algafoodapi.api.dto.response.FormaPagamentoDtoResponse;
 import io.algafoodapi.api.mapper.FormaPagamentoMapper;
 import io.algafoodapi.domain.service.FormaPagamentoService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -74,6 +75,15 @@ public final class FormaPagamentoController {
         return ResponseEntity
             .ok()
             .body(response);
+    }
+
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity deletarPorId(@PathVariable(name = "id") final Long id) {
+        this.formaPagamentoService.deletarPorId(id);
+
+        return ResponseEntity
+            .noContent()
+            .build();
     }
 }
 

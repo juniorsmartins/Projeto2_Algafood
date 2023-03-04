@@ -178,5 +178,29 @@ class FormaPagamentoControllerIntegracaoTest {
             Matchers.greaterThanOrEqualTo(2)))
             .andDo(MockMvcResultHandlers.print());
     }
+
+    @Test
+    @Order(15)
+    @DisplayName("Deletar - Fluxo Principal I - 204")
+    void deveRetornarHttp204_quandoDeletar() throws Exception {
+        var formaPagamentoSalva = CriadorDeBuilders.gerarFormaPagamentoBuilder()
+                .build();
+        formaPagamentoSalva = this.formaPagamentoRepositoryJpa.save(formaPagamentoSalva);
+
+        mockMvc.perform(MockMvcRequestBuilders.delete(ENDPOINT.concat("/") + formaPagamentoSalva.getId()))
+            .andExpect(MockMvcResultMatchers.status().isNoContent())
+            .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @Order(16)
+    @DisplayName("Deletar - Fluxo de Exceção I - id inexistente")
+    void deveRetornarHttp404_quandoDeletar() throws Exception {
+        var idInexistente = Math.round((Math.random() + 1) * 10000);
+
+        mockMvc.perform(MockMvcRequestBuilders.delete(ENDPOINT.concat("/") + idInexistente))
+            .andExpect(MockMvcResultMatchers.status().isNotFound())
+            .andDo(MockMvcResultHandlers.print());
+    }
 }
 
