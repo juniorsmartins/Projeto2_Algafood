@@ -10,8 +10,8 @@ import io.algafoodapi.domain.exception.http404.RestauranteNaoEncontradoException
 import io.algafoodapi.domain.exception.http409.RestauranteEmUsoException;
 import io.algafoodapi.domain.model.Restaurante;
 import io.algafoodapi.infraestrutura.repository.jpa.CidadeRepositoryJpa;
-import io.algafoodapi.domain.repository.CozinhaRepository;
-import io.algafoodapi.domain.repository.RestauranteRepository;
+import io.algafoodapi.domain.ports.CozinhaRepository;
+import io.algafoodapi.domain.ports.RestauranteRepository;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;

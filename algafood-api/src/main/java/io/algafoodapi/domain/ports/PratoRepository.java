@@ -1,7 +1,6 @@
-package io.algafoodapi.domain.repository;
+package io.algafoodapi.domain.ports;
 
 import io.algafoodapi.domain.model.Prato;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
