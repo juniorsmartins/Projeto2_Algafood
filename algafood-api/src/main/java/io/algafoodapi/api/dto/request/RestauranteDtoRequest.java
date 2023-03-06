@@ -14,6 +14,7 @@ import lombok.ToString;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Builder
@@ -24,7 +25,9 @@ import java.math.BigDecimal;
 @ToString
 @EqualsAndHashCode(of = {"nome", "endereco.cep"})
 @FreteGratisObrigaDescricaoNoNomeAnotation(valorTaxaFrete = "taxaFrete", descricaoNome = "nome", descricaoObrigatoria = "Frete Grátis")
-public final class RestauranteDtoRequest {
+public final class RestauranteDtoRequest implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @NotBlank
     private String nome;

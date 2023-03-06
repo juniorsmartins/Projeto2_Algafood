@@ -12,6 +12,7 @@ import org.hibernate.validator.constraints.Length;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 @Builder
 @NoArgsConstructor
@@ -20,7 +21,9 @@ import javax.validation.constraints.NotNull;
 @Setter
 @ToString
 @EqualsAndHashCode(of = {"cep", "bairro", "logradouro", "numero"})
-public final class EnderecoDtoRequest {
+public final class EnderecoDtoRequest implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @NotNull
     @Length(max = 15)

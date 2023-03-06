@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
 
 @Builder
 @NoArgsConstructor
@@ -17,7 +18,10 @@ import javax.validation.constraints.NotBlank;
 @Setter
 @ToString
 @EqualsAndHashCode(of = "nome")
-public final class CozinhaDtoRequest {
+public final class CozinhaDtoRequest implements Serializable {
+
+        private static final long serialVersionUID = 1L;
+
         @NotBlank
         private String nome;
 }
