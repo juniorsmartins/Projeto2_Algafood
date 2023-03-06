@@ -7,7 +7,14 @@ import io.algafoodapi.domain.ports.GrupoRepository;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -17,6 +24,8 @@ public class GrupoServiceImpl implements GrupoService {
     @Autowired
     private GrupoRepository grupoRepository;
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
+    @Override
     public Grupo cadastrar(Grupo grupo) {
 
         return Optional.of(grupo)
@@ -24,6 +33,15 @@ public class GrupoServiceImpl implements GrupoService {
             .map(this::regraCapitalizarNome)
             .map(this.grupoRepository::salvar)
             .orElseThrow();
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Page<Grupo> pesquisar(final Grupo grupo, final Pageable paginacao) {
+
+        var condicoesDePesquisa = this.criarCondicoesParaPesquisar(grupo);
+
+        return this.grupoRepository.pesquisar(condicoesDePesquisa, paginacao);
     }
 
     private Grupo regraCapitalizarNome(Grupo grupo) {
@@ -72,6 +90,16 @@ public class GrupoServiceImpl implements GrupoService {
             .map(nomeParaPadronizar -> RegExUtils.replaceAll(nomeParaPadronizar, "û", "u"))
             .map(nomeParaPadronizar -> RegExUtils.replaceAll(nomeParaPadronizar, "ù", "u"))
             .orElseThrow();
+    }
+
+    private Example criarCondicoesParaPesquisar(Grupo grupo) {
+        ExampleMatcher matcher = ExampleMatcher
+            .matching()
+            .withIgnoreCase()
+            .withIgnoreNullValues()
+            .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
+
+        return Example.of(grupo, matcher);
     }
 }
 
