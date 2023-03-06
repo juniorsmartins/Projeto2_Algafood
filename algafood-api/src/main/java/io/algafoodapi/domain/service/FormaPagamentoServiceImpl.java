@@ -2,7 +2,7 @@ package io.algafoodapi.domain.service;
 
 import io.algafoodapi.domain.exception.http404.FormaPagamentoNaoEncontradaException;
 import io.algafoodapi.domain.model.FormaPagamento;
-import io.algafoodapi.domain.repository.FormaPagamentoRepository;
+import io.algafoodapi.domain.ports.FormaPagamentoRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;

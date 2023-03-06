@@ -10,6 +10,7 @@ import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
 
 @Builder
 @NoArgsConstructor
@@ -18,7 +19,9 @@ import javax.validation.constraints.NotBlank;
 @Setter
 @ToString
 @EqualsAndHashCode(of = "descricao")
-public final class FormaPagamentoDtoRequest {
+public final class FormaPagamentoDtoRequest implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @NotBlank
     @Length(max = 250)

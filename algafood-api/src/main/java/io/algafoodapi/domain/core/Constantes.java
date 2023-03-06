@@ -8,14 +8,19 @@ public final class Constantes {
 
     public static final String COZINHA_NAO_ENCONTRADA = "Não encontrada cozinha com código %d.";
 
-    public static final String NAO_EXISTEM_ESTADOS_CADASTRADOS = "Não existem estados cadastrados.";
 
-    public static final String NÃO_EXISTEM_CIDADES_CADASTRADAS = "Não existem cidades cadastradas.";
+    public static final String NAO_EXISTEM_ESTADOS = "Não existem estados cadastrados.";
+
+    public static final String NÃO_EXISTEM_CIDADES = "Não existem cidades cadastradas.";
+
+    public static final String NÃO_EXISTEM_RESTAURANTES = "Não existem restaurantes cadastrados.";
+
+    public static final String NAO_EXISTEM_COZINHAS = "Não existem cozinhas cadastradas.";
+
 
     public static final String NÃO_ENCONTRADA_COZINHA_COM_NOME = "Não encontrada cozinha com nome %s.";
 
-    public static final String NAO_EXISTEM_COZINHAS_CADASTRADAS = "Não existem cozinhas cadastradas.";
 
-    public static final String NÃO_EXISTEM_RESTAURANTES = "Não existem restaurantes cadastrados.";
+    public static final String NOME_DE_GRUPO_JA_CADASTRADO = "Não é permitido duplicar nome. Já existe Grupo com nome: %s.";
 }
 

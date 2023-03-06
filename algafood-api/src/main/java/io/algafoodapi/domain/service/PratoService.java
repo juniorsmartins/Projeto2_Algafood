@@ -2,7 +2,7 @@ package io.algafoodapi.domain.service;
 
 import io.algafoodapi.domain.exception.http404.PratoNaoEncontradoException;
 import io.algafoodapi.domain.model.Prato;
-import io.algafoodapi.domain.repository.PratoRepository;
+import io.algafoodapi.domain.ports.PratoRepository;
 import io.algafoodapi.infraestrutura.repository.spec.PratoFactorySpecs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;

@@ -6,7 +6,7 @@ import io.algafoodapi.domain.exception.http404.CidadeNaoEncontradaException;
 import io.algafoodapi.domain.exception.http409.CidadeEmUsoException;
 import io.algafoodapi.domain.model.Cidade;
 import io.algafoodapi.infraestrutura.repository.jpa.CidadeRepositoryJpa;
-import io.algafoodapi.domain.repository.EstadoRepository;
+import io.algafoodapi.domain.ports.EstadoRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -80,7 +80,7 @@ public class CidadeService {
                 .toList();
 
         if (cidades.isEmpty()) {
-            throw new CidadeNaoEncontradaException(Constantes.NÃO_EXISTEM_CIDADES_CADASTRADAS);
+            throw new CidadeNaoEncontradaException(Constantes.NÃO_EXISTEM_CIDADES);
         }
 
         return cidades;

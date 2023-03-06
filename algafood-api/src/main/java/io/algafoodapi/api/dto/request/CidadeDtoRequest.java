@@ -11,6 +11,7 @@ import lombok.ToString;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 @Builder
 @NoArgsConstructor
@@ -19,7 +20,10 @@ import javax.validation.constraints.NotNull;
 @Setter
 @ToString
 @EqualsAndHashCode(of = {"nome", "estado"})
-public final class CidadeDtoRequest {
+public final class CidadeDtoRequest implements Serializable {
+
+        private static final long serialVersionUID = 1L;
+
         @NotBlank
         private String nome;
 

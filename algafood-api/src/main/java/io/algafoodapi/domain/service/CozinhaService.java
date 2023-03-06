@@ -4,7 +4,7 @@ import io.algafoodapi.domain.core.Constantes;
 import io.algafoodapi.domain.exception.http404.CozinhaNaoEncontradaException;
 import io.algafoodapi.domain.exception.http409.CozinhaEmUsoException;
 import io.algafoodapi.domain.model.Cozinha;
-import io.algafoodapi.domain.repository.CozinhaRepository;
+import io.algafoodapi.domain.ports.CozinhaRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -87,7 +87,7 @@ public class CozinhaService {
                 .toList();
 
         if (cozinhas.isEmpty()) {
-            throw new CozinhaNaoEncontradaException(Constantes.NAO_EXISTEM_COZINHAS_CADASTRADAS);
+            throw new CozinhaNaoEncontradaException(Constantes.NAO_EXISTEM_COZINHAS);
         }
 
         return cozinhas;

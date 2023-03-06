@@ -1,7 +1,7 @@
 package io.algafoodapi.infraestrutura.repository;
 
 import io.algafoodapi.domain.model.FormaPagamento;
-import io.algafoodapi.domain.repository.FormaPagamentoRepository;
+import io.algafoodapi.domain.ports.FormaPagamentoRepository;
 import io.algafoodapi.infraestrutura.repository.jpa.FormaPagamentoRepositoryJpa;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
