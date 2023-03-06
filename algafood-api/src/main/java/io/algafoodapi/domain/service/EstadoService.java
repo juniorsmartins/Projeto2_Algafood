@@ -4,7 +4,7 @@ import io.algafoodapi.domain.core.Constantes;
 import io.algafoodapi.domain.exception.http404.EstadoNaoEncontradoException;
 import io.algafoodapi.domain.exception.http409.EstadoEmUsoException;
 import io.algafoodapi.domain.model.Estado;
-import io.algafoodapi.domain.repository.EstadoRepository;
+import io.algafoodapi.domain.ports.EstadoRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -72,7 +72,7 @@ public class EstadoService {
                 .toList();
 
         if (estados.isEmpty()) {
-            throw new EstadoNaoEncontradoException(Constantes.NAO_EXISTEM_ESTADOS_CADASTRADOS);
+            throw new EstadoNaoEncontradoException(Constantes.NAO_EXISTEM_ESTADOS);
         }
 
         return estados;

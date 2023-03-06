@@ -7,9 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 @Builder
@@ -18,13 +16,11 @@ import java.io.Serializable;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode(of = "nome")
-public final class EstadoDtoRequest implements Serializable {
+@EqualsAndHashCode(of = "id")
+public final class GrupoPesquisarDtoRequest implements Serializable {
 
-        private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-        @NotBlank
-        @Length(max = 100)
-        private String nome;
+    private String nome;
 }
 

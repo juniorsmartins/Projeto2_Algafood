@@ -10,6 +10,7 @@ import lombok.ToString;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+import java.io.Serializable;
 
 @Builder
 @NoArgsConstructor
@@ -18,7 +19,9 @@ import javax.validation.constraints.Positive;
 @Setter
 @ToString
 @EqualsAndHashCode(of = "id")
-public final class CidadeIdRequest {
+public final class CidadeIdRequest implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @NotNull
     @Positive

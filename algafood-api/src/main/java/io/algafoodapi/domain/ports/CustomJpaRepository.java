@@ -1,4 +1,4 @@
-package io.algafoodapi.domain.repository;
+package io.algafoodapi.domain.ports;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;

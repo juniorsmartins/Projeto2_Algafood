@@ -43,7 +43,7 @@ public final class CidadeController {
 
         return ResponseEntity
                 .created(uriComponentsBuilder
-                        .path("cidades/{id}")
+                        .path("/v1/cidades/{id}")
                         .buildAndExpand(response.getId())
                         .toUri())
                 .body(response);

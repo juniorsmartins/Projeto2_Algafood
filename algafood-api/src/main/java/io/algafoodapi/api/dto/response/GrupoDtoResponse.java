@@ -1,4 +1,4 @@
-package io.algafoodapi.api.dto.request;
+package io.algafoodapi.api.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,8 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 import java.io.Serializable;
 
 @Builder
@@ -19,12 +17,12 @@ import java.io.Serializable;
 @Setter
 @ToString
 @EqualsAndHashCode(of = "id")
-public final class CozinhaIdRequest implements Serializable {
+public final class GrupoDtoResponse implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @NotNull
-    @Positive
     private Long id;
+
+    private String nome;
 }
 
