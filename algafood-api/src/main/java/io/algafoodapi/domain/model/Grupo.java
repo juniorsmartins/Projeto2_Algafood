@@ -41,7 +41,7 @@ public final class Grupo implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "nome", nullable = false)
+    @Column(name = "nome", length = 100, nullable = false)
     private String nome;
 
     @ManyToMany(fetch = FetchType.LAZY)

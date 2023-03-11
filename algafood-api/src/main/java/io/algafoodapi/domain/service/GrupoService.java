@@ -8,6 +8,10 @@ public interface GrupoService {
 
     Grupo cadastrar(Grupo grupo);
 
+    Grupo atualizar(Grupo grupo);
+
     Page<Grupo> pesquisar(Grupo grupo, Pageable paginacao);
+
+    void apagarPorId(Long id);
 }
 
