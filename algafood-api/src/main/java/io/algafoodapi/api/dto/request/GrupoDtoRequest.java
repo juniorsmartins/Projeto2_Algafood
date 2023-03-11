@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
@@ -23,6 +24,7 @@ public final class GrupoDtoRequest implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @NotBlank
+    @Length(max = 100)
     private String nome;
 }
 

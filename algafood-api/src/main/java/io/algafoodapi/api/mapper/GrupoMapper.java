@@ -1,5 +1,6 @@
 package io.algafoodapi.api.mapper;
 
+import io.algafoodapi.api.dto.request.GrupoAtualizarDtoRequest;
 import io.algafoodapi.api.dto.request.GrupoDtoRequest;
 import io.algafoodapi.api.dto.request.GrupoPesquisarDtoRequest;
 import io.algafoodapi.api.dto.response.GrupoDtoResponse;
@@ -23,6 +24,10 @@ public final class GrupoMapper {
 
     public Grupo converterPesquisarDtoRequestParaEntidade(GrupoPesquisarDtoRequest pesquisarDtoRequest) {
         return this.modelMapper.map(pesquisarDtoRequest, Grupo.class);
+    }
+
+    public Grupo converterAtualizarDtoRequestParaEntidade(GrupoAtualizarDtoRequest atualizarDtoRequest) {
+        return this.modelMapper.map(atualizarDtoRequest, Grupo.class);
     }
 
     public GrupoDtoResponse converterEntidadeParaDtoResponse(Grupo grupo) {
