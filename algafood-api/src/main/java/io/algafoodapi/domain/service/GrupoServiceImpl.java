@@ -1,11 +1,13 @@
 package io.algafoodapi.domain.service;
 
-import io.algafoodapi.domain.core.Constantes;
+import io.algafoodapi.domain.exception.ConstantesDeErro;
+import io.algafoodapi.domain.exception.http404.GrupoNaoEncontradoException;
 import io.algafoodapi.domain.exception.http409.NomeDeGrupoEmUsoException;
 import io.algafoodapi.domain.model.Grupo;
 import io.algafoodapi.domain.ports.GrupoRepository;
-import org.apache.commons.lang3.RegExUtils;
+import io.algafoodapi.domain.utils.ServiceUtils;
 import org.apache.commons.lang3.text.WordUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -24,15 +26,36 @@ public class GrupoServiceImpl implements GrupoService {
     @Autowired
     private GrupoRepository grupoRepository;
 
+    @Autowired
+    private ServiceUtils serviceUtils;
+
+    @Autowired
+    private ConstantesDeErro constantesDeErro;
+
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
     @Override
     public Grupo cadastrar(Grupo grupo) {
 
         return Optional.of(grupo)
-            .map(this::regraGarantirNomeÚnico)
+            .map(this::regraGarantirNomeUnico)
             .map(this::regraCapitalizarNome)
             .map(this.grupoRepository::salvar)
             .orElseThrow();
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
+    @Override
+    public Grupo atualizar(Grupo grupo) {
+        var id = grupo.getId();
+
+        return this.grupoRepository.consultarPorId(id)
+            .map(grupoDoDatabase -> {
+                this.regraGarantirNomeUnico(grupo);
+                BeanUtils.copyProperties(grupo, grupoDoDatabase, "id");
+                return grupoDoDatabase;
+            })
+            .map(this::regraCapitalizarNome)
+            .orElseThrow(() -> new GrupoNaoEncontradoException(id));
     }
 
     @Transactional(readOnly = true)
@@ -40,8 +63,25 @@ public class GrupoServiceImpl implements GrupoService {
     public Page<Grupo> pesquisar(final Grupo grupo, final Pageable paginacao) {
 
         var condicoesDePesquisa = this.criarCondicoesParaPesquisar(grupo);
+        var resultadoDaPesquisa = this.grupoRepository.pesquisar(condicoesDePesquisa, paginacao);
 
-        return this.grupoRepository.pesquisar(condicoesDePesquisa, paginacao);
+        if (resultadoDaPesquisa.isEmpty()) {
+            throw new GrupoNaoEncontradoException(constantesDeErro.NENHUM_RECURSO_ENCONTRADO);
+        }
+
+        return resultadoDaPesquisa;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
+    @Override
+    public void apagarPorId(final Long id) {
+
+        this.grupoRepository.consultarPorId(id)
+            .map(grupo -> {
+                this.grupoRepository.apagar(grupo);
+                return true;
+            })
+            .orElseThrow(() -> new GrupoNaoEncontradoException(id));
     }
 
     private Grupo regraCapitalizarNome(Grupo grupo) {
@@ -51,45 +91,22 @@ public class GrupoServiceImpl implements GrupoService {
         return grupo;
     }
 
-    private Grupo regraGarantirNomeÚnico(Grupo grupo) {
+    private Grupo regraGarantirNomeUnico(Grupo grupo) {
         var nomeDeEntradaParaPadronizar = grupo.getNome();
-        var nomeDeEntradaPadronizado = this.padronizarNome(nomeDeEntradaParaPadronizar);
+        var nomeDeEntradaPadronizado = this.serviceUtils.padronizarNome(nomeDeEntradaParaPadronizar);
 
         var existeNomeIgual = this.grupoRepository.listar()
             .stream()
+            .filter(grupoDoDatabase -> grupoDoDatabase.getId() != grupo.getId())
             .map(Grupo::getNome)
-            .map(this::padronizarNome)
+            .map(this.serviceUtils::padronizarNome)
             .anyMatch(nomeDoDatabasePadronizado -> nomeDoDatabasePadronizado.equals(nomeDeEntradaPadronizado));
 
         if (existeNomeIgual) {
-            throw new NomeDeGrupoEmUsoException(String.format(Constantes.NOME_DE_GRUPO_JA_CADASTRADO, nomeDeEntradaParaPadronizar));
+            throw new NomeDeGrupoEmUsoException(nomeDeEntradaParaPadronizar);
         }
 
         return grupo;
-    }
-
-    private String padronizarNome(String nome) {
-        return Optional.of(nome)
-            .map(nomeParaPadronizar -> nomeParaPadronizar.toLowerCase().trim())
-            .map(nomeParaPadronizar -> RegExUtils.replaceAll(nomeParaPadronizar, "ç", "c"))
-            .map(nomeParaPadronizar -> RegExUtils.replaceAll(nomeParaPadronizar, "á", "a"))
-            .map(nomeParaPadronizar -> RegExUtils.replaceAll(nomeParaPadronizar, "â", "a"))
-            .map(nomeParaPadronizar -> RegExUtils.replaceAll(nomeParaPadronizar, "à", "a"))
-            .map(nomeParaPadronizar -> RegExUtils.replaceAll(nomeParaPadronizar, "ã", "a"))
-            .map(nomeParaPadronizar -> RegExUtils.replaceAll(nomeParaPadronizar, "é", "e"))
-            .map(nomeParaPadronizar -> RegExUtils.replaceAll(nomeParaPadronizar, "ê", "e"))
-            .map(nomeParaPadronizar -> RegExUtils.replaceAll(nomeParaPadronizar, "è", "e"))
-            .map(nomeParaPadronizar -> RegExUtils.replaceAll(nomeParaPadronizar, "í", "i"))
-            .map(nomeParaPadronizar -> RegExUtils.replaceAll(nomeParaPadronizar, "î", "i"))
-            .map(nomeParaPadronizar -> RegExUtils.replaceAll(nomeParaPadronizar, "ì", "i"))
-            .map(nomeParaPadronizar -> RegExUtils.replaceAll(nomeParaPadronizar, "ó", "o"))
-            .map(nomeParaPadronizar -> RegExUtils.replaceAll(nomeParaPadronizar, "ô", "o"))
-            .map(nomeParaPadronizar -> RegExUtils.replaceAll(nomeParaPadronizar, "ò", "o"))
-            .map(nomeParaPadronizar -> RegExUtils.replaceAll(nomeParaPadronizar, "õ", "o"))
-            .map(nomeParaPadronizar -> RegExUtils.replaceAll(nomeParaPadronizar, "ú", "u"))
-            .map(nomeParaPadronizar -> RegExUtils.replaceAll(nomeParaPadronizar, "û", "u"))
-            .map(nomeParaPadronizar -> RegExUtils.replaceAll(nomeParaPadronizar, "ù", "u"))
-            .orElseThrow();
     }
 
     private Example criarCondicoesParaPesquisar(Grupo grupo) {

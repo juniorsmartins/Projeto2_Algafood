@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface GrupoRepository {
 
@@ -14,5 +15,9 @@ public interface GrupoRepository {
     List<Grupo> listar();
 
     Page<Grupo> pesquisar(Example example, Pageable paginacao);
+
+    Optional<Grupo> consultarPorId(Long id);
+
+    void apagar(Grupo grupo);
 }
 
