@@ -24,6 +24,7 @@ import java.util.Optional;
 public final class CidadeController {
 
     private final CidadeMapper cidadeMapper;
+
     private final CidadeService cidadeService;
 
     public CidadeController(final CidadeMapper cidadeMapper, final CidadeService cidadeService) {
