@@ -35,7 +35,7 @@ import java.util.List;
 @Setter
 @ToString
 @EqualsAndHashCode(of = {"id"})
-public final class Usuario implements Serializable {
+public final class Usuario implements PoliticaEntidade<Long>, Serializable {
 
     private static final long serialVersionUID = 1L;
 
