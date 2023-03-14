@@ -1,6 +1,6 @@
 package io.algafoodapi.domain.exception.http409;
 
-public final class CidadeEmUsoException extends EntidadeEmUsoException {
+public final class CidadeEmUsoException extends RegraDeNegocioVioladaException {
 
     private static final long serialVersionUID = 1L;
 
