@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
@@ -30,6 +31,7 @@ public final class UsuarioDtoRequest implements PoliticaDtoRequest, Serializable
     private String nome;
 
     @NotBlank
+    @Email
     @Length(max = 150)
     private String email;
 
