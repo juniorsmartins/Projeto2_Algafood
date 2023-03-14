@@ -1,12 +1,34 @@
 package io.algafoodapi.domain.utils;
 
+import io.algafoodapi.domain.exception.http409.NomeDeUsuarioEmUsoException;
+import io.algafoodapi.domain.model.PoliticaEntidade;
+import io.algafoodapi.infraestrutura.repository.PoliticaRepository;
 import org.apache.commons.lang3.RegExUtils;
+import org.apache.commons.lang3.text.WordUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
-public final class ServiceUtils {
+public class ServiceUtils {
+
+    public <E extends PoliticaEntidade, R extends PoliticaRepository<?, Long>> E regraGarantirNomeUnico(E entidade, R repository) {
+        var nomeDeEntradaParaPadronizar = entidade.getNome().trim();
+        var nomeDeEntradaPadronizado = this.padronizarNome(nomeDeEntradaParaPadronizar);
+
+        var existeNomeIgual = repository.listar()
+            .stream()
+            .filter(entidadeDoDatabase -> entidadeDoDatabase.getId() != entidade.getId())
+            .map(entidadeDoDatabase -> entidadeDoDatabase.getNome())
+            .map(this::padronizarNome)
+            .anyMatch(nomeDoDatabasePadronizado -> nomeDoDatabasePadronizado.equals(nomeDeEntradaPadronizado));
+
+        if (existeNomeIgual) {
+            throw new NomeDeUsuarioEmUsoException(nomeDeEntradaPadronizado);
+        }
+
+        return entidade;
+    }
 
     public String padronizarNome(String nome) {
         return Optional.of(nome)
@@ -30,6 +52,22 @@ public final class ServiceUtils {
             .map(nomeParaPadronizar -> RegExUtils.replaceAll(nomeParaPadronizar, "û", "u"))
             .map(nomeParaPadronizar -> RegExUtils.replaceAll(nomeParaPadronizar, "ù", "u"))
             .orElseThrow();
+    }
+
+    public <E extends PoliticaEntidade> E capitalizarNome(E entidade) {
+        var nomeParaCapitalizar = entidade.getNome().trim();
+        var nomeCapitalizado = WordUtils.capitalizeFully(nomeParaCapitalizar);
+
+        var nomeCapitalizadoComDaDeDiDoDuMinusculo = Optional.of(nomeCapitalizado)
+                .map(nome -> RegExUtils.replaceAll(nome, " Da ", " da "))
+                .map(nome -> RegExUtils.replaceAll(nome, " De ", " de "))
+                .map(nome -> RegExUtils.replaceAll(nome, " Di ", " di "))
+                .map(nome -> RegExUtils.replaceAll(nome, " Do ", " do "))
+                .map(nome -> RegExUtils.replaceAll(nome, " Du ", " du "))
+                .orElseThrow();
+
+        entidade.setNome(nomeCapitalizadoComDaDeDiDoDuMinusculo);
+        return entidade;
     }
 }
 

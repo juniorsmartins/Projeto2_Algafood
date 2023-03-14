@@ -22,5 +22,7 @@ public final class Constantes {
 
 
     public static final String NOME_DE_GRUPO_JA_CADASTRADO = "Não é permitido duplicar nome. Já existe Grupo com nome: %s.";
+
+    public static final String NOME_DE_USUARIO_JA_CADASTRADO = "Não é permitido duplicar nome. Já existe Usuário com nome: %s.";
 }
 

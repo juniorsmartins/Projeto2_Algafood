@@ -3,7 +3,7 @@ package io.algafoodapi.domain.exception;
 import io.algafoodapi.domain.core.validation.ValidacaoException;
 import io.algafoodapi.domain.exception.http400.RequisicaoMalFormuladaException;
 import io.algafoodapi.domain.exception.http404.EntidadeNaoEncontradaException;
-import io.algafoodapi.domain.exception.http409.EntidadeEmUsoException;
+import io.algafoodapi.domain.exception.http409.RegraDeNegocioVioladaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -41,16 +41,16 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
                 httpStatus, request);
     }
 
-    @ExceptionHandler(value = EntidadeEmUsoException.class)
-    public ResponseEntity<Object> tratarEntidadeEmUso(EntidadeEmUsoException emUsoException, WebRequest request) {
+    @ExceptionHandler(value = RegraDeNegocioVioladaException.class)
+    public ResponseEntity<Object> tratarRegraDeNegocioViolada(RegraDeNegocioVioladaException regraViolada, WebRequest request) {
 
         var httpStatus = HttpStatus.CONFLICT;
         var tipoDeErroEnum = TipoDeErroEnum.ENTIDADE_EM_USO;
-        var detalhe = emUsoException.getMessage();
+        var detalhe = regraViolada.getMessage();
 
         var mensagemDeErro = this.criarMensagemDeErrorBuilder(httpStatus, tipoDeErroEnum, detalhe).build();
 
-        return this.handleExceptionInternal(emUsoException, mensagemDeErro, new HttpHeaders(),
+        return this.handleExceptionInternal(regraViolada, mensagemDeErro, new HttpHeaders(),
                 httpStatus, request);
     }
 

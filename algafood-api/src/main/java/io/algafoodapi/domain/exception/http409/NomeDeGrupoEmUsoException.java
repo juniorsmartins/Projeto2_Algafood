@@ -2,7 +2,7 @@ package io.algafoodapi.domain.exception.http409;
 
 import io.algafoodapi.domain.core.Constantes;
 
-public final class NomeDeGrupoEmUsoException extends EntidadeEmUsoException {
+public final class NomeDeGrupoEmUsoException extends RegraDeNegocioVioladaException {
 
     private static final long serialVersionUID = 1L;
 

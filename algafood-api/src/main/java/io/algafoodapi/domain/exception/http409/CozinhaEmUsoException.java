@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.CONFLICT)
-public final class CozinhaEmUsoException extends EntidadeEmUsoException {
+public final class CozinhaEmUsoException extends RegraDeNegocioVioladaException {
 
     private static final long serialVersionUID = 1L;
 
