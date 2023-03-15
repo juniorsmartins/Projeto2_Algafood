@@ -2,7 +2,7 @@ package io.algafoodapi.domain.utils;
 
 import io.algafoodapi.domain.exception.http409.NomeDeUsuarioEmUsoException;
 import io.algafoodapi.domain.model.PoliticaEntidade;
-import io.algafoodapi.infraestrutura.repository.PoliticaRepository;
+import io.algafoodapi.infraestrutura.repository.PoliticaCrudBaseRepository;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.springframework.stereotype.Service;
@@ -12,7 +12,7 @@ import java.util.Optional;
 @Service
 public class ServiceUtils {
 
-    public <E extends PoliticaEntidade, R extends PoliticaRepository<?, Long>> E regraGarantirNomeUnico(E entidade, R repository) {
+    public <E extends PoliticaEntidade, R extends PoliticaCrudBaseRepository<?, Long>> E regraGarantirNomeUnico(E entidade, R repository) {
         var nomeDeEntradaParaPadronizar = entidade.getNome().trim();
         var nomeDeEntradaPadronizado = this.padronizarNome(nomeDeEntradaParaPadronizar);
 
@@ -30,27 +30,28 @@ public class ServiceUtils {
         return entidade;
     }
 
-    public String padronizarNome(String nome) {
-        return Optional.of(nome)
-            .map(nomeParaPadronizar -> nomeParaPadronizar.toLowerCase().trim())
-            .map(nomeParaPadronizar -> RegExUtils.replaceAll(nomeParaPadronizar, "ç", "c"))
-            .map(nomeParaPadronizar -> RegExUtils.replaceAll(nomeParaPadronizar, "á", "a"))
-            .map(nomeParaPadronizar -> RegExUtils.replaceAll(nomeParaPadronizar, "â", "a"))
-            .map(nomeParaPadronizar -> RegExUtils.replaceAll(nomeParaPadronizar, "à", "a"))
-            .map(nomeParaPadronizar -> RegExUtils.replaceAll(nomeParaPadronizar, "ã", "a"))
-            .map(nomeParaPadronizar -> RegExUtils.replaceAll(nomeParaPadronizar, "é", "e"))
-            .map(nomeParaPadronizar -> RegExUtils.replaceAll(nomeParaPadronizar, "ê", "e"))
-            .map(nomeParaPadronizar -> RegExUtils.replaceAll(nomeParaPadronizar, "è", "e"))
-            .map(nomeParaPadronizar -> RegExUtils.replaceAll(nomeParaPadronizar, "í", "i"))
-            .map(nomeParaPadronizar -> RegExUtils.replaceAll(nomeParaPadronizar, "î", "i"))
-            .map(nomeParaPadronizar -> RegExUtils.replaceAll(nomeParaPadronizar, "ì", "i"))
-            .map(nomeParaPadronizar -> RegExUtils.replaceAll(nomeParaPadronizar, "ó", "o"))
-            .map(nomeParaPadronizar -> RegExUtils.replaceAll(nomeParaPadronizar, "ô", "o"))
-            .map(nomeParaPadronizar -> RegExUtils.replaceAll(nomeParaPadronizar, "ò", "o"))
-            .map(nomeParaPadronizar -> RegExUtils.replaceAll(nomeParaPadronizar, "õ", "o"))
-            .map(nomeParaPadronizar -> RegExUtils.replaceAll(nomeParaPadronizar, "ú", "u"))
-            .map(nomeParaPadronizar -> RegExUtils.replaceAll(nomeParaPadronizar, "û", "u"))
-            .map(nomeParaPadronizar -> RegExUtils.replaceAll(nomeParaPadronizar, "ù", "u"))
+    public String padronizarNome(String nomeParaPadronizar) {
+
+        return Optional.of(nomeParaPadronizar)
+            .map(nome -> nome.toLowerCase().trim())
+            .map(nome -> RegExUtils.replaceAll(nome, "ç", "c"))
+            .map(nome -> RegExUtils.replaceAll(nome, "á", "a"))
+            .map(nome -> RegExUtils.replaceAll(nome, "â", "a"))
+            .map(nome -> RegExUtils.replaceAll(nome, "à", "a"))
+            .map(nome -> RegExUtils.replaceAll(nome, "ã", "a"))
+            .map(nome -> RegExUtils.replaceAll(nome, "é", "e"))
+            .map(nome -> RegExUtils.replaceAll(nome, "ê", "e"))
+            .map(nome -> RegExUtils.replaceAll(nome, "è", "e"))
+            .map(nome -> RegExUtils.replaceAll(nome, "í", "i"))
+            .map(nome -> RegExUtils.replaceAll(nome, "î", "i"))
+            .map(nome -> RegExUtils.replaceAll(nome, "ì", "i"))
+            .map(nome -> RegExUtils.replaceAll(nome, "ó", "o"))
+            .map(nome -> RegExUtils.replaceAll(nome, "ô", "o"))
+            .map(nome -> RegExUtils.replaceAll(nome, "ò", "o"))
+            .map(nome -> RegExUtils.replaceAll(nome, "õ", "o"))
+            .map(nome -> RegExUtils.replaceAll(nome, "ú", "u"))
+            .map(nome -> RegExUtils.replaceAll(nome, "û", "u"))
+            .map(nome -> RegExUtils.replaceAll(nome, "ù", "u"))
             .orElseThrow();
     }
 
@@ -58,15 +59,17 @@ public class ServiceUtils {
         var nomeParaCapitalizar = entidade.getNome().trim();
         var nomeCapitalizado = WordUtils.capitalizeFully(nomeParaCapitalizar);
 
-        var nomeCapitalizadoComDaDeDiDoDuMinusculo = Optional.of(nomeCapitalizado)
-                .map(nome -> RegExUtils.replaceAll(nome, " Da ", " da "))
-                .map(nome -> RegExUtils.replaceAll(nome, " De ", " de "))
-                .map(nome -> RegExUtils.replaceAll(nome, " Di ", " di "))
-                .map(nome -> RegExUtils.replaceAll(nome, " Do ", " do "))
-                .map(nome -> RegExUtils.replaceAll(nome, " Du ", " du "))
-                .orElseThrow();
+        var nomeCapitalizadoComDaDeDiDoDuEmNaMinusculo = Optional.of(nomeCapitalizado)
+            .map(nome -> RegExUtils.replaceAll(nome, " Da ", " da "))
+            .map(nome -> RegExUtils.replaceAll(nome, " De ", " de "))
+            .map(nome -> RegExUtils.replaceAll(nome, " Di ", " di "))
+            .map(nome -> RegExUtils.replaceAll(nome, " Do ", " do "))
+            .map(nome -> RegExUtils.replaceAll(nome, " Du ", " du "))
+            .map(nome -> RegExUtils.replaceAll(nome, " Em ", " em "))
+            .map(nome -> RegExUtils.replaceAll(nome, " Na ", " na "))
+            .orElseThrow();
 
-        entidade.setNome(nomeCapitalizadoComDaDeDiDoDuMinusculo);
+        entidade.setNome(nomeCapitalizadoComDaDeDiDoDuEmNaMinusculo);
         return entidade;
     }
 }

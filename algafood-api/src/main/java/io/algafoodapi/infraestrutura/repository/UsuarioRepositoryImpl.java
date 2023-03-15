@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class UsuarioRepositoryImpl implements PoliticaRepository<Usuario, Long> {
+public class UsuarioRepositoryImpl implements PoliticaCrudBaseRepository<Usuario, Long>, PoliticaUsuarioRepository {
 
     @Autowired
     private UsuarioRepositoryJpa usuarioRepositoryJpa;
@@ -40,6 +40,11 @@ public class UsuarioRepositoryImpl implements PoliticaRepository<Usuario, Long> 
     @Override
     public List<Usuario> listar() {
         return this.usuarioRepositoryJpa.findAll();
+    }
+
+    @Override
+    public Optional<Usuario> consultarPorEmail(String email) {
+        return this.usuarioRepositoryJpa.findByEmail(email);
     }
 }
 
