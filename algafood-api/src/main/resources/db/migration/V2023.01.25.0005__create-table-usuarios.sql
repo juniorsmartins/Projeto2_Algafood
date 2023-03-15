@@ -7,7 +7,6 @@ CREATE TABLE IF NOT EXISTS usuarios (
 
     CONSTRAINT constraint_check_nome_usuario CHECK(nome <> ''),
     CONSTRAINT constraint_check_email_usuario CHECK(email <> ''),
-    CONSTRAINT constraint_unique_email_usuario UNIQUE(email),
     CONSTRAINT constraint_check_senha_usuario CHECK(senha <> '')
 );
 
