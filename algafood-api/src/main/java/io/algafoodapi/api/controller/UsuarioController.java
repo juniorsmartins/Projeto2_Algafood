@@ -10,6 +10,8 @@ import io.algafoodapi.domain.service.PoliticaCrudBaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -71,8 +73,18 @@ public final class UsuarioController implements PoliticaCrudBaseController<Usuar
     }
 
     @Override
-    public ResponseEntity<Page<UsuarioDtoResponse>> pesquisar(UsuarioPesquisarDtoRequest dtoRequest, Pageable paginacao) {
-        return null;
+    public ResponseEntity<Page<UsuarioDtoResponse>> pesquisar(final UsuarioPesquisarDtoRequest dtoRequest,
+      @PageableDefault(sort = "nome", direction = Sort.Direction.ASC, page = 0, size = 20) final Pageable paginacao) {
+
+        var response = Optional.of(dtoRequest)
+            .map(this.mapper::converterPesquisarDtoRequestParaEntidade)
+            .map(entidade -> this.service.pesquisar(entidade, paginacao))
+            .map(this.mapper::converterPaginaDeEntidadeParaPaginaDeDtoResponse)
+            .orElseThrow();
+
+        return ResponseEntity
+            .ok()
+            .body(response);
     }
 
     @Override
