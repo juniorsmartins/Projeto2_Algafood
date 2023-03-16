@@ -1,4 +1,4 @@
-package io.algafoodapi.api.dto.request;
+package io.algafoodapi.api.dto.response;
 
 public interface PoliticaDtoResponse<I> {
 

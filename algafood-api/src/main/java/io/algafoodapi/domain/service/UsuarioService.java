@@ -6,7 +6,10 @@ import io.algafoodapi.domain.model.Usuario;
 import io.algafoodapi.domain.utils.ServiceUtils;
 import io.algafoodapi.infraestrutura.repository.PoliticaCrudBaseRepository;
 import io.algafoodapi.infraestrutura.repository.PoliticaUsuarioRepository;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -15,6 +18,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.OffsetDateTime;
 import java.util.Map;
 import java.util.Optional;
 
@@ -45,7 +49,18 @@ public class UsuarioService implements PoliticaCrudBaseService<Usuario, Long> {
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
     @Override
     public Usuario atualizar(Usuario entidade) {
-        return null;
+        var idUsuario = entidade.getId();
+
+        return this.repository.consultarPorId(idUsuario)
+            .map(this::regraGarantirEmailUnico)
+            .map(entity -> this.serviceUtils.regraGarantirNomeUnico(entity, repository))
+            .map(this.serviceUtils::capitalizarNome)
+            .map(entity -> {
+                BeanUtils.copyProperties(entidade, entity, "id");
+                entity.setDataCadastro(OffsetDateTime.now());
+                return entity;
+            })
+            .orElseThrow(() -> new UsuarioNaoEncontradoException(idUsuario));
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
@@ -56,8 +71,12 @@ public class UsuarioService implements PoliticaCrudBaseService<Usuario, Long> {
 
     @Transactional(readOnly = true)
     @Override
-    public Page<Usuario> pesquisar(Usuario entidade, Pageable paginacao) {
-        return null;
+    public Page<Usuario> pesquisar(final Usuario entidade, final Pageable paginacao) {
+
+        var condicoesDePesquisa = this.criarCondicoesDePesquisa(entidade);
+        var resultadoDaPesquisaPaginado = this.repository.pesquisar(condicoesDePesquisa, paginacao);
+
+        return resultadoDaPesquisaPaginado;
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
@@ -80,6 +99,17 @@ public class UsuarioService implements PoliticaCrudBaseService<Usuario, Long> {
             throw new EmailDeUsuarioEmUsoException(emailParaVerificar);
         }
         return usuario;
+    }
+
+    private Example criarCondicoesDePesquisa(final Usuario entidade) {
+
+        ExampleMatcher exampleMatcher = ExampleMatcher
+            .matching()
+            .withIgnoreCase()
+            .withIgnoreNullValues()
+            .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
+
+        return Example.of(entidade, exampleMatcher);
     }
 }
 

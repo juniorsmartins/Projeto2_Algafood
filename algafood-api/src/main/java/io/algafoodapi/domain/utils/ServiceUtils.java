@@ -66,7 +66,12 @@ public class ServiceUtils {
             .map(nome -> RegExUtils.replaceAll(nome, " Do ", " do "))
             .map(nome -> RegExUtils.replaceAll(nome, " Du ", " du "))
             .map(nome -> RegExUtils.replaceAll(nome, " Em ", " em "))
+            .map(nome -> RegExUtils.replaceAll(nome, " Um ", " um "))
             .map(nome -> RegExUtils.replaceAll(nome, " Na ", " na "))
+            .map(nome -> RegExUtils.replaceAll(nome, " Ne ", " ne "))
+            .map(nome -> RegExUtils.replaceAll(nome, " Ni ", " ni "))
+            .map(nome -> RegExUtils.replaceAll(nome, " No ", " no "))
+            .map(nome -> RegExUtils.replaceAll(nome, " Nu ", " nu "))
             .orElseThrow();
 
         entidade.setNome(nomeCapitalizadoComDaDeDiDoDuEmNaMinusculo);
