@@ -4,6 +4,7 @@ import io.algafoodapi.api.dto.request.RestauranteDtoRequest;
 import io.algafoodapi.api.dto.response.RestauranteDtoResponse;
 import io.algafoodapi.api.mapper.RestauranteMapper;
 import io.algafoodapi.domain.service.RestauranteService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,22 +30,20 @@ import java.util.Optional;
 @RequestMapping(path = "/v1/restaurantes")
 public final class RestauranteController {
 
-    private final RestauranteMapper restauranteMapper;
-    private final RestauranteService restauranteService;
+    @Autowired
+    private RestauranteMapper mapper;
 
-    public RestauranteController(final RestauranteMapper restauranteMapper, final RestauranteService restauranteService) {
-        this.restauranteMapper = restauranteMapper;
-        this.restauranteService = restauranteService;
-    }
+    @Autowired
+    private RestauranteService service;
 
     @PostMapping
     public ResponseEntity<RestauranteDtoResponse> criar(@RequestBody @Valid final RestauranteDtoRequest restauranteDtoRequest,
                                                         final UriComponentsBuilder uriComponentsBuilder) {
 
         var response = Optional.of(restauranteDtoRequest)
-            .map(this.restauranteMapper::converterDtoRequestParaEntidade)
-            .map(this.restauranteService::criar)
-            .map(this.restauranteMapper::converterEntidadeParaDtoResponse)
+            .map(this.mapper::converterDtoRequestParaEntidade)
+            .map(this.service::criar)
+            .map(this.mapper::converterEntidadeParaDtoResponse)
             .orElseThrow();
 
         return ResponseEntity
@@ -60,9 +59,9 @@ public final class RestauranteController {
                        @RequestBody @Valid final RestauranteDtoRequest restauranteDtoRequest) {
 
         var response = Optional.of(restauranteDtoRequest)
-            .map(this.restauranteMapper::converterDtoRequestParaEntidade)
-            .map(restaurant -> this.restauranteService.atualizar(idRestaurante, restaurant))
-            .map(this.restauranteMapper::converterEntidadeParaDtoResponse)
+            .map(this.mapper::converterDtoRequestParaEntidade)
+            .map(restaurant -> this.service.atualizar(idRestaurante, restaurant))
+            .map(this.mapper::converterEntidadeParaDtoResponse)
             .orElseThrow();
 
         return ResponseEntity
@@ -75,9 +74,9 @@ public final class RestauranteController {
                                               @RequestBody Map<String, Object> campos,
                                               final HttpServletRequest request) {
 
-        var response = Optional.of(this.restauranteService.atualizarParcial(
+        var response = Optional.of(this.service.atualizarParcial(
             idRestaurante, campos, request))
-            .map(this.restauranteMapper::converterEntidadeParaDtoResponse)
+            .map(this.mapper::converterEntidadeParaDtoResponse)
             .get();
 
         return ResponseEntity
@@ -88,7 +87,7 @@ public final class RestauranteController {
     @DeleteMapping(path = "/{id}")
     public ResponseEntity excluirPorId(@PathVariable(name = "id") final Long idRestaurante) {
 
-        this.restauranteService.excluirPorId(idRestaurante);
+        this.service.excluirPorId(idRestaurante);
 
         return ResponseEntity
             .noContent()
@@ -98,8 +97,8 @@ public final class RestauranteController {
     @GetMapping(path = "/{id}")
     public ResponseEntity<RestauranteDtoResponse> consultarPorId(@PathVariable(name = "id") final Long idRestaurante) {
 
-        var response = Optional.of(this.restauranteService.consultarPorId(idRestaurante))
-            .map(this.restauranteMapper::converterEntidadeParaDtoResponse)
+        var response = Optional.of(this.service.consultarPorId(idRestaurante))
+            .map(this.mapper::converterEntidadeParaDtoResponse)
             .get();
 
         return ResponseEntity
@@ -110,9 +109,9 @@ public final class RestauranteController {
     @GetMapping(path = "/por-nome")
     public ResponseEntity<List<RestauranteDtoResponse>> consultarPorNome(@RequestParam(name = "nome") final String nome) {
 
-        var response = this.restauranteService.consultarPorNome(nome)
+        var response = this.service.consultarPorNome(nome)
             .stream()
-            .map(this.restauranteMapper::converterEntidadeParaDtoResponse)
+            .map(this.mapper::converterEntidadeParaDtoResponse)
             .toList();
 
         return ResponseEntity
@@ -123,9 +122,9 @@ public final class RestauranteController {
     @GetMapping
     public ResponseEntity<List<RestauranteDtoResponse>> listar() {
 
-        var response = this.restauranteService.listar()
+        var response = this.service.listar()
             .stream()
-            .map(this.restauranteMapper::converterEntidadeParaDtoResponse)
+            .map(this.mapper::converterEntidadeParaDtoResponse)
             .toList();
 
         return ResponseEntity
@@ -138,9 +137,9 @@ public final class RestauranteController {
                                                       @Param("freteTaxaInicial") final BigDecimal freteTaxaInicial,
                                                       @Param("freteTaxaFinal") final BigDecimal freteTaxaFinal) {
 
-        var response = this.restauranteService.consultarPorNomeAndTaxas(nome, freteTaxaInicial, freteTaxaFinal)
+        var response = this.service.consultarPorNomeAndTaxas(nome, freteTaxaInicial, freteTaxaFinal)
             .stream()
-            .map(this.restauranteMapper::converterEntidadeParaDtoResponse)
+            .map(this.mapper::converterEntidadeParaDtoResponse)
             .toList();
 
         return ResponseEntity
@@ -150,7 +149,7 @@ public final class RestauranteController {
 
     @PutMapping(path = "/{id}/ativos")
     public ResponseEntity ativar(@PathVariable(name = "id") final Long idRestaurante) {
-        this.restauranteService.ativar(idRestaurante);
+        this.service.ativar(idRestaurante);
 
         return ResponseEntity
             .noContent()
@@ -159,7 +158,7 @@ public final class RestauranteController {
 
     @DeleteMapping(path = "/{id}/ativos")
     public ResponseEntity inativar(@PathVariable(name = "id") final Long idRestaurante) {
-        this.restauranteService.inativar(idRestaurante);
+        this.service.inativar(idRestaurante);
 
         return ResponseEntity
             .noContent()

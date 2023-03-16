@@ -52,8 +52,17 @@ public final class UsuarioController implements PoliticaCrudBaseController<Usuar
     }
 
     @Override
-    public ResponseEntity<UsuarioDtoResponse> atualizar(UsuarioAtualizarDtoRequest dtoRequest) {
-        return null;
+    public ResponseEntity<UsuarioDtoResponse> atualizar(@RequestBody @Valid final UsuarioAtualizarDtoRequest dtoRequest) {
+
+        var response = Optional.of(dtoRequest)
+            .map(this.mapper::converterAtualizarDtoRequestParaEntidade)
+            .map(this.service::atualizar)
+            .map(this.mapper::converterEntidadeParaDtoResponse)
+            .orElseThrow();
+
+        return ResponseEntity
+            .ok()
+            .body(response);
     }
 
     @Override

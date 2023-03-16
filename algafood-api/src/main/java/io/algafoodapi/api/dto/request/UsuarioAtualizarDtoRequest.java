@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.io.Serializable;
 
 @Builder
@@ -23,6 +25,8 @@ public class UsuarioAtualizarDtoRequest implements PoliticaAtualizarDtoRequest<L
 
     private static final long serialVersionUID = 1L;
 
+    @NotNull
+    @Positive
     private Long id;
 
     private String nome;

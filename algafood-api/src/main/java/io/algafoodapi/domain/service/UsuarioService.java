@@ -6,6 +6,7 @@ import io.algafoodapi.domain.model.Usuario;
 import io.algafoodapi.domain.utils.ServiceUtils;
 import io.algafoodapi.infraestrutura.repository.PoliticaCrudBaseRepository;
 import io.algafoodapi.infraestrutura.repository.PoliticaUsuarioRepository;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -45,7 +46,17 @@ public class UsuarioService implements PoliticaCrudBaseService<Usuario, Long> {
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
     @Override
     public Usuario atualizar(Usuario entidade) {
-        return null;
+        var idUsuario = entidade.getId();
+
+        return this.repository.consultarPorId(idUsuario)
+            .map(this::regraGarantirEmailUnico)
+            .map(entity -> this.serviceUtils.regraGarantirNomeUnico(entity, repository))
+            .map(this.serviceUtils::capitalizarNome)
+            .map(entity -> {
+                BeanUtils.copyProperties(entidade, entity, "id");
+                return entity;
+            })
+            .orElseThrow(() -> new UsuarioNaoEncontradoException(idUsuario));
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)

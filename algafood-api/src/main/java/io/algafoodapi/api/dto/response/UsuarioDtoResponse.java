@@ -1,7 +1,6 @@
 package io.algafoodapi.api.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.algafoodapi.api.dto.request.PoliticaDtoResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;

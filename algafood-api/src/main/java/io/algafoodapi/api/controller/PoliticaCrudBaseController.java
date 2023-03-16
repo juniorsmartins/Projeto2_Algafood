@@ -2,7 +2,7 @@ package io.algafoodapi.api.controller;
 
 import io.algafoodapi.api.dto.request.PoliticaAtualizarDtoRequest;
 import io.algafoodapi.api.dto.request.PoliticaDtoRequest;
-import io.algafoodapi.api.dto.request.PoliticaDtoResponse;
+import io.algafoodapi.api.dto.response.PoliticaDtoResponse;
 import io.algafoodapi.api.dto.request.PoliticaPesquisarDtoRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
