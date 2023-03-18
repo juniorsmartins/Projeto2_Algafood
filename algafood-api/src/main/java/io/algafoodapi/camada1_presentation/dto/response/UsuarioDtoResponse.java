@@ -1,8 +1,6 @@
 package io.algafoodapi.camada1_presentation.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.algafoodapi.camada1_presentation.dto.request.GrupoDtoRequest;
-import io.algafoodapi.camada1_presentation.dto.request.PedidoDtoRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -32,8 +30,8 @@ public final class UsuarioDtoResponse implements PoliticaDtoResponse<Long>, Seri
 
     private String email;
 
-    private List<GrupoDtoRequest> grupos;
+    private List<GrupoDtoResponse> grupos;
 
-    private List<PedidoDtoRequest> pedidos;
+    private List<PedidoDtoResponse> pedidos;
 }
 

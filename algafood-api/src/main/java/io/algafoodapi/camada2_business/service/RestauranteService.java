@@ -13,6 +13,7 @@ import io.algafoodapi.camada3_infraestrutura.repository.jpa.CidadeRepositoryJpa;
 import io.algafoodapi.camada2_business.ports.CozinhaRepository;
 import io.algafoodapi.camada2_business.ports.RestauranteRepository;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -36,27 +37,20 @@ import java.util.Optional;
 @Service
 public class RestauranteService {
 
-    private final RestauranteRepository restauranteRepository;
+    @Autowired
+    private RestauranteRepository restauranteRepository;
 
-    private final CozinhaRepository cozinhaRepository;
+    @Autowired
+    private CozinhaRepository cozinhaRepository;
 
-    private final CidadeRepositoryJpa cidadeRepositoryJpa;
+    @Autowired
+    private CidadeRepositoryJpa cidadeRepositoryJpa;
 
-    private final SmartValidator smartValidator;
+    @Autowired
+    private SmartValidator smartValidator;
 
-    private final RestauranteMapper restauranteMapper;
-
-    public RestauranteService(final RestauranteRepository restauranteRepository,
-                              final CozinhaRepository cozinhaRepository,
-                              final CidadeRepositoryJpa cidadeRepositoryJpa,
-                              final SmartValidator smartValidator,
-                              final RestauranteMapper restauranteMapper) {
-        this.restauranteRepository = restauranteRepository;
-        this.cozinhaRepository = cozinhaRepository;
-        this.cidadeRepositoryJpa = cidadeRepositoryJpa;
-        this.smartValidator = smartValidator;
-        this.restauranteMapper = restauranteMapper;
-    }
+    @Autowired
+    private RestauranteMapper restauranteMapper;
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
     public Restaurante criar(Restaurante restaurante) {

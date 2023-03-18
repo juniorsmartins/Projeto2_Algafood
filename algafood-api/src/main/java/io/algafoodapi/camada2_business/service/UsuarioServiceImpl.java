@@ -1,8 +1,11 @@
 package io.algafoodapi.camada2_business.service;
 
+import io.algafoodapi.camada2_business.core.Constantes;
+import io.algafoodapi.camada2_business.exception.http400.RequisicaoMalFormuladaException;
 import io.algafoodapi.camada2_business.exception.http404.UsuarioNaoEncontradoException;
 import io.algafoodapi.camada2_business.exception.http409.EmailDeUsuarioEmUsoException;
 import io.algafoodapi.camada2_business.model.Usuario;
+import io.algafoodapi.camada2_business.ports.GrupoRepository;
 import io.algafoodapi.camada2_business.utils.ServiceUtils;
 import io.algafoodapi.camada3_infraestrutura.repository.PoliticaCrudBaseRepository;
 import io.algafoodapi.camada3_infraestrutura.repository.PoliticaUsuarioRepository;
@@ -15,19 +18,20 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
 import java.time.OffsetDateTime;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
-public class UsuarioService implements PoliticaCrudBaseService<Usuario, Long> {
+public class UsuarioServiceImpl implements PoliticaCrudBaseService<Usuario, Long> {
 
     @Autowired
     private PoliticaCrudBaseRepository<Usuario, Long> repository;
 
     @Autowired
     private PoliticaUsuarioRepository usuarioRepository;
+
+    @Autowired
+    private GrupoRepository grupoRepository;
 
     @Autowired
     private ServiceUtils serviceUtils;
@@ -50,21 +54,16 @@ public class UsuarioService implements PoliticaCrudBaseService<Usuario, Long> {
         var idUsuario = entidade.getId();
 
         return this.repository.consultarPorId(idUsuario)
+            .map(this::validarIdsDeRelacionamentos)
             .map(this::regraGarantirEmailUnico)
             .map(entity -> this.serviceUtils.regraGarantirNomeUnico(entity, repository))
             .map(this.serviceUtils::capitalizarNome)
             .map(entity -> {
-                BeanUtils.copyProperties(entidade, entity, "id");
+                BeanUtils.copyProperties(entidade, entity, "id", "senha");
                 entity.setDataCadastro(OffsetDateTime.now());
                 return entity;
             })
             .orElseThrow(() -> new UsuarioNaoEncontradoException(idUsuario));
-    }
-
-    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
-    @Override
-    public Usuario atualizarParcial(final Long id, final Map<String, Object> campos, final HttpServletRequest httpServletRequest) {
-        return null;
     }
 
     @Transactional(readOnly = true)
@@ -95,6 +94,20 @@ public class UsuarioService implements PoliticaCrudBaseService<Usuario, Long> {
             throw new EmailDeUsuarioEmUsoException(emailParaVerificar);
         }
         return usuario;
+    }
+
+    private Usuario validarIdsDeRelacionamentos(final Usuario usuario) {
+
+        return Optional.of(usuario)
+            .map(user -> {
+                user.getGrupos().forEach(grupo -> {
+                    var idGrupo = grupo.getId();
+                    this.grupoRepository.consultarPorId(idGrupo)
+                        .orElseThrow(() -> new RequisicaoMalFormuladaException(String.format(Constantes.GRUPO_NAO_ENCONTRADO, idGrupo)));
+                });
+                return user;
+            })
+            .orElseThrow();
     }
 }
 

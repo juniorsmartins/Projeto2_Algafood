@@ -10,11 +10,13 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.io.Serializable;
+import java.util.List;
 
 @Builder
 @NoArgsConstructor
@@ -41,8 +43,10 @@ public final class UsuarioAtualizarDtoRequest implements PoliticaAtualizarDtoReq
     @Length(max = 150)
     private String email;
 
-    @NotBlank
-    @Length(min = 6, max = 100)
-    private String senha;
+    @Valid
+    private List<GrupoIdDtoRequest> grupos;
+
+    @Valid
+    private List<PedidoIdDtoRequest> pedidos;
 }
 
