@@ -149,6 +149,7 @@ public final class RestauranteController {
 
     @PutMapping(path = "/{id}/ativos")
     public ResponseEntity ativar(@PathVariable(name = "id") final Long idRestaurante) {
+
         this.service.ativar(idRestaurante);
 
         return ResponseEntity
@@ -158,6 +159,7 @@ public final class RestauranteController {
 
     @DeleteMapping(path = "/{id}/ativos")
     public ResponseEntity inativar(@PathVariable(name = "id") final Long idRestaurante) {
+
         this.service.inativar(idRestaurante);
 
         return ResponseEntity

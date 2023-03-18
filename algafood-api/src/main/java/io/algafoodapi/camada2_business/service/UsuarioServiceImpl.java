@@ -1,9 +1,11 @@
 package io.algafoodapi.camada2_business.service;
 
+import io.algafoodapi.camada1_presentation.dto.request.UsuarioTrocarSenhaDtoRequest;
 import io.algafoodapi.camada2_business.core.Constantes;
 import io.algafoodapi.camada2_business.exception.http400.RequisicaoMalFormuladaException;
 import io.algafoodapi.camada2_business.exception.http404.UsuarioNaoEncontradoException;
 import io.algafoodapi.camada2_business.exception.http409.EmailDeUsuarioEmUsoException;
+import io.algafoodapi.camada2_business.exception.http409.SenhaIncompativelException;
 import io.algafoodapi.camada2_business.model.Usuario;
 import io.algafoodapi.camada2_business.ports.GrupoRepository;
 import io.algafoodapi.camada2_business.utils.ServiceUtils;
@@ -22,10 +24,10 @@ import java.time.OffsetDateTime;
 import java.util.Optional;
 
 @Service
-public class UsuarioServiceImpl implements PoliticaCrudBaseService<Usuario, Long> {
+public class UsuarioServiceImpl implements PoliticaCrudBaseService<Usuario, Long>, PoliticaUsuarioService<UsuarioTrocarSenhaDtoRequest, Long, String> {
 
     @Autowired
-    private PoliticaCrudBaseRepository<Usuario, Long> repository;
+    private PoliticaCrudBaseRepository<Usuario, Long> usuarioCrudRepository;
 
     @Autowired
     private PoliticaUsuarioRepository usuarioRepository;
@@ -42,9 +44,9 @@ public class UsuarioServiceImpl implements PoliticaCrudBaseService<Usuario, Long
 
         return Optional.of(entidade)
             .map(this::regraGarantirEmailUnico)
-            .map(entity -> this.serviceUtils.regraGarantirNomeUnico(entity, repository))
+            .map(entity -> this.serviceUtils.regraGarantirNomeUnico(entity, usuarioCrudRepository))
             .map(this.serviceUtils::capitalizarNome)
-            .map(this.repository::salvar)
+            .map(this.usuarioCrudRepository::salvar)
             .orElseThrow();
     }
 
@@ -53,10 +55,10 @@ public class UsuarioServiceImpl implements PoliticaCrudBaseService<Usuario, Long
     public Usuario atualizar(Usuario entidade) {
         var idUsuario = entidade.getId();
 
-        return this.repository.consultarPorId(idUsuario)
+        return this.usuarioCrudRepository.consultarPorId(idUsuario)
             .map(this::validarIdsDeRelacionamentos)
             .map(this::regraGarantirEmailUnico)
-            .map(entity -> this.serviceUtils.regraGarantirNomeUnico(entity, repository))
+            .map(entity -> this.serviceUtils.regraGarantirNomeUnico(entity, usuarioCrudRepository))
             .map(this.serviceUtils::capitalizarNome)
             .map(entity -> {
                 BeanUtils.copyProperties(entidade, entity, "id", "senha");
@@ -71,19 +73,37 @@ public class UsuarioServiceImpl implements PoliticaCrudBaseService<Usuario, Long
     public Page<Usuario> pesquisar(final Usuario entidade, final Pageable paginacao) {
 
         var condicoesDePesquisa = this.serviceUtils.criarCondicoesDePesquisa(entidade);
-        return this.repository.pesquisar(condicoesDePesquisa, paginacao);
+        return this.usuarioCrudRepository.pesquisar(condicoesDePesquisa, paginacao);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
     @Override
     public void deletar(final Long id) {
 
-        this.repository.consultarPorId(id)
+        this.usuarioCrudRepository.consultarPorId(id)
             .map(user -> {
-                this.repository.deletar(user);
+                this.usuarioCrudRepository.deletar(user);
                 return true;
             })
             .orElseThrow(() -> new UsuarioNaoEncontradoException(id));
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
+    @Override
+    public String trocarSenha(final UsuarioTrocarSenhaDtoRequest dtoRequest) {
+        var idUsuario = dtoRequest.getId();
+
+        this.usuarioCrudRepository.consultarPorId(idUsuario)
+            .map(user -> {
+                if (!user.getSenha().equals(dtoRequest.getSenhaAtual())) {
+                    throw new SenhaIncompativelException();
+                }
+                user.setSenha(dtoRequest.getSenhaNova());
+                return user;
+            })
+            .orElseThrow(() -> new UsuarioNaoEncontradoException(idUsuario));
+
+        return Constantes.SENHA_ALTERADA_COM_SUCESSO;
     }
 
     private Usuario regraGarantirEmailUnico(final Usuario usuario) {

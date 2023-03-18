@@ -2,6 +2,8 @@ package io.algafoodapi.camada2_business.core;
 
 public final class Constantes {
 
+    public static final String SENHA_ALTERADA_COM_SUCESSO = "Senha alterada com sucesso!";
+
     public static final String ESTADO_NAO_ENCONTRADO = "Não encontrado estado com código %d.";
 
     public static final String CIDADE_NAO_ENCONTRADA = "Não encontrada cidade com código %d.";
