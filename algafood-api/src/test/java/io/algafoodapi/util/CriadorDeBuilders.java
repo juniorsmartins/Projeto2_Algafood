@@ -1,8 +1,8 @@
 package io.algafoodapi.util;
 
 import com.github.javafaker.Faker;
-import io.algafoodapi.api.dto.request.FormaPagamentoDtoRequest;
-import io.algafoodapi.domain.model.FormaPagamento;
+import io.algafoodapi.camada1_presentation.dto.request.FormaPagamentoDtoRequest;
+import io.algafoodapi.camada2_business.model.FormaPagamento;
 
 public final class CriadorDeBuilders {
 

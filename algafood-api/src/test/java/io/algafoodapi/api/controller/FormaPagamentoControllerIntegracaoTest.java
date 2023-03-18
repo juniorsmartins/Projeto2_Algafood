@@ -1,6 +1,6 @@
 package io.algafoodapi.api.controller;
 
-import io.algafoodapi.infraestrutura.repository.jpa.FormaPagamentoRepositoryJpa;
+import io.algafoodapi.camada3_infraestrutura.repository.jpa.FormaPagamentoRepositoryJpa;
 import io.algafoodapi.util.CriadorDeBuilders;
 import io.algafoodapi.util.CriadorDeJsons;
 import org.hamcrest.Matchers;
