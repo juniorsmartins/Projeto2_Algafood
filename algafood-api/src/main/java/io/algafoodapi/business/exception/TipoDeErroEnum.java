@@ -5,11 +5,17 @@ import lombok.Getter;
 @Getter
 public enum TipoDeErroEnum {
 
-    ENTIDADE_NAO_ENCONTRADA("Entidade não encontrada.", "/entidade-nao-encontrada"),
-    ENTIDADE_EM_USO("Entidade em uso.", "/entidade-em-uso"),
+    RECURSO_NAO_ENCONTRADO("Recurso não encontrado.", "/recurso-nao-encontrado"),
+
+    RECURSO_EM_USO("Recurso em uso.", "/recurso-em-uso"),
+
     REQUISICAO_MAL_FORMULADA("Requisição mal formulada.", "/requisicao-mal-formulada"),
+
     ERRO_DE_SISTEMA("Erro de sistema.", "/erro-de-sistema"),
-    DADOS_INVALIDOS("Dados inválidos.", "/dados-invalidos");
+
+    DADOS_INVALIDOS("Dados inválidos.", "/dados-invalidos"),
+
+    REGRA_VIOLADA("Regra de negócio violada.", "/regra-violada");
 
     private String titulo;
     private String caminho;

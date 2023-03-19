@@ -2,7 +2,7 @@ package io.algafoodapi.business.exception;
 
 import io.algafoodapi.business.core.validation.ValidacaoException;
 import io.algafoodapi.business.exception.http400.RequisicaoMalFormuladaException;
-import io.algafoodapi.business.exception.http404.EntidadeNaoEncontradaException;
+import io.algafoodapi.business.exception.http404.RecursoNaoEncontradoException;
 import io.algafoodapi.business.exception.http409.RegraDeNegocioVioladaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -28,11 +28,11 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
     @Autowired
     private MessageSource mensagemInternacionalizada;
 
-    @ExceptionHandler(value = EntidadeNaoEncontradaException.class)
-    public ResponseEntity<Object> tratarEntidadeNaoEncontrada(EntidadeNaoEncontradaException naoEncontradaException,
-                                                         WebRequest request) {
+    @ExceptionHandler(value = RecursoNaoEncontradoException.class)
+    public ResponseEntity<Object> tratarEntidadeNaoEncontrada(RecursoNaoEncontradoException naoEncontradaException,
+                                                              WebRequest request) {
         var httpStatus = HttpStatus.NOT_FOUND;
-        var tipoDeErroEnum = TipoDeErroEnum.ENTIDADE_NAO_ENCONTRADA;
+        var tipoDeErroEnum = TipoDeErroEnum.RECURSO_NAO_ENCONTRADO;
         var detalhe = naoEncontradaException.getMessage();
 
         var mensagemDeErro = this.criarMensagemDeErrorBuilder(httpStatus, tipoDeErroEnum, detalhe).build();
@@ -45,7 +45,7 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
     public ResponseEntity<Object> tratarRegraDeNegocioViolada(RegraDeNegocioVioladaException regraViolada, WebRequest request) {
 
         var httpStatus = HttpStatus.CONFLICT;
-        var tipoDeErroEnum = TipoDeErroEnum.ENTIDADE_EM_USO;
+        var tipoDeErroEnum = TipoDeErroEnum.REGRA_VIOLADA;
         var detalhe = regraViolada.getMessage();
 
         var mensagemDeErro = this.criarMensagemDeErrorBuilder(httpStatus, tipoDeErroEnum, detalhe).build();

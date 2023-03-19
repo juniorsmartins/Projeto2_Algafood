@@ -1,6 +1,6 @@
 package io.algafoodapi.presentation.controller;
 
-import io.algafoodapi.business.exception.http404.EntidadeNaoEncontradaException;
+import io.algafoodapi.business.exception.http404.RecursoNaoEncontradoException;
 import io.algafoodapi.business.model.Prato;
 import io.algafoodapi.business.service.PratoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +38,7 @@ public class PratoController {
                     .ok()
                     .body(pratos);
 
-        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
+        } catch (RecursoNaoEncontradoException naoEncontradaException) {
             return ResponseEntity
                     .noContent()
                     .build();
@@ -54,7 +54,7 @@ public class PratoController {
                     .ok()
                     .body(prato.get());
 
-        } catch (EntidadeNaoEncontradaException naoEncontradaException) {
+        } catch (RecursoNaoEncontradoException naoEncontradaException) {
             return ResponseEntity
                     .noContent()
                     .build();

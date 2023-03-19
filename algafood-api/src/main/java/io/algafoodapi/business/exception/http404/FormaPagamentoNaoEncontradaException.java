@@ -1,6 +1,6 @@
 package io.algafoodapi.business.exception.http404;
 
-public final class FormaPagamentoNaoEncontradaException extends EntidadeNaoEncontradaException {
+public final class FormaPagamentoNaoEncontradaException extends RecursoNaoEncontradoException {
     private static final long serialVersionUID = 1L;
 
     public FormaPagamentoNaoEncontradaException(String mensagem) {

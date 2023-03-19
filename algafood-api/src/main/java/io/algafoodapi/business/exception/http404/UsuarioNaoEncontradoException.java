@@ -2,7 +2,7 @@ package io.algafoodapi.business.exception.http404;
 
 import io.algafoodapi.business.core.Constantes;
 
-public final class UsuarioNaoEncontradoException extends EntidadeNaoEncontradaException {
+public final class UsuarioNaoEncontradoException extends RecursoNaoEncontradoException {
 
     private static final long serialVersionUID = 1L;
 

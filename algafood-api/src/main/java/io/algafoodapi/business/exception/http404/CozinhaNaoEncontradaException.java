@@ -1,6 +1,6 @@
 package io.algafoodapi.business.exception.http404;
 
-public final class CozinhaNaoEncontradaException extends EntidadeNaoEncontradaException {
+public final class CozinhaNaoEncontradaException extends RecursoNaoEncontradoException {
     private static final long serialVersionUID = 1L;
 
     public CozinhaNaoEncontradaException(String mensagem) {
