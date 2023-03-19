@@ -1,6 +1,6 @@
 package io.algafoodapi;
 
-import io.algafoodapi.camada3_infraestrutura.repository.CustomJpaRepositoryImpl;
+import io.algafoodapi.infraestrutura.repository.CustomJpaRepositoryImpl;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
