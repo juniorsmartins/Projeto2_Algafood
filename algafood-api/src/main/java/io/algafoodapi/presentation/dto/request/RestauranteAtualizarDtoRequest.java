@@ -16,7 +16,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.List;
 
 @Builder
 @NoArgsConstructor
@@ -24,11 +23,13 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode(of = {"nome", "endereco.cep"})
+@EqualsAndHashCode(of = {"id"})
 @FreteGratisObrigaDescricaoNoNomeAnotation(valorTaxaFrete = "taxaFrete", descricaoNome = "nome", descricaoObrigatoria = "Frete Grátis")
-public final class RestauranteDtoRequest implements PoliticaDtoRequest, Serializable {
+public final class RestauranteAtualizarDtoRequest implements PoliticaAtualizarDtoRequest<Long>, Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    private Long id;
 
     @NotBlank
     private String nome;
@@ -44,9 +45,5 @@ public final class RestauranteDtoRequest implements PoliticaDtoRequest, Serializ
     @NotNull
     @Valid
     private EnderecoDtoRequest endereco;
-
-    @NotNull
-    @Valid
-    private List<FormaPagamentoIdDtoRequest> formasPagamento;
 }
 

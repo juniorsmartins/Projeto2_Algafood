@@ -11,6 +11,7 @@ import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.List;
 
 @Builder
 @NoArgsConstructor
@@ -20,7 +21,7 @@ import java.time.OffsetDateTime;
 @ToString
 @EqualsAndHashCode(of = "id")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public final class RestauranteDtoResponse {
+public final class RestauranteDtoResponse implements PoliticaDtoResponse<Long> {
 
     private Long id;
 
@@ -37,5 +38,7 @@ public final class RestauranteDtoResponse {
     private OffsetDateTime dataHoraUTCAtualizacao;
 
     private Boolean ativo;
+
+    private List<FormaPagamentoDtoResponse> formasPagamento;
 }
 

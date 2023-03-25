@@ -34,7 +34,7 @@ public final class UsuarioControllerImpl implements PoliticaCrudBaseController<U
                 UsuarioAtualizarDtoRequest, Usuario, Long> mapper;
 
     @Autowired
-    private PoliticaCrudBaseService<Usuario, Long> usuarioCrudservice;
+    private PoliticaCrudBaseService<Usuario, Long> crudService;
 
     @Autowired
     private PoliticaUsuarioService<UsuarioTrocarSenhaDtoRequest, Long, String> usuarioService;
@@ -45,7 +45,7 @@ public final class UsuarioControllerImpl implements PoliticaCrudBaseController<U
 
         var response = Optional.of(dtoRequest)
             .map(this.mapper::converterDtoRequestParaEntidade)
-            .map(this.usuarioCrudservice::cadastrar)
+            .map(this.crudService::cadastrar)
             .map(this.mapper::converterEntidadeParaDtoResponse)
             .orElseThrow();
 
@@ -62,7 +62,7 @@ public final class UsuarioControllerImpl implements PoliticaCrudBaseController<U
 
         var response = Optional.of(dtoRequest)
             .map(this.mapper::converterAtualizarDtoRequestParaEntidade)
-            .map(this.usuarioCrudservice::atualizar)
+            .map(this.crudService::atualizar)
             .map(this.mapper::converterEntidadeParaDtoResponse)
             .orElseThrow();
 
@@ -77,7 +77,7 @@ public final class UsuarioControllerImpl implements PoliticaCrudBaseController<U
 
         var response = Optional.of(dtoRequest)
             .map(this.mapper::converterPesquisarDtoRequestParaEntidade)
-            .map(entidade -> this.usuarioCrudservice.pesquisar(entidade, paginacao))
+            .map(entidade -> this.crudService.pesquisar(entidade, paginacao))
             .map(this.mapper::converterPaginaDeEntidadeParaPaginaDeDtoResponse)
             .orElseThrow();
 
@@ -89,7 +89,7 @@ public final class UsuarioControllerImpl implements PoliticaCrudBaseController<U
     @Override
     public ResponseEntity deletar(@PathVariable(name = "id") final Long id) {
 
-        this.usuarioCrudservice.deletar(id);
+        this.crudService.deletar(id);
 
         return ResponseEntity
             .noContent()
