@@ -23,11 +23,13 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode(of = {"nome", "endereco.cep"})
+@EqualsAndHashCode(of = {"id"})
 @FreteGratisObrigaDescricaoNoNomeAnotation(valorTaxaFrete = "taxaFrete", descricaoNome = "nome", descricaoObrigatoria = "Frete Grátis")
-public final class RestauranteDtoRequest implements PoliticaDtoRequest, Serializable {
+public final class RestauranteAtualizarDtoRequest implements PoliticaAtualizarDtoRequest<Long>, Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    private Long id;
 
     @NotBlank
     private String nome;

@@ -27,7 +27,7 @@ import java.util.Optional;
 public class UsuarioServiceImpl implements PoliticaCrudBaseService<Usuario, Long>, PoliticaUsuarioService<UsuarioTrocarSenhaDtoRequest, Long, String> {
 
     @Autowired
-    private PoliticaCrudBaseRepository<Usuario, Long> usuarioCrudRepository;
+    private PoliticaCrudBaseRepository<Usuario, Long> crudRepository;
 
     @Autowired
     private PoliticaUsuarioRepository usuarioRepository;
@@ -44,9 +44,9 @@ public class UsuarioServiceImpl implements PoliticaCrudBaseService<Usuario, Long
 
         return Optional.of(entidade)
             .map(this::regraGarantirEmailUnico)
-            .map(entity -> this.serviceUtils.regraGarantirNomeUnico(entity, usuarioCrudRepository))
+            .map(entity -> this.serviceUtils.regraGarantirNomeUnico(entity, crudRepository))
             .map(this.serviceUtils::capitalizarNome)
-            .map(this.usuarioCrudRepository::salvar)
+            .map(this.crudRepository::salvar)
             .orElseThrow();
     }
 
@@ -55,10 +55,10 @@ public class UsuarioServiceImpl implements PoliticaCrudBaseService<Usuario, Long
     public Usuario atualizar(Usuario entidade) {
         var idUsuario = entidade.getId();
 
-        return this.usuarioCrudRepository.consultarPorId(idUsuario)
+        return this.crudRepository.consultarPorId(idUsuario)
             .map(this::validarIdsDeRelacionamentos)
             .map(this::regraGarantirEmailUnico)
-            .map(entity -> this.serviceUtils.regraGarantirNomeUnico(entity, usuarioCrudRepository))
+            .map(entity -> this.serviceUtils.regraGarantirNomeUnico(entity, crudRepository))
             .map(this.serviceUtils::capitalizarNome)
             .map(entity -> {
                 BeanUtils.copyProperties(entidade, entity, "id", "senha");
@@ -73,16 +73,16 @@ public class UsuarioServiceImpl implements PoliticaCrudBaseService<Usuario, Long
     public Page<Usuario> pesquisar(final Usuario entidade, final Pageable paginacao) {
 
         var condicoesDePesquisa = this.serviceUtils.criarCondicoesDePesquisa(entidade);
-        return this.usuarioCrudRepository.pesquisar(condicoesDePesquisa, paginacao);
+        return this.crudRepository.pesquisar(condicoesDePesquisa, paginacao);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
     @Override
     public void deletar(final Long id) {
 
-        this.usuarioCrudRepository.consultarPorId(id)
+        this.crudRepository.consultarPorId(id)
             .map(user -> {
-                this.usuarioCrudRepository.deletar(user);
+                this.crudRepository.deletar(user);
                 return true;
             })
             .orElseThrow(() -> new UsuarioNaoEncontradoException(id));
@@ -93,7 +93,7 @@ public class UsuarioServiceImpl implements PoliticaCrudBaseService<Usuario, Long
     public String trocarSenha(final UsuarioTrocarSenhaDtoRequest dtoRequest) {
         var idUsuario = dtoRequest.getId();
 
-        this.usuarioCrudRepository.consultarPorId(idUsuario)
+        this.crudRepository.consultarPorId(idUsuario)
             .map(user -> {
                 if (!user.getSenha().equals(dtoRequest.getSenhaAtual())) {
                     throw new SenhaIncompativelException();
