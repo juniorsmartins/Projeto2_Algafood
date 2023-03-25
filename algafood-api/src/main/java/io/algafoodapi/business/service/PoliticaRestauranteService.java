@@ -6,17 +6,17 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
-public interface PoliticaRestauranteService<Restaurante, I> {
+public interface PoliticaRestauranteService<R, I> {
 
-  Restaurante atualizarParcial(I id, Map<String, Object> campos, HttpServletRequest request);
+  R atualizarParcial(I id, Map<String, Object> campos, HttpServletRequest request);
 
-  Restaurante consultarPorId(I id);
+  R consultarPorId(I id);
 
-  List<Restaurante> consultarPorNome(String nome);
+  List<R> consultarPorNome(String nome);
 
 //  List<Restaurante> consultarPorNomeAndTaxas(String nome, BigDecimal freteTaxaInicial, BigDecimal freteTaxaFinal);
 
-  List<Restaurante> listar();
+  List<R> listar();
 
   void ativar(I id);
 

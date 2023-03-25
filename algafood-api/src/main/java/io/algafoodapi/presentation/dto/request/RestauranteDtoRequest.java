@@ -16,6 +16,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Builder
 @NoArgsConstructor
@@ -43,5 +44,9 @@ public final class RestauranteDtoRequest implements PoliticaDtoRequest, Serializ
     @NotNull
     @Valid
     private EnderecoDtoRequest endereco;
+
+    @NotNull
+    @Valid
+    private List<FormaPagamentoIdDtoRequest> formasPagamento;
 }
 

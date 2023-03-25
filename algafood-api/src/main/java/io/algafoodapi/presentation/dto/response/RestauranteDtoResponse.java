@@ -11,6 +11,7 @@ import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.List;
 
 @Builder
 @NoArgsConstructor
@@ -37,5 +38,7 @@ public final class RestauranteDtoResponse implements PoliticaDtoResponse<Long> {
     private OffsetDateTime dataHoraUTCAtualizacao;
 
     private Boolean ativo;
+
+    private List<FormaPagamentoDtoResponse> formasPagamento;
 }
 

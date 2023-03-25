@@ -24,6 +24,7 @@ import java.util.Optional;
 public final class FormaPagamentoController {
 
     private final FormaPagamentoMapper formaPagamentoMapper;
+
     private final FormaPagamentoService formaPagamentoService;
 
     public FormaPagamentoController(final FormaPagamentoMapper formaPagamentoMapper,
