@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public final class UsuarioMapper implements PoliticaMapper<UsuarioDtoRequest, UsuarioDtoResponse,
     UsuarioPesquisarDtoRequest, UsuarioAtualizarDtoRequest, Usuario, Long> {
@@ -38,8 +40,15 @@ public final class UsuarioMapper implements PoliticaMapper<UsuarioDtoRequest, Us
     }
 
     @Override
-    public Page<UsuarioDtoResponse> converterPaginaDeEntidadeParaPaginaDeDtoResponse(Page<Usuario> entidades) {
+    public Page<UsuarioDtoResponse> converterPaginaDeEntidadesParaPaginaDeDtoResponse(Page<Usuario> entidades) {
         return entidades.map(this::converterEntidadeParaDtoResponse);
+    }
+
+    @Override
+    public List<UsuarioDtoResponse> converterListaDeEntidadesParaListaDeDtoResponse(List<Usuario> entidades) {
+        return entidades.stream()
+            .map(this::converterEntidadeParaDtoResponse)
+            .toList();
     }
 }
 

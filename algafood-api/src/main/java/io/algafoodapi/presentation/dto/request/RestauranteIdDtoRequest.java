@@ -1,4 +1,4 @@
-package io.algafoodapi.presentation.dto.response;
+package io.algafoodapi.presentation.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.io.Serializable;
 
 @Builder
@@ -19,12 +21,12 @@ import java.io.Serializable;
 @ToString
 @EqualsAndHashCode(of = "id")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public final class FormaPagamentoDtoResponse implements PoliticaDtoResponse<Long>, Serializable {
+public final class RestauranteIdDtoRequest implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    public static final long serialVersionUID = 1L;
 
+    @NotNull
+    @Positive
     private Long id;
-
-    private String nome;
 }
 

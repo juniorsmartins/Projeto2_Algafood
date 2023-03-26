@@ -60,9 +60,9 @@ public class FormaPagamentoServiceImpl implements FormaPagamentoService {
     }
 
     private FormaPagamento padronizarDescricao(FormaPagamento formaPagamento) {
-        var descricaoParaPadronizar = formaPagamento.getDescricao();
+        var descricaoParaPadronizar = formaPagamento.getNome();
         var descricaoPadronizada = descricaoParaPadronizar.toUpperCase();
-        formaPagamento.setDescricao(descricaoPadronizada);
+        formaPagamento.setNome(descricaoPadronizada);
         return formaPagamento;
     }
 }

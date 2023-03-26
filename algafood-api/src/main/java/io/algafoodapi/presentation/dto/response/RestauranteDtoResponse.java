@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -21,7 +22,9 @@ import java.util.List;
 @ToString
 @EqualsAndHashCode(of = "id")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public final class RestauranteDtoResponse implements PoliticaDtoResponse<Long> {
+public final class RestauranteDtoResponse implements PoliticaDtoResponse<Long>, Serializable {
+
+    public static final long serialVersionUID = 1L;
 
     private Long id;
 
@@ -40,5 +43,7 @@ public final class RestauranteDtoResponse implements PoliticaDtoResponse<Long> {
     private Boolean ativo;
 
     private List<FormaPagamentoDtoResponse> formasPagamento;
+
+    private List<ProdutoDtoResponse> produtos;
 }
 

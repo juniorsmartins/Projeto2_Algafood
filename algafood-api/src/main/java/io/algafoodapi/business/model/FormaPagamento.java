@@ -23,7 +23,7 @@ import java.util.List;
 @Setter
 @ToString
 @EqualsAndHashCode(of = {"id"})
-public final class FormaPagamento implements Serializable {
+public final class FormaPagamento implements PoliticaEntidade<Long>, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -33,7 +33,7 @@ public final class FormaPagamento implements Serializable {
     private Long id;
 
     @Column(name = "descricao", length = 250, nullable = false)
-    private String descricao;
+    private String nome;
 
     @OneToMany(mappedBy = "formaPagamento", fetch = FetchType.LAZY)
     private List<Pedido> pedidos = new ArrayList<>();

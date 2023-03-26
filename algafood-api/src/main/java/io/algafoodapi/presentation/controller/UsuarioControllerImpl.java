@@ -78,7 +78,7 @@ public final class UsuarioControllerImpl implements PoliticaCrudBaseController<U
         var response = Optional.of(dtoRequest)
             .map(this.mapper::converterPesquisarDtoRequestParaEntidade)
             .map(entidade -> this.crudService.pesquisar(entidade, paginacao))
-            .map(this.mapper::converterPaginaDeEntidadeParaPaginaDeDtoResponse)
+            .map(this.mapper::converterPaginaDeEntidadesParaPaginaDeDtoResponse)
             .orElseThrow();
 
         return ResponseEntity
