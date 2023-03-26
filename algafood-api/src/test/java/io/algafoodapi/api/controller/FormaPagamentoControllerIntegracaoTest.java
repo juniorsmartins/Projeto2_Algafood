@@ -66,7 +66,7 @@ class FormaPagamentoControllerIntegracaoTest {
         var dtoRequest = CriadorDeBuilders.gerarFormaPagamentoDtoRequestBuilder()
             .build();
 
-        var descricaoPadronizada = dtoRequest.getDescricao().toUpperCase();
+        var descricaoPadronizada = dtoRequest.getNome().toUpperCase();
 
         mockMvc.perform(MockMvcRequestBuilders.post(ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -83,7 +83,7 @@ class FormaPagamentoControllerIntegracaoTest {
     @DisplayName("Cadastrar - Fluxo de Exceção I - sem descricao")
     void deveRetornarHttp400_quandoCadastrarSemDescricao() throws Exception {
         var dtoRequest = CriadorDeBuilders.gerarFormaPagamentoDtoRequestBuilder()
-            .descricao(null)
+            .nome(null)
             .build();
 
         mockMvc.perform(MockMvcRequestBuilders.post(ENDPOINT.concat("/"))
@@ -126,7 +126,7 @@ class FormaPagamentoControllerIntegracaoTest {
         var dtoRequest = CriadorDeBuilders.gerarFormaPagamentoDtoRequestBuilder()
             .build();
 
-        var descricaoPadronizada = dtoRequest.getDescricao().toUpperCase();
+        var descricaoPadronizada = dtoRequest.getNome().toUpperCase();
 
         mockMvc.perform(MockMvcRequestBuilders.put(ENDPOINT.concat("/") + formaPagamentoSalva.getId())
                 .contentType(MediaType.APPLICATION_JSON)

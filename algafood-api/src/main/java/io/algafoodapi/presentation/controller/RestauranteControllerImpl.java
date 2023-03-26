@@ -1,14 +1,23 @@
 package io.algafoodapi.presentation.controller;
 
+import io.algafoodapi.business.model.FormaPagamento;
+import io.algafoodapi.business.model.Produto;
 import io.algafoodapi.business.model.Restaurante;
 import io.algafoodapi.business.service.PoliticaCrudBaseService;
 import io.algafoodapi.business.service.PoliticaRestauranteService;
+import io.algafoodapi.presentation.dto.request.FormaPagamentoAtualizarDtoRequest;
+import io.algafoodapi.presentation.dto.request.FormaPagamentoDtoRequest;
+import io.algafoodapi.presentation.dto.request.FormaPagamentoPesquisarDtoRequest;
+import io.algafoodapi.presentation.dto.request.ProdutoAtualizarDtoRequest;
+import io.algafoodapi.presentation.dto.request.ProdutoDtoRequest;
+import io.algafoodapi.presentation.dto.request.ProdutoPesquisarDtoRequest;
 import io.algafoodapi.presentation.dto.request.RestauranteAtualizarDtoRequest;
 import io.algafoodapi.presentation.dto.request.RestauranteDtoRequest;
 import io.algafoodapi.presentation.dto.request.RestaurantePesquisarDtoRequest;
 import io.algafoodapi.presentation.dto.response.FormaPagamentoDtoResponse;
+import io.algafoodapi.presentation.dto.response.ProdutoDtoResponse;
 import io.algafoodapi.presentation.dto.response.RestauranteDtoResponse;
-import io.algafoodapi.presentation.mapper.FormaPagamentoMapper;
+import io.algafoodapi.presentation.mapper.PoliticaMapper;
 import io.algafoodapi.presentation.mapper.RestauranteMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -39,7 +48,12 @@ public final class RestauranteControllerImpl implements PoliticaCrudBaseControll
     private RestauranteMapper mapper;
 
     @Autowired
-    private FormaPagamentoMapper formaPagamentoMapper;
+    private PoliticaMapper<FormaPagamentoDtoRequest, FormaPagamentoDtoResponse, FormaPagamentoPesquisarDtoRequest,
+        FormaPagamentoAtualizarDtoRequest, FormaPagamento, Long> formaPagamentoMapper;
+
+    @Autowired
+    private PoliticaMapper<ProdutoDtoRequest, ProdutoDtoResponse, ProdutoPesquisarDtoRequest,
+        ProdutoAtualizarDtoRequest, Produto, Long> produtoMapper;
 
     @Autowired
     private PoliticaCrudBaseService<Restaurante, Long> crudService;
@@ -201,5 +215,36 @@ public final class RestauranteControllerImpl implements PoliticaCrudBaseControll
             .ok()
             .body(response);
     }
+
+    @Override
+    public ResponseEntity<ProdutoDtoResponse> cadastrarProdutoPorRestaurante(@PathVariable(name = "id") final Long id,
+                                                             @RequestBody @Valid final ProdutoDtoRequest dtoRequest) {
+
+        var response = Optional.of(dtoRequest)
+            .map(this.produtoMapper::converterDtoRequestParaEntidade)
+            .map(produto -> this.restauranteService.cadastrarProdutoPorRestaurante(id, produto))
+            .map(this.produtoMapper::converterEntidadeParaDtoResponse)
+            .orElseThrow();
+
+        return ResponseEntity
+            .ok()
+            .body(response);
+    }
+
+
+    @Override
+    public ResponseEntity<List<ProdutoDtoResponse>> consultarProdutosPorRestaurante(@PathVariable(name = "id") final Long id) {
+
+        var response = this.restauranteService.consultarProdutosPorRestaurante(id)
+            .stream()
+            .map(this.produtoMapper::converterEntidadeParaDtoResponse)
+            .toList();
+
+        return ResponseEntity
+            .ok()
+            .body(response);
+    }
+
+
 }
 

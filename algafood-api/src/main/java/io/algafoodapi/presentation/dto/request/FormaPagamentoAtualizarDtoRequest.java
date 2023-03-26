@@ -10,6 +10,8 @@ import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.io.Serializable;
 
 @Builder
@@ -19,9 +21,13 @@ import java.io.Serializable;
 @Setter
 @ToString
 @EqualsAndHashCode(of = "descricao")
-public final class FormaPagamentoDtoRequest implements PoliticaDtoRequest, Serializable {
+public final class FormaPagamentoAtualizarDtoRequest implements PoliticaAtualizarDtoRequest<Long>, Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    @NotNull
+    @Positive
+    private Long id;
 
     @NotBlank
     @Length(max = 250)
