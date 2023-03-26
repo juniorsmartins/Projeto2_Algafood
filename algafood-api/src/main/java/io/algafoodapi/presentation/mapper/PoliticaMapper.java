@@ -1,16 +1,17 @@
 package io.algafoodapi.presentation.mapper;
 
+import io.algafoodapi.business.model.PoliticaEntidade;
 import io.algafoodapi.presentation.dto.request.PoliticaAtualizarDtoRequest;
 import io.algafoodapi.presentation.dto.request.PoliticaDtoRequest;
-import io.algafoodapi.presentation.dto.response.PoliticaDtoResponse;
 import io.algafoodapi.presentation.dto.request.PoliticaPesquisarDtoRequest;
-import io.algafoodapi.business.model.PoliticaEntidade;
+import io.algafoodapi.presentation.dto.response.PoliticaDtoResponse;
 import org.springframework.data.domain.Page;
+
+import java.util.List;
 
 public interface PoliticaMapper<R extends PoliticaDtoRequest, S extends PoliticaDtoResponse<I>,
         P extends PoliticaPesquisarDtoRequest<I>, A extends PoliticaAtualizarDtoRequest<I>,
         E extends PoliticaEntidade<I>, I> {
-
 
     E converterDtoRequestParaEntidade(R dtoRequest);
 
@@ -20,5 +21,8 @@ public interface PoliticaMapper<R extends PoliticaDtoRequest, S extends Politica
 
     E converterAtualizarDtoRequestParaEntidade(A atualizarDtoRequest);
 
-    Page<S> converterPaginaDeEntidadeParaPaginaDeDtoResponse(Page<E> entidades);
+    Page<S> converterPaginaDeEntidadesParaPaginaDeDtoResponse(Page<E> entidades);
+
+    List<S> converterListaDeEntidadesParaListaDeDtoResponse(List<E> entidades);
 }
+

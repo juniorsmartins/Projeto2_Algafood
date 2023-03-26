@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Builder
 @NoArgsConstructor
@@ -17,14 +18,20 @@ import java.io.Serializable;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = {"id"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public final class FormaPagamentoDtoResponse implements PoliticaDtoResponse<Long>, Serializable {
+public final class ProdutoDtoResponse implements PoliticaDtoResponse<Long>, Serializable {
 
-    private static final long serialVersionUID = 1L;
+  private static final Long serialVersionUID = 1L;
 
-    private Long id;
+  private Long id;
 
-    private String nome;
+  private String nome;
+
+  private String descricao;
+
+  private BigDecimal preco;
+
+  private Boolean ativo;
 }
 

@@ -1,6 +1,7 @@
 package io.algafoodapi.business.service;
 
 import io.algafoodapi.business.model.FormaPagamento;
+import io.algafoodapi.business.model.Produto;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -23,5 +24,9 @@ public interface PoliticaRestauranteService<R, I> {
   void inativar(I id);
 
   List<FormaPagamento> consultarFormasDePagamentoPorRestaurante(I id);
+
+  Produto cadastrarProdutoPorRestaurante(I id, Produto produto);
+
+  List<Produto> consultarProdutosPorRestaurante(I id);
 }
 

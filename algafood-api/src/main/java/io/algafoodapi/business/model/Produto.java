@@ -32,7 +32,7 @@ import java.util.List;
 @Setter
 @ToString
 @EqualsAndHashCode(of = "id")
-public final class Produto implements Serializable {
+public final class Produto implements PoliticaEntidade<Long>, Serializable {
 
     private static final long serialVersionUID = 1L;
 

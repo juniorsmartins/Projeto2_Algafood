@@ -5,15 +5,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.algafoodapi.business.core.Constantes;
 import io.algafoodapi.business.core.validation.ValidacaoException;
 import io.algafoodapi.business.exception.http400.RequisicaoMalFormuladaException;
+import io.algafoodapi.business.exception.http404.ProdutoNaoEncontradoException;
 import io.algafoodapi.business.exception.http404.RestauranteNaoEncontradoException;
 import io.algafoodapi.business.exception.http409.RestauranteEmUsoException;
 import io.algafoodapi.business.model.FormaPagamento;
+import io.algafoodapi.business.model.Produto;
 import io.algafoodapi.business.model.Restaurante;
 import io.algafoodapi.business.ports.CozinhaRepository;
 import io.algafoodapi.business.utils.ServiceUtils;
 import io.algafoodapi.infraestrutura.repository.PoliticaCrudBaseRepository;
 import io.algafoodapi.infraestrutura.repository.PoliticaRestauranteRepository;
 import io.algafoodapi.infraestrutura.repository.jpa.CidadeRepositoryJpa;
+import io.algafoodapi.infraestrutura.repository.jpa.ProdutoRepositoryJpa;
 import io.algafoodapi.presentation.mapper.RestauranteMapper;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +55,9 @@ public class RestauranteServiceImpl implements PoliticaCrudBaseService<Restauran
 
     @Autowired
     private CidadeRepositoryJpa cidadeRepositoryJpa;
+
+    @Autowired
+    private ProdutoRepositoryJpa produtoRepositoryJpa;
 
     @Autowired
     private SmartValidator smartValidator;
@@ -210,6 +216,33 @@ public class RestauranteServiceImpl implements PoliticaCrudBaseService<Restauran
 
         return this.crudRepository.consultarPorId(id)
             .map(Restaurante::getFormasPagamento)
+            .orElseThrow(() -> new RestauranteNaoEncontradoException(id));
+    }
+
+    @Override
+    public Produto cadastrarProdutoPorRestaurante(final Long id, final Produto produto) {
+
+        return this.restauranteRepository.findById(id)
+            .map(restaurante -> {
+                this.produtoRepositoryJpa.save(produto);
+                restaurante.getProdutos().add(produto);
+                return produto;
+            })
+            .orElseThrow(() -> new RestauranteNaoEncontradoException(id));
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<Produto> consultarProdutosPorRestaurante(final Long id) {
+
+        return this.restauranteRepository.findById(id)
+            .map(restaurante -> {
+                var produtos = restaurante.getProdutos();
+                if (produtos.isEmpty()) {
+                    throw new ProdutoNaoEncontradoException();
+                }
+                return produtos;
+            })
             .orElseThrow(() -> new RestauranteNaoEncontradoException(id));
     }
 
