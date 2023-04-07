@@ -9,6 +9,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
@@ -98,7 +99,7 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException argumentNotValid,
                                                                   HttpHeaders headers,
-                                                                  HttpStatus status,
+                                                                  HttpStatusCode status,
                                                                   WebRequest request) {
 
         return this.construirResponseComMensagemDeErros(argumentNotValid, argumentNotValid.getBindingResult(),
@@ -107,7 +108,7 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
 
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException notReadableException,
-                                                                  HttpHeaders headers, HttpStatus status,
+                                                                  HttpHeaders headers, HttpStatusCode status,
                                                                   WebRequest request) {
 
         var tipoDeErroEnum = TipoDeErroEnum.REQUISICAO_MAL_FORMULADA;
@@ -121,12 +122,12 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
 
     @Override
     protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers,
-                                                             HttpStatus status, WebRequest request) {
+                                                             HttpStatusCode status, WebRequest request) {
 
         if (body == null) {
             body = MensagemDeErro.builder()
                     .codigoHttp(status.value())
-                    .tipoDeErro(status.getReasonPhrase()) // Devolve uma descrição sobre o status retornado na resposta
+                    .tipoDeErro(HttpStatus.valueOf(status.value()).getReasonPhrase()) // Devolve uma descrição sobre o status retornado na resposta
                     .dataHora(OffsetDateTime.now())
                     .build();
 
@@ -144,7 +145,7 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
     private ResponseEntity<Object> construirResponseComMensagemDeErros(Exception exception,
                                                                        BindingResult bindingResult,
                                                                        HttpHeaders headers,
-                                                                       HttpStatus status,
+                                                                       HttpStatusCode status,
                                                                        WebRequest request) {
 
         var tipoDeErroEnum = TipoDeErroEnum.DADOS_INVALIDOS;
@@ -175,12 +176,12 @@ public final class ControleDeTratamentoDeExceptions extends ResponseEntityExcept
         return handleExceptionInternal(exception, problema, headers, status, request);
     }
 
-    private MensagemDeErro.MensagemDeErroBuilder criarMensagemDeErrorBuilder(HttpStatus httpStatus,
+    private MensagemDeErro.MensagemDeErroBuilder criarMensagemDeErrorBuilder(HttpStatusCode httpStatus,
                                                                              TipoDeErroEnum tipoDeErroEnum,
                                                                              String details) {
         return MensagemDeErro.builder()
                 .codigoHttp(httpStatus.value())
-                .statusHttp(httpStatus.name())
+                .statusHttp(HttpStatus.valueOf(httpStatus.value()).name())
                 .linkParaEsclarecer(tipoDeErroEnum.getCaminho())
                 .tipoDeErro(tipoDeErroEnum.getTitulo())
                 .detalhe(details)
