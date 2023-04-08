@@ -2,8 +2,9 @@ package io.algafoodapi.business.service;
 
 import io.algafoodapi.business.exception.http404.FormaPagamentoNaoEncontradaException;
 import io.algafoodapi.business.model.FormaPagamento;
-import io.algafoodapi.business.ports.FormaPagamentoRepository;
+import io.algafoodapi.infraestrutura.repository.PoliticaFormaPagamentoRepository;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -14,11 +15,8 @@ import java.util.List;
 @Service
 public class FormaPagamentoServiceImpl implements FormaPagamentoService {
 
-    private final FormaPagamentoRepository formaPagamentoRepository;
-
-    public FormaPagamentoServiceImpl(final FormaPagamentoRepository formaPagamentoRepository) {
-        this.formaPagamentoRepository = formaPagamentoRepository;
-    }
+    @Autowired
+    private PoliticaFormaPagamentoRepository formaPagamentoRepository;
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
     @Override

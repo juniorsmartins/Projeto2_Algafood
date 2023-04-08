@@ -14,6 +14,8 @@ public final class Constantes {
 
     public static final String GRUPO_NAO_ENCONTRADO = "Não encontrado grupo com código %d.";
 
+    public static final String FORMA_PAGAMENTO_NAO_ENCONTRADA = "Não encontrada forma de pagamento com código %d.";
+
 
     public static final String NAO_EXISTEM_ESTADOS = "Não existem estados cadastrados.";
 
