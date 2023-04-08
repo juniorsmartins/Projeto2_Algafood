@@ -219,35 +219,6 @@ public final class RestauranteControllerImpl implements PoliticaCrudBaseControll
     }
 
     @Override
-    public ResponseEntity<ProdutoDtoResponse> cadastrarProdutoPorRestaurante(@PathVariable(name = "id") final Long id,
-                                                             @RequestBody @Valid final ProdutoDtoRequest dtoRequest) {
-
-        var response = Optional.of(dtoRequest)
-            .map(this.produtoMapper::converterDtoRequestParaEntidade)
-            .map(produto -> this.restauranteService.cadastrarProdutoPorRestaurante(id, produto))
-            .map(this.produtoMapper::converterEntidadeParaDtoResponse)
-            .orElseThrow();
-
-        return ResponseEntity
-            .ok()
-            .body(response);
-    }
-
-
-    @Override
-    public ResponseEntity<List<ProdutoDtoResponse>> consultarProdutosPorIdDeRestaurante(@PathVariable(name = "id") final Long id) {
-
-        var response = this.restauranteService.consultarProdutosPorRestaurante(id)
-            .stream()
-            .map(this.produtoMapper::converterEntidadeParaDtoResponse)
-            .toList();
-
-        return ResponseEntity
-            .ok()
-            .body(response);
-    }
-
-    @Override
     public ResponseEntity desassociarFormaPagamentoDoRestaurantePorIds(
         @PathVariable(name = "idRestaurante") final Long idRestaurante,
         @PathVariable(name = "idFormaPagamento") final Long idFormaPagamento) {
@@ -265,6 +236,47 @@ public final class RestauranteControllerImpl implements PoliticaCrudBaseControll
         @PathVariable(name = "idFormaPagamento") final Long idFormaPagamento) {
 
         var response = this.restauranteService.associarFormaPagamentoNoRestaurantePorIds(idRestaurante, idFormaPagamento);
+
+        return ResponseEntity
+            .ok()
+            .body(response);
+    }
+
+    @Override
+    public ResponseEntity<ProdutoDtoResponse> cadastrarProdutoPorRestaurante(
+        @PathVariable(name = "id") final Long id,
+        @RequestBody @Valid final ProdutoDtoRequest dtoRequest) {
+
+        var response = Optional.of(dtoRequest)
+            .map(this.produtoMapper::converterDtoRequestParaEntidade)
+            .map(produto -> this.restauranteService.cadastrarProdutoPorRestaurante(id, produto))
+            .map(this.produtoMapper::converterEntidadeParaDtoResponse)
+            .orElseThrow();
+
+        return ResponseEntity
+            .ok()
+            .body(response);
+    }
+
+    @Override
+    public ResponseEntity<List<ProdutoDtoResponse>> consultarProdutosPorIdDeRestaurante(@PathVariable(name = "id") final Long id) {
+
+        var response = this.restauranteService.consultarProdutosPorRestaurante(id)
+            .stream()
+            .map(this.produtoMapper::converterEntidadeParaDtoResponse)
+            .toList();
+
+        return ResponseEntity
+            .ok()
+            .body(response);
+    }
+
+    @Override
+    public ResponseEntity<ProdutoDtoResponse> buscarProdutoPorIdNoRestaurantePorId(
+        @PathVariable(name = "idRestaurante") final Long idRestaurante,
+        @PathVariable(name = "idProduto") final Long idProduto) {
+
+        var response = this.restauranteService.buscarProdutoPorIdNoRestaurantePorId(idRestaurante, idProduto);
 
         return ResponseEntity
             .ok()

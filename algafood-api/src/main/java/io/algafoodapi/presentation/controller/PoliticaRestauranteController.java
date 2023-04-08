@@ -44,16 +44,19 @@ public interface PoliticaRestauranteController<R extends PoliticaDtoRequest, S e
   @GetMapping(path = "/{id}/formas-pagamento")
   ResponseEntity<Set<FormaPagamentoDtoResponse>> consultarFormasDePagamentoPorIdDeRestaurante(I id);
 
+  @DeleteMapping(path = "/{idRestaurante}/formas-pagamento/{idFormaPagamento}")
+  ResponseEntity desassociarFormaPagamentoDoRestaurantePorIds(I idRestaurante, I idFormaPagamento);
+
+  @PutMapping(path = "/{idRestaurante}/formas-pagamento/{idFormaPagamento}")
+  ResponseEntity<RestauranteDtoResponse> associarFormaPagamentoNoRestaurantePorIds(I idRestaurante, I idFormaPagamento);
+
   @PostMapping(path = "/{id}/produtos")
   ResponseEntity<ProdutoDtoResponse> cadastrarProdutoPorRestaurante(I id, ProdutoDtoRequest dtoRequest);
 
   @GetMapping(path = "/{id}/produtos")
   ResponseEntity<List<ProdutoDtoResponse>> consultarProdutosPorIdDeRestaurante(I id);
 
-  @DeleteMapping(path = "/{idRestaurante}/formas-pagamento/{idFormaPagamento}")
-  ResponseEntity desassociarFormaPagamentoDoRestaurantePorIds(I idRestaurante, I idFormaPagamento);
-
-  @PutMapping(path = "/{idRestaurante}/formas-pagamento/{idFormaPagamento}")
-  ResponseEntity<RestauranteDtoResponse> associarFormaPagamentoNoRestaurantePorIds(I idRestaurante, I idFormaPagamento);
+  @GetMapping(path = "/{idRestaurante}/produtos/{idProduto}")
+  ResponseEntity<ProdutoDtoResponse> buscarProdutoPorIdNoRestaurantePorId(I idRestaurante, I idProduto);
 }
 

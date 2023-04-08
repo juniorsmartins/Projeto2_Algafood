@@ -18,7 +18,9 @@ import io.algafoodapi.infraestrutura.repository.PoliticaFormaPagamentoRepository
 import io.algafoodapi.infraestrutura.repository.PoliticaRestauranteRepository;
 import io.algafoodapi.infraestrutura.repository.jpa.CidadeRepositoryJpa;
 import io.algafoodapi.infraestrutura.repository.jpa.ProdutoRepositoryJpa;
+import io.algafoodapi.presentation.dto.response.ProdutoDtoResponse;
 import io.algafoodapi.presentation.dto.response.RestauranteDtoResponse;
+import io.algafoodapi.presentation.mapper.ProdutoMapper;
 import io.algafoodapi.presentation.mapper.RestauranteMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -69,6 +71,9 @@ public class RestauranteServiceImpl implements PoliticaCrudBaseService<Restauran
 
     @Autowired
     private RestauranteMapper restauranteMapper;
+
+    @Autowired
+    private ProdutoMapper produtoMapper;
 
     @Autowired
     private ServiceUtils serviceUtils;
@@ -224,33 +229,6 @@ public class RestauranteServiceImpl implements PoliticaCrudBaseService<Restauran
             .orElseThrow(() -> new RestauranteNaoEncontradoException(id));
     }
 
-    @Override
-    public Produto cadastrarProdutoPorRestaurante(final Long id, final Produto produto) {
-
-        return this.restauranteRepository.findById(id)
-            .map(restaurante -> {
-                this.produtoRepositoryJpa.save(produto);
-                restaurante.getProdutos().add(produto);
-                return produto;
-            })
-            .orElseThrow(() -> new RestauranteNaoEncontradoException(id));
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public List<Produto> consultarProdutosPorRestaurante(final Long id) {
-
-        return this.restauranteRepository.findById(id)
-            .map(restaurante -> {
-                var produtos = restaurante.getProdutos();
-                if (produtos.isEmpty()) {
-                    throw new ProdutoNaoEncontradoException();
-                }
-                return produtos;
-            })
-            .orElseThrow(() -> new RestauranteNaoEncontradoException(id));
-    }
-
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
     @Override
     public void desassociarFormaPagamentoDoRestaurantePorIds(final Long idRestaurante, final Long idFormaPagamento) {
@@ -283,6 +261,52 @@ public class RestauranteServiceImpl implements PoliticaCrudBaseService<Restauran
             .orElseThrow(() -> new RestauranteNaoEncontradoException(idRestaurante));
 
         return this.restauranteMapper.converterEntidadeParaDtoResponse(restauranteEntity);
+    }
+
+    @Override
+    public Produto cadastrarProdutoPorRestaurante(final Long id, final Produto produto) {
+
+        return this.restauranteRepository.findById(id)
+            .map(restaurante -> {
+                this.produtoRepositoryJpa.save(produto);
+                restaurante.getProdutos().add(produto);
+                return produto;
+            })
+            .orElseThrow(() -> new RestauranteNaoEncontradoException(id));
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<Produto> consultarProdutosPorRestaurante(final Long id) {
+
+        return this.restauranteRepository.findById(id)
+            .map(restaurante -> {
+                var produtos = restaurante.getProdutos();
+                if (produtos.isEmpty()) {
+                    throw new ProdutoNaoEncontradoException();
+                }
+                return produtos;
+            })
+            .orElseThrow(() -> new RestauranteNaoEncontradoException(id));
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public ProdutoDtoResponse buscarProdutoPorIdNoRestaurantePorId(final Long idRestaurante, final Long idProduto) {
+
+        return this.restauranteRepository.findById(idRestaurante)
+            .map(restaurante -> {
+
+                var produto = restaurante.getProdutos()
+                    .stream()
+                    .filter(produtoDoDatabase -> produtoDoDatabase.getId() == idProduto)
+                    .findFirst()
+                    .orElseThrow(() -> new RequisicaoMalFormuladaException(String.format(Constantes.PRODUTO_NAO_ENCONTRADO, idProduto)));
+
+                return produto;
+            })
+            .map(this.produtoMapper::converterEntidadeParaDtoResponse)
+            .orElseThrow(() -> new RestauranteNaoEncontradoException(idRestaurante));
     }
 
     private void merge(Map<String, Object> dadosOrigem, Restaurante restaurante, HttpServletRequest request) {

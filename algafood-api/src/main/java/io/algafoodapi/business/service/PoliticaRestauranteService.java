@@ -2,6 +2,7 @@ package io.algafoodapi.business.service;
 
 import io.algafoodapi.business.model.FormaPagamento;
 import io.algafoodapi.business.model.Produto;
+import io.algafoodapi.presentation.dto.response.ProdutoDtoResponse;
 import io.algafoodapi.presentation.dto.response.RestauranteDtoResponse;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -27,12 +28,15 @@ public interface PoliticaRestauranteService<R, I> {
 
   Set<FormaPagamento> consultarFormasDePagamentoPorRestaurante(I id);
 
+  void desassociarFormaPagamentoDoRestaurantePorIds(I idRestaurante, I idFormaPagamento);
+
+  RestauranteDtoResponse associarFormaPagamentoNoRestaurantePorIds(I idRestaurante, I idFormaPagamento);
+
   Produto cadastrarProdutoPorRestaurante(I id, Produto produto);
 
   List<Produto> consultarProdutosPorRestaurante(I id);
 
-  void desassociarFormaPagamentoDoRestaurantePorIds(I idRestaurante, I idFormaPagamento);
+  ProdutoDtoResponse buscarProdutoPorIdNoRestaurantePorId(I idRestaurante, I idProduto);
 
-  RestauranteDtoResponse associarFormaPagamentoNoRestaurantePorIds(I idRestaurante, I idFormaPagamento);
 }
 
