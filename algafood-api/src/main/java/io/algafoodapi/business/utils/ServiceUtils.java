@@ -86,6 +86,7 @@ public class ServiceUtils {
             .matching()
             .withIgnoreCase()
             .withIgnoreNullValues()
+            .withIgnorePaths("ativo", "aberto", "taxaFrete")
             .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
 
         return Example.of(entidade, exampleMatcher);

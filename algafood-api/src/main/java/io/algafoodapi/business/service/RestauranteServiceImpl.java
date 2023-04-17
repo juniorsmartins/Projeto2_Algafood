@@ -220,6 +220,30 @@ public class RestauranteServiceImpl implements PoliticaCrudBaseService<Restauran
             .orElseThrow(() -> new RestauranteNaoEncontradoException(idRestaurante));
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
+    @Override
+    public void abertura(final Long id) {
+
+        this.restauranteRepository.findById(id)
+            .map(restaurante -> {
+                restaurante.setAberto(true);
+                return restaurante;
+            })
+            .orElseThrow(() -> new RestauranteNaoEncontradoException(id));
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
+    @Override
+    public void fechamento(final Long id) {
+
+        this.restauranteRepository.findById(id)
+            .map(restaurante -> {
+                restaurante.setAberto(false);
+                return restaurante;
+            })
+            .orElseThrow(() -> new RestauranteNaoEncontradoException(id));
+    }
+
     @Transactional(readOnly = true)
     @Override
     public Set<FormaPagamento> consultarFormasDePagamentoPorRestaurante(final Long id) {

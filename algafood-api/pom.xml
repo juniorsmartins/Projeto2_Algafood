@@ -21,6 +21,8 @@
 		<modelmapper.version>3.1.1</modelmapper.version>
 		<springdoc.version>2.0.4</springdoc.version>
 		<javafaker.version>1.0.2</javafaker.version>
+		<flyway.user>postgres</flyway.user>
+		<flyway.password>postgres</flyway.password>
 	</properties>
 
 	<dependencies>
@@ -112,6 +114,15 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.flywaydb</groupId>
+				<artifactId>flyway-maven-plugin</artifactId>
+				<configuration>
+					<url>jdbc:postgresql://localhost:5432/algafoods</url>
+					<user>postgres</user>
+					<password>postgres</password>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
