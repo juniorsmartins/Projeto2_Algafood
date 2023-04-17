@@ -206,6 +206,26 @@ public final class RestauranteControllerImpl implements PoliticaCrudBaseControll
     }
 
     @Override
+    public ResponseEntity abertura(@PathVariable(name = "id") final Long idRestaurante) {
+
+        this.restauranteService.abertura(idRestaurante);
+
+        return ResponseEntity
+            .noContent()
+            .build();
+    }
+
+    @Override
+    public ResponseEntity fechamento(@PathVariable(name = "id") final Long idRestaurante) {
+
+        this.restauranteService.fechamento(idRestaurante);
+
+        return ResponseEntity
+            .noContent()
+            .build();
+    }
+
+    @Override
     public ResponseEntity<Set<FormaPagamentoDtoResponse>> consultarFormasDePagamentoPorIdDeRestaurante(@PathVariable(name = "id") final Long id) {
 
         var response = this.restauranteService.consultarFormasDePagamentoPorRestaurante(id)

@@ -41,6 +41,12 @@ public interface PoliticaRestauranteController<R extends PoliticaDtoRequest, S e
   @DeleteMapping(path = "/{id}/ativos")
   ResponseEntity inativar(I id);
 
+  @PutMapping(path = "/{id}/abertura")
+  ResponseEntity abertura(I id);
+
+  @PutMapping(path = "/{id}/fechamento")
+  ResponseEntity fechamento(I id);
+
   @GetMapping(path = "/{id}/formas-pagamento")
   ResponseEntity<Set<FormaPagamentoDtoResponse>> consultarFormasDePagamentoPorIdDeRestaurante(I id);
 

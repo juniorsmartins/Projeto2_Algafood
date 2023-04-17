@@ -48,10 +48,10 @@ INSERT INTO cozinhas(id, nome) VALUES
     On CONFLICT(id) DO NOTHING;
 
 INSERT INTO restaurantes(id, nome, taxa_frete, data_hora_utc_cadastro, cozinha_id, endereco_cep, endereco_bairro,
-    endereco_logradouro, endereco_numero, endereco_cidade_id, ativo) VALUES
-    (1, 'Casa do Porco', 30.10, now(), 1, '78000001', 'Centro-Sul', 'Avenida X', 1000, 1, true),
-    (2, 'Narisawa', 42.90, now(), 2, '78000002', 'Zona Norte', 'Rua Central', 2500, 2, true),
-    (3, 'White Rabbit', 80, now(), 4, '78000003', 'Alameda Vermelha', 'Avenida R', 4750, 6, true)
+    endereco_logradouro, endereco_numero, endereco_cidade_id, ativo, aberto) VALUES
+    (1, 'Casa do Porco', 30.10, now(), 1, '78000001', 'Centro-Sul', 'Avenida X', 1000, 1, true, true),
+    (2, 'Narisawa', 42.90, now(), 2, '78000002', 'Zona Norte', 'Rua Central', 2500, 2, true, true),
+    (3, 'White Rabbit', 80, now(), 4, '78000003', 'Alameda Vermelha', 'Avenida R', 4750, 6, true, true)
     On CONFLICT(id) DO NOTHING;
 
 INSERT INTO formas_pagamento(id, descricao) VALUES
