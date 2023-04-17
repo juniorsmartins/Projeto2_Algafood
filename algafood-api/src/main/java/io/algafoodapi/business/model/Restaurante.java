@@ -85,6 +85,9 @@ public final class Restaurante implements PoliticaEntidade<Long>, Serializable {
     @Column(name = "ativo", columnDefinition = "boolean", nullable = false)
     private Boolean ativo = Boolean.TRUE;
 
+    @Column(name = "aberto", nullable = false)
+    private Boolean aberto;
+
     public void ativar() {
         this.setAtivo(true);
     }
