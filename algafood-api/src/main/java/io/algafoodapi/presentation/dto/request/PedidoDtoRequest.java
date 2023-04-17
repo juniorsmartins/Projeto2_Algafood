@@ -18,7 +18,7 @@ import java.math.BigDecimal;
 @Setter
 @ToString
 @EqualsAndHashCode(of = "subtotal")
-public final class PedidoDtoRequest implements Serializable {
+public final class PedidoDtoRequest implements PoliticaDtoRequest, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -27,7 +27,5 @@ public final class PedidoDtoRequest implements Serializable {
     private BigDecimal taxaFrete = BigDecimal.ZERO;
 
     private BigDecimal valorTotal;
-
-
 }
 
