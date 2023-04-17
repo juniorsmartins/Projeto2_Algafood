@@ -32,6 +32,12 @@ public interface PoliticaRestauranteController<R extends PoliticaDtoRequest, S e
   @GetMapping(path = "/listar")
   ResponseEntity<List<S>> listar();
 
+  @GetMapping(path = "/listar", params = "projecao=resumo")
+  ResponseEntity<List<S>> listarResumido();
+
+  @GetMapping(path = "/listar", params = "projecao=apenas-nome")
+  ResponseEntity<List<S>> listarApenasNome();
+
 //  @GetMapping(path = "/por-nome-e-taxas")
 //  ResponseEntity<List<S>> consultarPorNomeAndTaxas(String nome, BigDecimal freteTaxaInicial, BigDecimal freteTaxaFinal);
 
