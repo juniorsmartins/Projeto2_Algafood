@@ -1,7 +1,6 @@
 package io.algafoodapi.infraestrutura.repository;
 
 import io.algafoodapi.business.model.FormaPagamento;
-import io.algafoodapi.business.ports.FormaPagamentoRepository;
 import io.algafoodapi.infraestrutura.repository.jpa.FormaPagamentoRepositoryJpa;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -10,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class FormaPagamentoRepositoryImpl implements FormaPagamentoRepository {
+public class FormaPagamentoRepositoryImpl implements PoliticaFormaPagamentoRepository {
 
     @Autowired
     private FormaPagamentoRepositoryJpa formaPagamentoRepositoryJpa;

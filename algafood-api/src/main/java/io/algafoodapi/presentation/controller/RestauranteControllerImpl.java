@@ -19,6 +19,8 @@ import io.algafoodapi.presentation.dto.response.ProdutoDtoResponse;
 import io.algafoodapi.presentation.dto.response.RestauranteDtoResponse;
 import io.algafoodapi.presentation.mapper.PoliticaMapper;
 import io.algafoodapi.presentation.mapper.RestauranteMapper;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,11 +34,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "/v1/restaurantes")
@@ -204,12 +206,12 @@ public final class RestauranteControllerImpl implements PoliticaCrudBaseControll
     }
 
     @Override
-    public ResponseEntity<List<FormaPagamentoDtoResponse>> consultarFormasDePagamentoPorRestaurante(@PathVariable(name = "id") final Long id) {
+    public ResponseEntity<Set<FormaPagamentoDtoResponse>> consultarFormasDePagamentoPorIdDeRestaurante(@PathVariable(name = "id") final Long id) {
 
         var response = this.restauranteService.consultarFormasDePagamentoPorRestaurante(id)
             .stream()
             .map(this.formaPagamentoMapper::converterEntidadeParaDtoResponse)
-            .toList();
+            .collect(Collectors.toSet());
 
         return ResponseEntity
             .ok()
@@ -217,8 +219,33 @@ public final class RestauranteControllerImpl implements PoliticaCrudBaseControll
     }
 
     @Override
-    public ResponseEntity<ProdutoDtoResponse> cadastrarProdutoPorRestaurante(@PathVariable(name = "id") final Long id,
-                                                             @RequestBody @Valid final ProdutoDtoRequest dtoRequest) {
+    public ResponseEntity desassociarFormaPagamentoDoRestaurantePorIds(
+        @PathVariable(name = "idRestaurante") final Long idRestaurante,
+        @PathVariable(name = "idFormaPagamento") final Long idFormaPagamento) {
+
+        this.restauranteService.desassociarFormaPagamentoDoRestaurantePorIds(idRestaurante, idFormaPagamento);
+
+        return ResponseEntity
+            .noContent()
+            .build();
+    }
+
+    @Override
+    public ResponseEntity<RestauranteDtoResponse> associarFormaPagamentoNoRestaurantePorIds(
+        @PathVariable(name = "idRestaurante") final Long idRestaurante,
+        @PathVariable(name = "idFormaPagamento") final Long idFormaPagamento) {
+
+        var response = this.restauranteService.associarFormaPagamentoNoRestaurantePorIds(idRestaurante, idFormaPagamento);
+
+        return ResponseEntity
+            .ok()
+            .body(response);
+    }
+
+    @Override
+    public ResponseEntity<ProdutoDtoResponse> cadastrarProdutoPorRestaurante(
+        @PathVariable(name = "id") final Long id,
+        @RequestBody @Valid final ProdutoDtoRequest dtoRequest) {
 
         var response = Optional.of(dtoRequest)
             .map(this.produtoMapper::converterDtoRequestParaEntidade)
@@ -231,9 +258,8 @@ public final class RestauranteControllerImpl implements PoliticaCrudBaseControll
             .body(response);
     }
 
-
     @Override
-    public ResponseEntity<List<ProdutoDtoResponse>> consultarProdutosPorRestaurante(@PathVariable(name = "id") final Long id) {
+    public ResponseEntity<List<ProdutoDtoResponse>> consultarProdutosPorIdDeRestaurante(@PathVariable(name = "id") final Long id) {
 
         var response = this.restauranteService.consultarProdutosPorRestaurante(id)
             .stream()
@@ -245,6 +271,17 @@ public final class RestauranteControllerImpl implements PoliticaCrudBaseControll
             .body(response);
     }
 
+    @Override
+    public ResponseEntity<ProdutoDtoResponse> buscarProdutoPorIdNoRestaurantePorId(
+        @PathVariable(name = "idRestaurante") final Long idRestaurante,
+        @PathVariable(name = "idProduto") final Long idProduto) {
+
+        var response = this.restauranteService.buscarProdutoPorIdNoRestaurantePorId(idRestaurante, idProduto);
+
+        return ResponseEntity
+            .ok()
+            .body(response);
+    }
 
 }
 

@@ -14,10 +14,15 @@ import io.algafoodapi.business.model.Restaurante;
 import io.algafoodapi.business.ports.CozinhaRepository;
 import io.algafoodapi.business.utils.ServiceUtils;
 import io.algafoodapi.infraestrutura.repository.PoliticaCrudBaseRepository;
+import io.algafoodapi.infraestrutura.repository.PoliticaFormaPagamentoRepository;
 import io.algafoodapi.infraestrutura.repository.PoliticaRestauranteRepository;
 import io.algafoodapi.infraestrutura.repository.jpa.CidadeRepositoryJpa;
 import io.algafoodapi.infraestrutura.repository.jpa.ProdutoRepositoryJpa;
+import io.algafoodapi.presentation.dto.response.ProdutoDtoResponse;
+import io.algafoodapi.presentation.dto.response.RestauranteDtoResponse;
+import io.algafoodapi.presentation.mapper.ProdutoMapper;
 import io.algafoodapi.presentation.mapper.RestauranteMapper;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -33,13 +38,12 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.SmartValidator;
 
-import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Field;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
+import java.util.Set;
 
 @Service
 public class RestauranteServiceImpl implements PoliticaCrudBaseService<Restaurante, Long>, PoliticaRestauranteService<Restaurante, Long> {
@@ -49,6 +53,9 @@ public class RestauranteServiceImpl implements PoliticaCrudBaseService<Restauran
 
     @Autowired
     private PoliticaRestauranteRepository<Long> restauranteRepository;
+
+    @Autowired
+    private PoliticaFormaPagamentoRepository formaPagamentoRepository;
 
     @Autowired
     private CozinhaRepository cozinhaRepository;
@@ -64,6 +71,9 @@ public class RestauranteServiceImpl implements PoliticaCrudBaseService<Restauran
 
     @Autowired
     private RestauranteMapper restauranteMapper;
+
+    @Autowired
+    private ProdutoMapper produtoMapper;
 
     @Autowired
     private ServiceUtils serviceUtils;
@@ -212,11 +222,45 @@ public class RestauranteServiceImpl implements PoliticaCrudBaseService<Restauran
 
     @Transactional(readOnly = true)
     @Override
-    public List<FormaPagamento> consultarFormasDePagamentoPorRestaurante(final Long id) {
+    public Set<FormaPagamento> consultarFormasDePagamentoPorRestaurante(final Long id) {
 
         return this.crudRepository.consultarPorId(id)
             .map(Restaurante::getFormasPagamento)
             .orElseThrow(() -> new RestauranteNaoEncontradoException(id));
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
+    @Override
+    public void desassociarFormaPagamentoDoRestaurantePorIds(final Long idRestaurante, final Long idFormaPagamento) {
+
+        this.restauranteRepository.findById(idRestaurante)
+            .map(restaurante -> {
+
+                var formaPgto = this.formaPagamentoRepository.buscar(idFormaPagamento)
+                    .orElseThrow(() -> new RequisicaoMalFormuladaException(String.format(Constantes.FORMA_PAGAMENTO_NAO_ENCONTRADA, idFormaPagamento)));
+
+                restaurante.getFormasPagamento().remove(formaPgto);
+                return restaurante;
+            })
+            .orElseThrow(() -> new RestauranteNaoEncontradoException(idRestaurante));
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
+    @Override
+    public RestauranteDtoResponse associarFormaPagamentoNoRestaurantePorIds(final Long idRestaurante, final Long idFormaPagamento) {
+
+        var restauranteEntity = this.restauranteRepository.findById(idRestaurante)
+            .map(restaurante -> {
+
+                var formaPgto = this.formaPagamentoRepository.buscar(idFormaPagamento)
+                    .orElseThrow(() -> new RequisicaoMalFormuladaException(String.format(Constantes.FORMA_PAGAMENTO_NAO_ENCONTRADA, idFormaPagamento)));
+
+                restaurante.getFormasPagamento().add(formaPgto);
+                return restaurante;
+            })
+            .orElseThrow(() -> new RestauranteNaoEncontradoException(idRestaurante));
+
+        return this.restauranteMapper.converterEntidadeParaDtoResponse(restauranteEntity);
     }
 
     @Override
@@ -244,6 +288,25 @@ public class RestauranteServiceImpl implements PoliticaCrudBaseService<Restauran
                 return produtos;
             })
             .orElseThrow(() -> new RestauranteNaoEncontradoException(id));
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public ProdutoDtoResponse buscarProdutoPorIdNoRestaurantePorId(final Long idRestaurante, final Long idProduto) {
+
+        return this.restauranteRepository.findById(idRestaurante)
+            .map(restaurante -> {
+
+                var produto = restaurante.getProdutos()
+                    .stream()
+                    .filter(produtoDoDatabase -> produtoDoDatabase.getId() == idProduto)
+                    .findFirst()
+                    .orElseThrow(() -> new RequisicaoMalFormuladaException(String.format(Constantes.PRODUTO_NAO_ENCONTRADO, idProduto)));
+
+                return produto;
+            })
+            .map(this.produtoMapper::converterEntidadeParaDtoResponse)
+            .orElseThrow(() -> new RestauranteNaoEncontradoException(idRestaurante));
     }
 
     private void merge(Map<String, Object> dadosOrigem, Restaurante restaurante, HttpServletRequest request) {

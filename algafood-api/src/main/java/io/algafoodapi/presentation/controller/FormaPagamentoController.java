@@ -4,6 +4,7 @@ import io.algafoodapi.presentation.dto.request.FormaPagamentoDtoRequest;
 import io.algafoodapi.presentation.dto.response.FormaPagamentoDtoResponse;
 import io.algafoodapi.presentation.mapper.FormaPagamentoMapper;
 import io.algafoodapi.business.service.FormaPagamentoService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,15 +24,11 @@ import java.util.Optional;
 @RequestMapping(path = "/v1/formas-pagamento")
 public final class FormaPagamentoController {
 
-    private final FormaPagamentoMapper formaPagamentoMapper;
+    @Autowired
+    private FormaPagamentoMapper formaPagamentoMapper;
 
-    private final FormaPagamentoService formaPagamentoService;
-
-    public FormaPagamentoController(final FormaPagamentoMapper formaPagamentoMapper,
-                                    final FormaPagamentoService formaPagamentoService) {
-        this.formaPagamentoMapper = formaPagamentoMapper;
-        this.formaPagamentoService = formaPagamentoService;
-    }
+    @Autowired
+    private FormaPagamentoService formaPagamentoService;
 
     @PostMapping
     public ResponseEntity<FormaPagamentoDtoResponse> cadastrar(@RequestBody @Valid final FormaPagamentoDtoRequest dtoRequest,

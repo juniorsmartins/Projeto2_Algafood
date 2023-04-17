@@ -5,6 +5,8 @@ import io.algafoodapi.presentation.dto.request.ProdutoDtoRequest;
 import io.algafoodapi.presentation.dto.response.FormaPagamentoDtoResponse;
 import io.algafoodapi.presentation.dto.response.PoliticaDtoResponse;
 import io.algafoodapi.presentation.dto.response.ProdutoDtoResponse;
+import io.algafoodapi.presentation.dto.response.RestauranteDtoResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,9 +14,9 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface PoliticaRestauranteController<R extends PoliticaDtoRequest, S extends PoliticaDtoResponse<I>, I> {
 
@@ -40,12 +42,21 @@ public interface PoliticaRestauranteController<R extends PoliticaDtoRequest, S e
   ResponseEntity inativar(I id);
 
   @GetMapping(path = "/{id}/formas-pagamento")
-  ResponseEntity<List<FormaPagamentoDtoResponse>> consultarFormasDePagamentoPorRestaurante(I id);
+  ResponseEntity<Set<FormaPagamentoDtoResponse>> consultarFormasDePagamentoPorIdDeRestaurante(I id);
+
+  @DeleteMapping(path = "/{idRestaurante}/formas-pagamento/{idFormaPagamento}")
+  ResponseEntity desassociarFormaPagamentoDoRestaurantePorIds(I idRestaurante, I idFormaPagamento);
+
+  @PutMapping(path = "/{idRestaurante}/formas-pagamento/{idFormaPagamento}")
+  ResponseEntity<RestauranteDtoResponse> associarFormaPagamentoNoRestaurantePorIds(I idRestaurante, I idFormaPagamento);
 
   @PostMapping(path = "/{id}/produtos")
   ResponseEntity<ProdutoDtoResponse> cadastrarProdutoPorRestaurante(I id, ProdutoDtoRequest dtoRequest);
 
   @GetMapping(path = "/{id}/produtos")
-  ResponseEntity<List<ProdutoDtoResponse>> consultarProdutosPorRestaurante(I id);
+  ResponseEntity<List<ProdutoDtoResponse>> consultarProdutosPorIdDeRestaurante(I id);
+
+  @GetMapping(path = "/{idRestaurante}/produtos/{idProduto}")
+  ResponseEntity<ProdutoDtoResponse> buscarProdutoPorIdNoRestaurantePorId(I idRestaurante, I idProduto);
 }
 
