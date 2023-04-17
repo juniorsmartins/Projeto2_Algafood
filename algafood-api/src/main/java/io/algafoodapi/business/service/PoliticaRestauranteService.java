@@ -26,6 +26,10 @@ public interface PoliticaRestauranteService<R, I> {
 
   void inativar(I id);
 
+  void abertura(I id);
+
+  void fechamento(I id);
+
   Set<FormaPagamento> consultarFormasDePagamentoPorRestaurante(I id);
 
   void desassociarFormaPagamentoDoRestaurantePorIds(I idRestaurante, I idFormaPagamento);
