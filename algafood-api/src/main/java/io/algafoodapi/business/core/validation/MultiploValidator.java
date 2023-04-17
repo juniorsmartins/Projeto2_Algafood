@@ -1,7 +1,7 @@
 package io.algafoodapi.business.core.validation;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import java.math.BigDecimal;
 
 public final class MultiploValidator implements ConstraintValidator<MultiploAnotation, Number> {

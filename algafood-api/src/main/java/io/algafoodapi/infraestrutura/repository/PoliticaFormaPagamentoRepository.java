@@ -1,11 +1,11 @@
-package io.algafoodapi.business.ports;
+package io.algafoodapi.infraestrutura.repository;
 
 import io.algafoodapi.business.model.FormaPagamento;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface FormaPagamentoRepository {
+public interface PoliticaFormaPagamentoRepository {
 
     List<FormaPagamento> listar();
 

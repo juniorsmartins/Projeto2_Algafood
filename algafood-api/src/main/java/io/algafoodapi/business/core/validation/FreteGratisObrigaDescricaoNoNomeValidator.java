@@ -3,9 +3,9 @@ package io.algafoodapi.business.core.validation;
 import io.algafoodapi.presentation.dto.request.RestauranteDtoRequest;
 import org.springframework.beans.BeanUtils;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-import javax.validation.ValidationException;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
+import jakarta.validation.ValidationException;
 import java.math.BigDecimal;
 
 public final class FreteGratisObrigaDescricaoNoNomeValidator implements ConstraintValidator<FreteGratisObrigaDescricaoNoNomeAnotation, RestauranteDtoRequest> {

@@ -32,18 +32,20 @@ public final class RestauranteDtoResponse implements PoliticaDtoResponse<Long>, 
 
     private BigDecimal taxaFrete;
 
-    private CozinhaDtoResponse cozinha;
-
-    private EnderecoDtoResponse endereco;
-
     private OffsetDateTime dataHoraUTCCadastro;
 
     private OffsetDateTime dataHoraUTCAtualizacao;
 
     private Boolean ativo;
 
+    private Boolean aberto;
+
     private List<FormaPagamentoDtoResponse> formasPagamento;
 
     private List<ProdutoDtoResponse> produtos;
+
+    private CozinhaDtoResponse cozinha;
+
+    private EnderecoDtoResponse endereco;
 }
 
