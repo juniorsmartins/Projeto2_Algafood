@@ -1,5 +1,6 @@
 package io.algafoodapi.presentation.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import io.algafoodapi.business.model.enuns.StatusPedidoEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,6 +14,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
+@JsonFilter("pedidoFilter")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,7 +22,7 @@ import java.time.OffsetDateTime;
 @Setter
 @ToString
 @EqualsAndHashCode(of = "id")
-public final class PedidoDtoResponse implements Serializable {
+public final class PedidoDtoResponse implements PoliticaDtoResponse<Long>, Serializable {
 
     public static final long serialVersionUID = 1L;
 
@@ -52,3 +54,4 @@ public final class PedidoDtoResponse implements Serializable {
 
     private EnderecoDtoResponse enderecoEntrega;
 }
+

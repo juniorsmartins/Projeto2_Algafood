@@ -1,8 +1,10 @@
 package io.algafoodapi.presentation.controller;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import io.algafoodapi.business.model.FormaPagamento;
 import io.algafoodapi.business.model.Produto;
 import io.algafoodapi.business.model.Restaurante;
+import io.algafoodapi.business.model.views.RestauranteView;
 import io.algafoodapi.business.service.PoliticaCrudBaseService;
 import io.algafoodapi.business.service.PoliticaRestauranteService;
 import io.algafoodapi.presentation.dto.request.FormaPagamentoAtualizarDtoRequest;
@@ -169,6 +171,18 @@ public final class RestauranteControllerImpl implements PoliticaCrudBaseControll
         return ResponseEntity
             .ok()
             .body(response);
+    }
+
+    @JsonView(RestauranteView.Resumo.class)
+    @Override
+    public ResponseEntity<List<RestauranteDtoResponse>> listarResumido() {
+        return listar();
+    }
+
+    @JsonView(RestauranteView.ApenasNome.class)
+    @Override
+    public ResponseEntity<List<RestauranteDtoResponse>> listarApenasNome() {
+        return listar();
     }
 
 //    @Override
