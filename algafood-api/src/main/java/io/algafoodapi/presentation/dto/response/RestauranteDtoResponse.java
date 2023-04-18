@@ -1,6 +1,8 @@
 package io.algafoodapi.presentation.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonView;
+import io.algafoodapi.business.model.views.RestauranteView;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -26,10 +28,13 @@ public final class RestauranteDtoResponse implements PoliticaDtoResponse<Long>, 
 
     public static final long serialVersionUID = 1L;
 
+    @JsonView(RestauranteView.Resumo.class)
     private Long id;
 
+    @JsonView({RestauranteView.Resumo.class, RestauranteView.ApenasNome.class})
     private String nome;
 
+    @JsonView(RestauranteView.Resumo.class)
     private BigDecimal taxaFrete;
 
     private OffsetDateTime dataHoraUTCCadastro;
@@ -44,6 +49,7 @@ public final class RestauranteDtoResponse implements PoliticaDtoResponse<Long>, 
 
     private List<ProdutoDtoResponse> produtos;
 
+    @JsonView(RestauranteView.Resumo.class)
     private CozinhaDtoResponse cozinha;
 
     private EnderecoDtoResponse endereco;

@@ -90,3 +90,4 @@ public final class Pedido implements Serializable {
     @Embedded
     private Endereco enderecoEntrega;
 }
+
