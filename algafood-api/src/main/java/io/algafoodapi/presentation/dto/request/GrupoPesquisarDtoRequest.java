@@ -17,7 +17,7 @@ import java.io.Serializable;
 @Setter
 @ToString
 @EqualsAndHashCode(of = "id")
-public final class GrupoPesquisarDtoRequest implements Serializable {
+public final class GrupoPesquisarDtoRequest implements PoliticaPesquisarDtoRequest<Long>, Serializable {
 
     private static final long serialVersionUID = 1L;
 

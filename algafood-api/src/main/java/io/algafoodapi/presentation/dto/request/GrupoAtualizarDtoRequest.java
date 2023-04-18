@@ -20,7 +20,7 @@ import java.io.Serializable;
 @Setter
 @ToString
 @EqualsAndHashCode(of = "id")
-public final class GrupoAtualizarDtoRequest implements Serializable {
+public final class GrupoAtualizarDtoRequest implements PoliticaAtualizarDtoRequest<Long>, Serializable {
 
     private static final long serialVersionUID = 1L;
 

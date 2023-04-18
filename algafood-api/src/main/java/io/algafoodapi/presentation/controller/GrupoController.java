@@ -1,33 +1,32 @@
 package io.algafoodapi.presentation.controller;
 
+import io.algafoodapi.business.service.GrupoService;
 import io.algafoodapi.presentation.dto.request.GrupoAtualizarDtoRequest;
 import io.algafoodapi.presentation.dto.request.GrupoDtoRequest;
 import io.algafoodapi.presentation.dto.request.GrupoPesquisarDtoRequest;
 import io.algafoodapi.presentation.dto.response.GrupoDtoResponse;
+import io.algafoodapi.presentation.dto.response.PermissaoDtoResponse;
 import io.algafoodapi.presentation.mapper.GrupoMapper;
-import io.algafoodapi.business.service.GrupoService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import jakarta.validation.Valid;
 import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping(path = "/v1/grupos")
-public final class GrupoController {
+public final class GrupoController implements PoliticaCrudBaseController<GrupoDtoRequest, GrupoDtoResponse,
+    GrupoPesquisarDtoRequest, GrupoAtualizarDtoRequest, Long>, PoliticaGrupoController {
 
     @Autowired
     private GrupoMapper grupoMapper;
@@ -35,7 +34,7 @@ public final class GrupoController {
     @Autowired
     private GrupoService grupoService;
 
-    @PostMapping
+    @Override
     public ResponseEntity<GrupoDtoResponse> cadastrar(@RequestBody @Valid final GrupoDtoRequest dtoRequest,
                                                       final UriComponentsBuilder uriComponentsBuilder) {
         var response = Optional.of(dtoRequest)
@@ -52,7 +51,7 @@ public final class GrupoController {
             .body(response);
     }
 
-    @PutMapping
+    @Override
     public ResponseEntity<GrupoDtoResponse> atualizar(@RequestBody @Valid final GrupoAtualizarDtoRequest atualizarDtoRequest) {
 
         var response = Optional.of(atualizarDtoRequest)
@@ -66,7 +65,7 @@ public final class GrupoController {
             .body(response);
     }
 
-    @GetMapping
+    @Override
     public ResponseEntity<Page<GrupoDtoResponse>> pesquisar(final GrupoPesquisarDtoRequest pesquisarDtoRequest,
         @PageableDefault(sort = "id", direction = Sort.Direction.DESC, page = 0, size = 10) final Pageable paginacao) {
 
@@ -81,17 +80,20 @@ public final class GrupoController {
             .body(response);
     }
 
-    @DeleteMapping(path = "/{id}")
-    public ResponseEntity apagarPorId(@PathVariable(name = "id") final Long idGrupo) {
+    @Override
+    public ResponseEntity deletar(@PathVariable(name = "id") final Long id) {
 
-        this.grupoService.apagarPorId(idGrupo);
+        this.grupoService.apagarPorId(id);
 
         return ResponseEntity
             .noContent()
             .build();
     }
 
+    @Override
+    public ResponseEntity<Set<PermissaoDtoResponse>> consultarPermissoesPorIdDeGrupo(@PathVariable(name = "id") final Long id) {
 
-
+        return null;
+    }
 }
 
