@@ -1,16 +1,16 @@
 package io.algafoodapi.business.service;
 
-import io.algafoodapi.presentation.dto.request.UsuarioTrocarSenhaDtoRequest;
 import io.algafoodapi.business.core.Constantes;
 import io.algafoodapi.business.exception.http400.RequisicaoMalFormuladaException;
 import io.algafoodapi.business.exception.http404.UsuarioNaoEncontradoException;
 import io.algafoodapi.business.exception.http409.EmailDeUsuarioEmUsoException;
 import io.algafoodapi.business.exception.http409.SenhaIncompativelException;
+import io.algafoodapi.business.model.Grupo;
 import io.algafoodapi.business.model.Usuario;
-import io.algafoodapi.business.ports.GrupoRepository;
 import io.algafoodapi.business.utils.ServiceUtils;
 import io.algafoodapi.infraestrutura.repository.PoliticaCrudBaseRepository;
 import io.algafoodapi.infraestrutura.repository.PoliticaUsuarioRepository;
+import io.algafoodapi.presentation.dto.request.UsuarioTrocarSenhaDtoRequest;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -33,7 +33,7 @@ public class UsuarioServiceImpl implements PoliticaCrudBaseService<Usuario, Long
     private PoliticaUsuarioRepository usuarioRepository;
 
     @Autowired
-    private GrupoRepository grupoRepository;
+    private PoliticaCrudBaseRepository<Grupo, Long> grupoRepository;
 
     @Autowired
     private ServiceUtils serviceUtils;

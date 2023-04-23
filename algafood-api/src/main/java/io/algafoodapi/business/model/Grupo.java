@@ -31,7 +31,7 @@ import java.util.Set;
 @Setter
 @ToString
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public final class Grupo implements Serializable {
+public final class Grupo implements PoliticaEntidade<Long>, Serializable {
 
     private static final long serialVersionUID = 1L;
 

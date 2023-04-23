@@ -25,7 +25,7 @@ public class PermissaoRepositoryImpl implements PermissaoRepository {
 
     @Transactional(readOnly = true)
     @Override
-    public Permissao buscar(Long id) {
+    public Permissao buscar(final Long id) {
         return this.manager.find(Permissao.class, id);
     }
 
