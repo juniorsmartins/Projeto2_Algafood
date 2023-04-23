@@ -23,8 +23,8 @@ public class GrupoRepositoryImpl implements PoliticaCrudBaseRepository<Grupo, Lo
     }
 
     @Override
-    public Page<Grupo> pesquisar(Example<Grupo> example, Pageable paginacao) {
-        return null;
+    public Page<Grupo> pesquisar(final Example<Grupo> example, final Pageable paginacao) {
+        return this.grupoRepositoryJpa.findAll(example, paginacao);
     }
 
     @Override

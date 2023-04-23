@@ -45,7 +45,7 @@ public class UsuarioServiceImpl implements PoliticaCrudBaseService<Usuario, Long
         return Optional.of(entidade)
             .map(this::regraGarantirEmailUnico)
             .map(entity -> this.serviceUtils.regraGarantirNomeUnico(entity, crudRepository))
-            .map(this.serviceUtils::capitalizarNome)
+            .map(this.serviceUtils::regraCapitalizarNome)
             .map(this.crudRepository::salvar)
             .orElseThrow();
     }
@@ -59,7 +59,7 @@ public class UsuarioServiceImpl implements PoliticaCrudBaseService<Usuario, Long
             .map(this::validarIdsDeRelacionamentos)
             .map(this::regraGarantirEmailUnico)
             .map(entity -> this.serviceUtils.regraGarantirNomeUnico(entity, crudRepository))
-            .map(this.serviceUtils::capitalizarNome)
+            .map(this.serviceUtils::regraCapitalizarNome)
             .map(entity -> {
                 BeanUtils.copyProperties(entidade, entity, "id", "senha");
                 entity.setDataCadastro(OffsetDateTime.now());

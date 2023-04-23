@@ -1,8 +1,11 @@
 package io.algafoodapi.business.service;
 
+import io.algafoodapi.business.exception.ConstantesDeErro;
+import io.algafoodapi.business.exception.http404.PermissaoNaoEncontradaException;
 import io.algafoodapi.business.model.Permissao;
 import io.algafoodapi.business.utils.ServiceUtils;
 import io.algafoodapi.infraestrutura.repository.PoliticaCrudBaseRepository;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +25,9 @@ public class PermissaoServiceImpl implements PoliticaCrudBaseService<Permissao, 
   @Autowired
   private ServiceUtils serviceUtils;
 
+  @Autowired
+  private ConstantesDeErro constantesDeErro;
+
   @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
   @Override
   public Permissao cadastrar(Permissao entidade) {
@@ -33,19 +39,45 @@ public class PermissaoServiceImpl implements PoliticaCrudBaseService<Permissao, 
         .orElseThrow();
   }
 
+  @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
   @Override
   public Permissao atualizar(Permissao entidade) {
-    return null;
+    var id = entidade.getId();
+
+    return this.repository.consultarPorId(id)
+        .map(permissao -> this.serviceUtils.regraGarantirNomeUnico(permissao, repository))
+        .map(permissao -> {
+          BeanUtils.copyProperties(entidade, permissao, "id");
+          return permissao;
+        })
+        .map(this.serviceUtils::regraCapitalizarNome)
+        .orElseThrow(() -> new PermissaoNaoEncontradaException(id));
   }
 
+  @Transactional(readOnly = true)
   @Override
   public Page<Permissao> pesquisar(Permissao entidade, Pageable paginacao) {
-    return null;
+
+    var condicoesDePesquisa = this.serviceUtils.criarCondicoesDePesquisa(entidade);
+    var resultadoDaPesquisa = this.repository.pesquisar(condicoesDePesquisa, paginacao);
+
+    if (resultadoDaPesquisa.isEmpty()) {
+      throw new PermissaoNaoEncontradaException(constantesDeErro.NENHUM_RECURSO_ENCONTRADO);
+    }
+
+    return resultadoDaPesquisa;
   }
 
+  @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
   @Override
-  public void deletar(Long id) {
+  public void deletar(final Long id) {
 
+    this.repository.consultarPorId(id)
+        .map(permissao -> {
+          this.repository.deletar(permissao);
+          return true;
+        })
+        .orElseThrow(() -> new PermissaoNaoEncontradaException(id));
   }
 }
 

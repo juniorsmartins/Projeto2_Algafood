@@ -87,7 +87,7 @@ public class ServiceUtils {
         return entidade;
     }
 
-    public <E extends PoliticaEntidade> E capitalizarNome(E entidade) {
+    public <E extends PoliticaEntidade> E regraCapitalizarNome(E entidade) {
         var nomeParaCapitalizar = entidade.getNome().trim();
         var nomeCapitalizado = WordUtils.capitalizeFully(nomeParaCapitalizar);
 
