@@ -2,6 +2,8 @@ package io.algafoodapi.infraestrutura.repository;
 
 import io.algafoodapi.business.model.Permissao;
 import io.algafoodapi.business.ports.PermissaoRepository;
+import io.algafoodapi.infraestrutura.repository.jpa.PermissaoRepositoryJpa;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +22,9 @@ public class PermissaoRepositoryImpl implements PoliticaCrudBaseRepository<Permi
 
     @PersistenceContext
     private EntityManager manager;
+
+    @Autowired
+    private PermissaoRepositoryJpa repositoryJpa;
 
     @Transactional(readOnly = true)
     @Override
@@ -41,7 +46,7 @@ public class PermissaoRepositoryImpl implements PoliticaCrudBaseRepository<Permi
 
     @Override
     public Page<Permissao> pesquisar(final Example<Permissao> example, final Pageable paginacao) {
-        return null;
+        return this.repositoryJpa.findAll(example, paginacao);
     }
 
     @Override

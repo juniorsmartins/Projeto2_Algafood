@@ -110,7 +110,7 @@ public class ServiceUtils {
         return entidade;
     }
 
-    public <E extends PoliticaEntidade> Example criarCondicoesDePesquisa(final E entidade) {
+    public <E extends PoliticaEntidade> Example<E> criarCondicoesDePesquisa(final E entidade) {
 
         ExampleMatcher exampleMatcher = ExampleMatcher
             .matching()
