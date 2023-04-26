@@ -5,7 +5,6 @@ import io.algafoodapi.presentation.dto.request.ProdutoDtoRequest;
 import io.algafoodapi.presentation.dto.response.FormaPagamentoDtoResponse;
 import io.algafoodapi.presentation.dto.response.PoliticaDtoResponse;
 import io.algafoodapi.presentation.dto.response.ProdutoDtoResponse;
-import io.algafoodapi.presentation.dto.response.RestauranteDtoResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -60,7 +59,7 @@ public interface PoliticaRestauranteController<R extends PoliticaDtoRequest, S e
   ResponseEntity desassociarFormaPagamentoDoRestaurantePorIds(I idRestaurante, I idFormaPagamento);
 
   @PutMapping(path = "/{idRestaurante}/formas-pagamento/{idFormaPagamento}")
-  ResponseEntity<RestauranteDtoResponse> associarFormaPagamentoNoRestaurantePorIds(I idRestaurante, I idFormaPagamento);
+  ResponseEntity<S> associarFormaPagamentoNoRestaurantePorIds(I idRestaurante, I idFormaPagamento);
 
   @PostMapping(path = "/{id}/produtos")
   ResponseEntity<ProdutoDtoResponse> cadastrarProdutoPorRestaurante(I id, ProdutoDtoRequest dtoRequest);

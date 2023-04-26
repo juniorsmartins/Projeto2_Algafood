@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(path = "/v1/grupos")
 public final class GrupoControllerImpl implements PoliticaCrudBaseController<GrupoDtoRequest, GrupoDtoResponse,
-    GrupoPesquisarDtoRequest, GrupoAtualizarDtoRequest, Long>, PoliticaGrupoController {
+    GrupoPesquisarDtoRequest, GrupoAtualizarDtoRequest, Long>, PoliticaGrupoController<GrupoDtoRequest, GrupoDtoResponse, Long> {
 
     @Autowired
     private PoliticaMapper<GrupoDtoRequest, GrupoDtoResponse, GrupoPesquisarDtoRequest,
@@ -117,6 +117,11 @@ public final class GrupoControllerImpl implements PoliticaCrudBaseController<Gru
         return ResponseEntity
             .ok()
             .body(response);
+    }
+
+    @Override
+    public ResponseEntity<GrupoDtoResponse> associarPermissaoNoGrupoPorIds(Long idGrupo, Long idPermissao) {
+        return null;
     }
 }
 
