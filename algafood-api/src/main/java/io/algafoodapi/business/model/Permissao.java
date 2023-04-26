@@ -14,7 +14,7 @@ import java.io.Serializable;
 @Setter
 @ToString
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public final class Permissao implements Serializable {
+public final class Permissao implements PoliticaEntidade<Long>, Serializable {
 
     private static final long serialVersionUID = 1L;
 

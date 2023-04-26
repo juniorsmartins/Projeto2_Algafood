@@ -4,8 +4,9 @@ import io.algafoodapi.business.exception.ConstantesDeErro;
 import io.algafoodapi.business.exception.http404.GrupoNaoEncontradoException;
 import io.algafoodapi.business.exception.http409.NomeDeGrupoEmUsoException;
 import io.algafoodapi.business.model.Grupo;
-import io.algafoodapi.business.ports.GrupoRepository;
+import io.algafoodapi.business.model.Permissao;
 import io.algafoodapi.business.utils.ServiceUtils;
+import io.algafoodapi.infraestrutura.repository.PoliticaCrudBaseRepository;
 import org.apache.commons.lang3.text.WordUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +20,13 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Service
-public class GrupoServiceImpl implements GrupoService {
+public class GrupoServiceImpl implements PoliticaCrudBaseService<Grupo, Long>, PoliticaGrupoService<Long> {
 
     @Autowired
-    private GrupoRepository grupoRepository;
+    private PoliticaCrudBaseRepository<Grupo, Long> repository;
 
     @Autowired
     private ServiceUtils serviceUtils;
@@ -39,7 +41,7 @@ public class GrupoServiceImpl implements GrupoService {
         return Optional.of(grupo)
             .map(this::regraGarantirNomeUnico)
             .map(this::regraCapitalizarNome)
-            .map(this.grupoRepository::salvar)
+            .map(this.repository::salvar)
             .orElseThrow();
     }
 
@@ -48,7 +50,7 @@ public class GrupoServiceImpl implements GrupoService {
     public Grupo atualizar(Grupo grupo) {
         var id = grupo.getId();
 
-        return this.grupoRepository.consultarPorId(id)
+        return this.repository.consultarPorId(id)
             .map(grupoDoDatabase -> {
                 this.regraGarantirNomeUnico(grupo);
                 BeanUtils.copyProperties(grupo, grupoDoDatabase, "id");
@@ -63,7 +65,7 @@ public class GrupoServiceImpl implements GrupoService {
     public Page<Grupo> pesquisar(final Grupo grupo, final Pageable paginacao) {
 
         var condicoesDePesquisa = this.criarCondicoesParaPesquisar(grupo);
-        var resultadoDaPesquisa = this.grupoRepository.pesquisar(condicoesDePesquisa, paginacao);
+        var resultadoDaPesquisa = this.repository.pesquisar(condicoesDePesquisa, paginacao);
 
         if (resultadoDaPesquisa.isEmpty()) {
             throw new GrupoNaoEncontradoException(constantesDeErro.NENHUM_RECURSO_ENCONTRADO);
@@ -74,13 +76,21 @@ public class GrupoServiceImpl implements GrupoService {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
     @Override
-    public void apagarPorId(final Long id) {
+    public void deletar(final Long id) {
 
-        this.grupoRepository.consultarPorId(id)
+        this.repository.consultarPorId(id)
             .map(grupo -> {
-                this.grupoRepository.apagar(grupo);
+                this.repository.deletar(grupo);
                 return true;
             })
+            .orElseThrow(() -> new GrupoNaoEncontradoException(id));
+    }
+
+    @Override
+    public Set<Permissao> consultarPermissoesPorIdDeGrupo(final Long id) {
+
+        return this.repository.consultarPorId(id)
+            .map(Grupo::getPermissoes)
             .orElseThrow(() -> new GrupoNaoEncontradoException(id));
     }
 
@@ -95,7 +105,7 @@ public class GrupoServiceImpl implements GrupoService {
         var nomeDeEntradaParaPadronizar = grupo.getNome();
         var nomeDeEntradaPadronizado = this.serviceUtils.padronizarNome(nomeDeEntradaParaPadronizar);
 
-        var existeNomeIgual = this.grupoRepository.listar()
+        var existeNomeIgual = this.repository.listar()
             .stream()
             .filter(grupoDoDatabase -> grupoDoDatabase.getId() != grupo.getId())
             .map(Grupo::getNome)
@@ -118,5 +128,7 @@ public class GrupoServiceImpl implements GrupoService {
 
         return Example.of(grupo, matcher);
     }
+
+
 }
 

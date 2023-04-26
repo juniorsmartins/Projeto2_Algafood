@@ -57,7 +57,37 @@ public class ServiceUtils {
             .orElseThrow();
     }
 
-    public <E extends PoliticaEntidade> E capitalizarNome(E entidade) {
+    public <E extends PoliticaEntidade> E padronizarNome(E entidade) {
+
+        var nomeParaPadronizar = entidade.getNome();
+
+        var nomePadronizado = Optional.of(nomeParaPadronizar)
+            .map(nome -> nome.toLowerCase().trim())
+            .map(nome -> RegExUtils.replaceAll(nome, "ç", "c"))
+            .map(nome -> RegExUtils.replaceAll(nome, "á", "a"))
+            .map(nome -> RegExUtils.replaceAll(nome, "â", "a"))
+            .map(nome -> RegExUtils.replaceAll(nome, "à", "a"))
+            .map(nome -> RegExUtils.replaceAll(nome, "ã", "a"))
+            .map(nome -> RegExUtils.replaceAll(nome, "é", "e"))
+            .map(nome -> RegExUtils.replaceAll(nome, "ê", "e"))
+            .map(nome -> RegExUtils.replaceAll(nome, "è", "e"))
+            .map(nome -> RegExUtils.replaceAll(nome, "í", "i"))
+            .map(nome -> RegExUtils.replaceAll(nome, "î", "i"))
+            .map(nome -> RegExUtils.replaceAll(nome, "ì", "i"))
+            .map(nome -> RegExUtils.replaceAll(nome, "ó", "o"))
+            .map(nome -> RegExUtils.replaceAll(nome, "ô", "o"))
+            .map(nome -> RegExUtils.replaceAll(nome, "ò", "o"))
+            .map(nome -> RegExUtils.replaceAll(nome, "õ", "o"))
+            .map(nome -> RegExUtils.replaceAll(nome, "ú", "u"))
+            .map(nome -> RegExUtils.replaceAll(nome, "û", "u"))
+            .map(nome -> RegExUtils.replaceAll(nome, "ù", "u"))
+            .orElseThrow();
+
+        entidade.setNome(nomePadronizado);
+        return entidade;
+    }
+
+    public <E extends PoliticaEntidade> E regraCapitalizarNome(E entidade) {
         var nomeParaCapitalizar = entidade.getNome().trim();
         var nomeCapitalizado = WordUtils.capitalizeFully(nomeParaCapitalizar);
 
@@ -80,7 +110,7 @@ public class ServiceUtils {
         return entidade;
     }
 
-    public <E extends PoliticaEntidade> Example criarCondicoesDePesquisa(final E entidade) {
+    public <E extends PoliticaEntidade> Example<E> criarCondicoesDePesquisa(final E entidade) {
 
         ExampleMatcher exampleMatcher = ExampleMatcher
             .matching()

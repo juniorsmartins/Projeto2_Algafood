@@ -19,7 +19,7 @@ import java.io.Serializable;
 @Setter
 @ToString
 @EqualsAndHashCode(of = "nome")
-public final class GrupoDtoRequest implements Serializable {
+public final class GrupoDtoRequest implements PoliticaDtoRequest, Serializable {
 
     private static final long serialVersionUID = 1L;
 
