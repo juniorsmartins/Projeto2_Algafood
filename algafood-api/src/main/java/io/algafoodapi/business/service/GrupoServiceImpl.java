@@ -2,6 +2,7 @@ package io.algafoodapi.business.service;
 
 import io.algafoodapi.business.exception.ConstantesDeErro;
 import io.algafoodapi.business.exception.http404.GrupoNaoEncontradoException;
+import io.algafoodapi.business.exception.http404.PermissaoNaoEncontradaException;
 import io.algafoodapi.business.exception.http409.NomeDeGrupoEmUsoException;
 import io.algafoodapi.business.model.Grupo;
 import io.algafoodapi.business.model.Permissao;
@@ -27,6 +28,9 @@ public class GrupoServiceImpl implements PoliticaCrudBaseService<Grupo, Long>, P
 
     @Autowired
     private PoliticaCrudBaseRepository<Grupo, Long> repository;
+
+    @Autowired
+    private PoliticaCrudBaseRepository<Permissao, Long> permissaoRepository;
 
     @Autowired
     private ServiceUtils serviceUtils;
@@ -86,12 +90,28 @@ public class GrupoServiceImpl implements PoliticaCrudBaseService<Grupo, Long>, P
             .orElseThrow(() -> new GrupoNaoEncontradoException(id));
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     @Override
     public Set<Permissao> consultarPermissoesPorIdDeGrupo(final Long id) {
 
         return this.repository.consultarPorId(id)
             .map(Grupo::getPermissoes)
             .orElseThrow(() -> new GrupoNaoEncontradoException(id));
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
+    @Override
+    public Grupo associarPermissaoNoGrupoPorIds(final Long idGrupo, final Long idPermissao) {
+
+        var permissaoParaAdd = this.permissaoRepository.consultarPorId(idPermissao)
+            .orElseThrow(() -> new PermissaoNaoEncontradaException(idPermissao));
+
+        return this.repository.consultarPorId(idGrupo)
+            .map(grupo -> {
+                grupo.getPermissoes().add(permissaoParaAdd);
+                return grupo;
+            })
+            .orElseThrow(() -> new GrupoNaoEncontradoException(idGrupo));
     }
 
     private Grupo regraCapitalizarNome(Grupo grupo) {
@@ -128,7 +148,5 @@ public class GrupoServiceImpl implements PoliticaCrudBaseService<Grupo, Long>, P
 
         return Example.of(grupo, matcher);
     }
-
-
 }
 

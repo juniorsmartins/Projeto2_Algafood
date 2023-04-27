@@ -120,8 +120,17 @@ public final class GrupoControllerImpl implements PoliticaCrudBaseController<Gru
     }
 
     @Override
-    public ResponseEntity<GrupoDtoResponse> associarPermissaoNoGrupoPorIds(Long idGrupo, Long idPermissao) {
-        return null;
+    public ResponseEntity<GrupoDtoResponse> associarPermissaoNoGrupoPorIds(
+        @PathVariable(name = "idGrupo") final Long idGrupo,
+        @PathVariable(name = "idPermissao") final Long idPermissao) {
+
+        var response = Optional.of(this.grupoService.associarPermissaoNoGrupoPorIds(idGrupo, idPermissao))
+            .map(this.mapper::converterEntidadeParaDtoResponse)
+            .orElseThrow();
+
+        return ResponseEntity
+            .ok()
+            .body(response);
     }
 }
 
