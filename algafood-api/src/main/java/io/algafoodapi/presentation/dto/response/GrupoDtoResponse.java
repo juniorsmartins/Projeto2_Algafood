@@ -1,5 +1,6 @@
 package io.algafoodapi.presentation.dto.response;
 
+import io.algafoodapi.business.model.Permissao;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -9,6 +10,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.util.Set;
 
 @Builder
 @NoArgsConstructor
@@ -24,5 +26,7 @@ public final class GrupoDtoResponse implements PoliticaDtoResponse<Long>, Serial
     private Long id;
 
     private String nome;
+
+    private Set<Permissao> permissoes;
 }
 
