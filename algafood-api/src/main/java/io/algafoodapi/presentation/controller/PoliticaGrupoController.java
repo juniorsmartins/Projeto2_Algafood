@@ -4,6 +4,7 @@ import io.algafoodapi.presentation.dto.request.PoliticaDtoRequest;
 import io.algafoodapi.presentation.dto.response.PermissaoDtoResponse;
 import io.algafoodapi.presentation.dto.response.PoliticaDtoResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 
@@ -16,5 +17,8 @@ public interface PoliticaGrupoController<R extends PoliticaDtoRequest, S extends
 
   @PutMapping(path = "/{idGrupo}/permissoes/{idPermissao}")
   ResponseEntity<S> associarPermissaoNoGrupoPorIds(I idGrupo, I idPermissao);
+
+  @DeleteMapping(path = "/{idGrupo}/permissoes/{idPermissao}")
+  ResponseEntity<?> removerPermissaoDoGrupoPorIds(I idGrupo, I idPermissao);
 }
 

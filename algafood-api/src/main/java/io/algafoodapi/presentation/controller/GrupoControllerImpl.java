@@ -132,5 +132,17 @@ public final class GrupoControllerImpl implements PoliticaCrudBaseController<Gru
             .ok()
             .body(response);
     }
+
+    @Override
+    public ResponseEntity<?> removerPermissaoDoGrupoPorIds(
+        @PathVariable(name = "idGrupo") final Long idGrupo,
+        @PathVariable(name = "idPermissao") final Long idPermissao) {
+
+        this.grupoService.removerPermissaoDoGrupoPorIds(idGrupo, idPermissao);
+
+        return ResponseEntity
+            .noContent()
+            .build();
+    }
 }
 
