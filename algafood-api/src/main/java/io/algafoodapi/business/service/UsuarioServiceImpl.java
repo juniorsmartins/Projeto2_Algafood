@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class UsuarioServiceImpl implements PoliticaCrudBaseService<Usuario, Long>, PoliticaUsuarioService<UsuarioTrocarSenhaDtoRequest, Long, String> {
@@ -104,6 +105,26 @@ public class UsuarioServiceImpl implements PoliticaCrudBaseService<Usuario, Long
             .orElseThrow(() -> new UsuarioNaoEncontradoException(idUsuario));
 
         return Constantes.SENHA_ALTERADA_COM_SUCESSO;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+    @Override
+    public Set<Grupo> consultarGruposPorIdDeUsuario(final Long idUsuario) {
+
+        return this.crudRepository.consultarPorId(idUsuario)
+            .map(Usuario::getGrupos)
+            .orElseThrow();
+    }
+
+    @Override
+    public Usuario associarNoUsuarioPorIdUmGrupoPorId(final Long idUsuario, final Long idGrupo) {
+
+        return null;
+    }
+
+    @Override
+    public void removerDoUsuarioPorIdUmGrupoPorId(final Long idUsuario, final Long idGrupo) {
+
     }
 
     private Usuario regraGarantirEmailUnico(final Usuario usuario) {
