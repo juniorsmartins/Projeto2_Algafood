@@ -56,8 +56,9 @@ public class PermissaoRepositoryImpl implements PoliticaCrudBaseRepository<Permi
     }
 
     @Override
-    public Optional<Permissao> consultarPorId(Long id) {
-        return Optional.of(this.manager.find(Permissao.class, id));
+    public Optional<Permissao> consultarPorId(final Long id) {
+        return this.repositoryJpa.findById(id);
+//        return Optional.of(this.manager.find(Permissao.class, id));
     }
 
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.SERIALIZABLE)
