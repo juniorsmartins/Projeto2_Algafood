@@ -150,7 +150,11 @@ public final class UsuarioControllerImpl implements PoliticaCrudBaseController<U
         @PathVariable(name = "idUsuario") final Long idUsuario,
         @PathVariable(name = "idGrupo") final Long idGrupo) {
 
-        return null;
+        this.usuarioService.removerDoUsuarioPorIdUmGrupoPorId(idUsuario, idGrupo);
+
+        return ResponseEntity
+            .noContent()
+            .build();
     }
 }
 

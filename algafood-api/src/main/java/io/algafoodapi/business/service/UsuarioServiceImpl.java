@@ -132,9 +132,19 @@ public class UsuarioServiceImpl implements PoliticaCrudBaseService<Usuario, Long
             .orElseThrow(() -> new UsuarioNaoEncontradoException(idUsuario));
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
     @Override
     public void removerDoUsuarioPorIdUmGrupoPorId(final Long idUsuario, final Long idGrupo) {
 
+        var grupoParaRemover = this.grupoRepository.consultarPorId(idGrupo)
+            .orElseThrow(() -> new GrupoNaoEncontradoException(idGrupo));
+
+        this.crudRepository.consultarPorId(idUsuario)
+            .map(usuario -> {
+                usuario.getGrupos().remove(grupoParaRemover);
+                return usuario;
+            })
+            .orElseThrow(() -> new UsuarioNaoEncontradoException(idUsuario));
     }
 
     private Usuario regraGarantirEmailUnico(final Usuario usuario) {
