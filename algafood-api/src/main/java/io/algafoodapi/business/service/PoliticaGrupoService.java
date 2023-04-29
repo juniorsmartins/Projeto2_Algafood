@@ -10,5 +10,7 @@ public interface PoliticaGrupoService<I> {
   Set<Permissao> consultarPermissoesPorIdDeGrupo(I id);
 
   Grupo associarPermissaoNoGrupoPorIds(I idGrupo, I idPermissao);
+
+  void removerPermissaoDoGrupoPorIds(I idGrupo, I idPermissao);
 }
 

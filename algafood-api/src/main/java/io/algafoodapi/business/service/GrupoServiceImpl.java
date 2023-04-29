@@ -114,6 +114,21 @@ public class GrupoServiceImpl implements PoliticaCrudBaseService<Grupo, Long>, P
             .orElseThrow(() -> new GrupoNaoEncontradoException(idGrupo));
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
+    @Override
+    public void removerPermissaoDoGrupoPorIds(final Long idGrupo, final Long idPermissao) {
+
+        var permissaoParaRemover = this.permissaoRepository.consultarPorId(idPermissao)
+            .orElseThrow(() -> new PermissaoNaoEncontradaException(idPermissao));
+
+        this.repository.consultarPorId(idGrupo)
+            .map(grupo -> {
+                grupo.getPermissoes().remove(permissaoParaRemover);
+                return grupo;
+            })
+            .orElseThrow(() -> new GrupoNaoEncontradoException(idGrupo));
+    }
+
     private Grupo regraCapitalizarNome(Grupo grupo) {
         var nomeParaCapitalizar = grupo.getNome();
         var nomeCapitalizado = WordUtils.capitalizeFully(nomeParaCapitalizar);
