@@ -19,10 +19,10 @@ public interface PoliticaUsuarioController<T extends PoliticaTrocarSenhaDtoReque
   @GetMapping(path = "/{idUsuario}/grupos")
   ResponseEntity<Set<GrupoDtoResponse>> consultarGruposPorIdDeUsuario(I idUsuario);
 
-  @PutMapping(path = "/{idUsuario}/permissoes/{idGrupo}")
+  @PutMapping(path = "/{idUsuario}/grupos/{idGrupo}")
   ResponseEntity<UsuarioDtoResponse> associarNoUsuarioPorIdUmGrupoPorId(I idUsuario, I idGrupo);
 
-  @DeleteMapping(path = "/{idUsuario}/permissoes/{idGrupo}")
+  @DeleteMapping(path = "/{idUsuario}/grupos/{idGrupo}")
   ResponseEntity<?> removerDoUsuarioPorIdUmGrupoPorId(I idUsuario, I idGrupo);
 }
 

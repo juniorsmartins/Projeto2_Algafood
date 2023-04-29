@@ -136,7 +136,13 @@ public final class UsuarioControllerImpl implements PoliticaCrudBaseController<U
         @PathVariable(name = "idUsuario") final Long idUsuario,
         @PathVariable(name = "idGrupo") final Long idGrupo) {
 
-        return null;
+        var response = Optional.of(this.usuarioService.associarNoUsuarioPorIdUmGrupoPorId(idUsuario, idGrupo))
+            .map(this.mapper::converterEntidadeParaDtoResponse)
+            .orElseThrow();
+
+        return ResponseEntity
+            .ok()
+            .body(response);
     }
 
     @Override

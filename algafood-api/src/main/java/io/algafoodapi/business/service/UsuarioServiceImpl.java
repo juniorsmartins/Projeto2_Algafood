@@ -2,6 +2,7 @@ package io.algafoodapi.business.service;
 
 import io.algafoodapi.business.core.Constantes;
 import io.algafoodapi.business.exception.http400.RequisicaoMalFormuladaException;
+import io.algafoodapi.business.exception.http404.GrupoNaoEncontradoException;
 import io.algafoodapi.business.exception.http404.UsuarioNaoEncontradoException;
 import io.algafoodapi.business.exception.http409.EmailDeUsuarioEmUsoException;
 import io.algafoodapi.business.exception.http409.SenhaIncompativelException;
@@ -116,10 +117,19 @@ public class UsuarioServiceImpl implements PoliticaCrudBaseService<Usuario, Long
             .orElseThrow();
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
     @Override
     public Usuario associarNoUsuarioPorIdUmGrupoPorId(final Long idUsuario, final Long idGrupo) {
 
-        return null;
+        var grupoParaAdd = this.grupoRepository.consultarPorId(idGrupo)
+            .orElseThrow(() -> new GrupoNaoEncontradoException(idGrupo));
+
+        return this.crudRepository.consultarPorId(idUsuario)
+            .map(usuario -> {
+                usuario.getGrupos().add(grupoParaAdd);
+                return usuario;
+            })
+            .orElseThrow(() -> new UsuarioNaoEncontradoException(idUsuario));
     }
 
     @Override
