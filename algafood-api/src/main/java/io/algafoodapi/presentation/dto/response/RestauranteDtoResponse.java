@@ -45,9 +45,11 @@ public final class RestauranteDtoResponse implements PoliticaDtoResponse<Long>, 
 
     private Boolean aberto;
 
+    private List<ProdutoDtoResponse> produtos;
+
     private List<FormaPagamentoDtoResponse> formasPagamento;
 
-    private List<ProdutoDtoResponse> produtos;
+    private List<UsuarioDtoResponse> usuarios;
 
     @JsonView(RestauranteView.Resumo.class)
     private CozinhaDtoResponse cozinha;

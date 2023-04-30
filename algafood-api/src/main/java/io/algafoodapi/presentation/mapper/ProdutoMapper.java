@@ -8,11 +8,11 @@ import io.algafoodapi.presentation.dto.response.ProdutoDtoResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Service
+@Component
 public final class ProdutoMapper implements PoliticaMapper<ProdutoDtoRequest, ProdutoDtoResponse,
     ProdutoPesquisarDtoRequest, ProdutoAtualizarDtoRequest, Produto, Long> {
 
