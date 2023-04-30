@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import io.algafoodapi.business.model.FormaPagamento;
 import io.algafoodapi.business.model.Produto;
 import io.algafoodapi.business.model.Restaurante;
+import io.algafoodapi.business.model.Usuario;
 import io.algafoodapi.business.model.views.RestauranteView;
 import io.algafoodapi.business.service.PoliticaCrudBaseService;
 import io.algafoodapi.business.service.PoliticaRestauranteService;
@@ -16,11 +17,14 @@ import io.algafoodapi.presentation.dto.request.ProdutoPesquisarDtoRequest;
 import io.algafoodapi.presentation.dto.request.RestauranteAtualizarDtoRequest;
 import io.algafoodapi.presentation.dto.request.RestauranteDtoRequest;
 import io.algafoodapi.presentation.dto.request.RestaurantePesquisarDtoRequest;
+import io.algafoodapi.presentation.dto.request.UsuarioAtualizarDtoRequest;
+import io.algafoodapi.presentation.dto.request.UsuarioDtoRequest;
+import io.algafoodapi.presentation.dto.request.UsuarioPesquisarDtoRequest;
 import io.algafoodapi.presentation.dto.response.FormaPagamentoDtoResponse;
 import io.algafoodapi.presentation.dto.response.ProdutoDtoResponse;
 import io.algafoodapi.presentation.dto.response.RestauranteDtoResponse;
+import io.algafoodapi.presentation.dto.response.UsuarioDtoResponse;
 import io.algafoodapi.presentation.mapper.PoliticaMapper;
-import io.algafoodapi.presentation.mapper.RestauranteMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +53,8 @@ public final class RestauranteControllerImpl implements PoliticaCrudBaseControll
     RestauranteDtoResponse, Long> {
 
     @Autowired
-    private RestauranteMapper mapper;
+    private PoliticaMapper<RestauranteDtoRequest, RestauranteDtoResponse, RestaurantePesquisarDtoRequest,
+        RestauranteAtualizarDtoRequest, Restaurante, Long> restauranteMapper;
 
     @Autowired
     private PoliticaMapper<FormaPagamentoDtoRequest, FormaPagamentoDtoResponse, FormaPagamentoPesquisarDtoRequest,
@@ -60,19 +65,23 @@ public final class RestauranteControllerImpl implements PoliticaCrudBaseControll
         ProdutoAtualizarDtoRequest, Produto, Long> produtoMapper;
 
     @Autowired
+    private PoliticaMapper<UsuarioDtoRequest, UsuarioDtoResponse, UsuarioPesquisarDtoRequest,
+        UsuarioAtualizarDtoRequest, Usuario, Long> usuarioMapper;
+
+    @Autowired
     private PoliticaCrudBaseService<Restaurante, Long> crudService;
 
     @Autowired
     private PoliticaRestauranteService<Restaurante, Long> restauranteService;
 
     @Override
-    public ResponseEntity<RestauranteDtoResponse> cadastrar(@RequestBody @Valid final RestauranteDtoRequest restauranteDtoRequest,
-                                                            final UriComponentsBuilder uriComponentsBuilder) {
+    public ResponseEntity<RestauranteDtoResponse> cadastrar(
+        @RequestBody @Valid final RestauranteDtoRequest restauranteDtoRequest, final UriComponentsBuilder uriComponentsBuilder) {
 
         var response = Optional.of(restauranteDtoRequest)
-            .map(this.mapper::converterDtoRequestParaEntidade)
+            .map(this.restauranteMapper::converterDtoRequestParaEntidade)
             .map(this.crudService::cadastrar)
-            .map(this.mapper::converterEntidadeParaDtoResponse)
+            .map(this.restauranteMapper::converterEntidadeParaDtoResponse)
             .orElseThrow();
 
         return ResponseEntity
@@ -87,9 +96,9 @@ public final class RestauranteControllerImpl implements PoliticaCrudBaseControll
     public ResponseEntity<RestauranteDtoResponse> atualizar(@RequestBody @Valid final RestauranteAtualizarDtoRequest dtoRequest) {
 
         var response = Optional.of(dtoRequest)
-            .map(this.mapper::converterAtualizarDtoRequestParaEntidade)
+            .map(this.restauranteMapper::converterAtualizarDtoRequestParaEntidade)
             .map(restaurant -> this.crudService.atualizar(restaurant))
-            .map(this.mapper::converterEntidadeParaDtoResponse)
+            .map(this.restauranteMapper::converterEntidadeParaDtoResponse)
             .orElseThrow();
 
         return ResponseEntity
@@ -102,9 +111,9 @@ public final class RestauranteControllerImpl implements PoliticaCrudBaseControll
         @PageableDefault(sort = "nome", direction = Sort.Direction.ASC, page = 0, size = 20) final Pageable paginacao) {
 
         var response = Optional.of(dtoRequest)
-            .map(this.mapper::converterPesquisarDtoRequestParaEntidade)
+            .map(this.restauranteMapper::converterPesquisarDtoRequestParaEntidade)
             .map(entidade -> this.crudService.pesquisar(entidade, paginacao))
-            .map(this.mapper::converterPaginaDeRestaurantesParaPaginaDeDtoResponse)
+            .map(this.restauranteMapper::converterPaginaDeEntidadesParaPaginaDeDtoResponse)
             .orElseThrow();
 
         return ResponseEntity
@@ -124,10 +133,10 @@ public final class RestauranteControllerImpl implements PoliticaCrudBaseControll
 
     @Override
     public ResponseEntity<RestauranteDtoResponse> atualizarParcial(@PathVariable(name = "id") final Long id,
-                                  @RequestBody Map<String, Object> campos, final HttpServletRequest request) {
+      @RequestBody Map<String, Object> campos, final HttpServletRequest request) {
 
         var response = Optional.of(this.restauranteService.atualizarParcial(id, campos, request))
-            .map(this.mapper::converterEntidadeParaDtoResponse)
+            .map(this.restauranteMapper::converterEntidadeParaDtoResponse)
             .orElseThrow();
 
         return ResponseEntity
@@ -139,7 +148,7 @@ public final class RestauranteControllerImpl implements PoliticaCrudBaseControll
     public ResponseEntity<RestauranteDtoResponse> consultarPorId(@PathVariable(name = "id") final Long id) {
 
         var response = Optional.of(this.restauranteService.consultarPorId(id))
-            .map(this.mapper::converterEntidadeParaDtoResponse)
+            .map(this.restauranteMapper::converterEntidadeParaDtoResponse)
             .orElseThrow();
 
         return ResponseEntity
@@ -152,7 +161,7 @@ public final class RestauranteControllerImpl implements PoliticaCrudBaseControll
 
         var response = this.restauranteService.consultarPorNome(nome)
             .stream()
-            .map(this.mapper::converterEntidadeParaDtoResponse)
+            .map(this.restauranteMapper::converterEntidadeParaDtoResponse)
             .toList();
 
         return ResponseEntity
@@ -165,7 +174,7 @@ public final class RestauranteControllerImpl implements PoliticaCrudBaseControll
 
         var response = this.restauranteService.listar()
             .stream()
-            .map(this.mapper::converterEntidadeParaDtoResponse)
+            .map(this.restauranteMapper::converterEntidadeParaDtoResponse)
             .toList();
 
         return ResponseEntity
@@ -315,6 +324,46 @@ public final class RestauranteControllerImpl implements PoliticaCrudBaseControll
         return ResponseEntity
             .ok()
             .body(response);
+    }
+
+    @Override
+    public ResponseEntity<Set<UsuarioDtoResponse>> consultarUsuariosDeRestaurantePorId(
+        @PathVariable(name = "idRestaurante") final Long idRestaurante) {
+
+        var response = this.restauranteService.consultarUsuariosDeRestaurantePorId(idRestaurante)
+            .stream()
+            .map(this.usuarioMapper::converterEntidadeParaDtoResponse)
+            .collect(Collectors.toSet());
+
+        return ResponseEntity
+            .ok()
+            .body(response);
+    }
+
+    @Override
+    public ResponseEntity<RestauranteDtoResponse> associarNoRestaurantePorIdUmUsuarioPorId(
+        @PathVariable(name = "idRestaurante") final Long idRestaurante,
+        @PathVariable(name = "idUsuario") final Long idUsuario) {
+
+        var response = Optional.of(this.restauranteService.associarNoRestaurantePorIdUmUsuarioPorId(idRestaurante, idUsuario))
+            .map(this.restauranteMapper::converterEntidadeParaDtoResponse)
+            .orElseThrow();
+
+        return ResponseEntity
+            .ok()
+            .body(response);
+    }
+
+    @Override
+    public ResponseEntity<?> removerDoRestaurantePorIdUmUsuarioPorId(
+        @PathVariable(name = "idRestaurante") final Long idRestaurante,
+        @PathVariable(name = "idUsuario") final Long idUsuario) {
+
+        this.restauranteService.removerDoRestaurantePorIdUmUsuarioPorId(idRestaurante, idUsuario);
+
+        return ResponseEntity
+            .noContent()
+            .build();
     }
 
 }

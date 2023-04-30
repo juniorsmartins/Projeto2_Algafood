@@ -2,6 +2,7 @@ package io.algafoodapi.business.service;
 
 import io.algafoodapi.business.core.Constantes;
 import io.algafoodapi.business.exception.http400.RequisicaoMalFormuladaException;
+import io.algafoodapi.business.exception.http404.GrupoNaoEncontradoException;
 import io.algafoodapi.business.exception.http404.UsuarioNaoEncontradoException;
 import io.algafoodapi.business.exception.http409.EmailDeUsuarioEmUsoException;
 import io.algafoodapi.business.exception.http409.SenhaIncompativelException;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class UsuarioServiceImpl implements PoliticaCrudBaseService<Usuario, Long>, PoliticaUsuarioService<UsuarioTrocarSenhaDtoRequest, Long, String> {
@@ -104,6 +106,45 @@ public class UsuarioServiceImpl implements PoliticaCrudBaseService<Usuario, Long
             .orElseThrow(() -> new UsuarioNaoEncontradoException(idUsuario));
 
         return Constantes.SENHA_ALTERADA_COM_SUCESSO;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+    @Override
+    public Set<Grupo> consultarGruposPorIdDeUsuario(final Long idUsuario) {
+
+        return this.crudRepository.consultarPorId(idUsuario)
+            .map(Usuario::getGrupos)
+            .orElseThrow();
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
+    @Override
+    public Usuario associarNoUsuarioPorIdUmGrupoPorId(final Long idUsuario, final Long idGrupo) {
+
+        var grupoParaAdd = this.grupoRepository.consultarPorId(idGrupo)
+            .orElseThrow(() -> new GrupoNaoEncontradoException(idGrupo));
+
+        return this.crudRepository.consultarPorId(idUsuario)
+            .map(usuario -> {
+                usuario.getGrupos().add(grupoParaAdd);
+                return usuario;
+            })
+            .orElseThrow(() -> new UsuarioNaoEncontradoException(idUsuario));
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
+    @Override
+    public void removerDoUsuarioPorIdUmGrupoPorId(final Long idUsuario, final Long idGrupo) {
+
+        var grupoParaRemover = this.grupoRepository.consultarPorId(idGrupo)
+            .orElseThrow(() -> new GrupoNaoEncontradoException(idGrupo));
+
+        this.crudRepository.consultarPorId(idUsuario)
+            .map(usuario -> {
+                usuario.getGrupos().remove(grupoParaRemover);
+                return usuario;
+            })
+            .orElseThrow(() -> new UsuarioNaoEncontradoException(idUsuario));
     }
 
     private Usuario regraGarantirEmailUnico(final Usuario usuario) {

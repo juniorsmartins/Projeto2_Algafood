@@ -7,10 +7,12 @@ import io.algafoodapi.business.core.validation.ValidacaoException;
 import io.algafoodapi.business.exception.http400.RequisicaoMalFormuladaException;
 import io.algafoodapi.business.exception.http404.ProdutoNaoEncontradoException;
 import io.algafoodapi.business.exception.http404.RestauranteNaoEncontradoException;
+import io.algafoodapi.business.exception.http404.UsuarioNaoEncontradoException;
 import io.algafoodapi.business.exception.http409.RestauranteEmUsoException;
 import io.algafoodapi.business.model.FormaPagamento;
 import io.algafoodapi.business.model.Produto;
 import io.algafoodapi.business.model.Restaurante;
+import io.algafoodapi.business.model.Usuario;
 import io.algafoodapi.business.ports.CozinhaRepository;
 import io.algafoodapi.business.utils.ServiceUtils;
 import io.algafoodapi.infraestrutura.repository.PoliticaCrudBaseRepository;
@@ -50,6 +52,9 @@ public class RestauranteServiceImpl implements PoliticaCrudBaseService<Restauran
 
     @Autowired
     private PoliticaCrudBaseRepository<Restaurante, Long> crudRepository;
+
+    @Autowired
+    private PoliticaCrudBaseRepository<Usuario, Long> usuarioCrudRepository;
 
     @Autowired
     private PoliticaRestauranteRepository<Long> restauranteRepository;
@@ -330,6 +335,45 @@ public class RestauranteServiceImpl implements PoliticaCrudBaseService<Restauran
                 return produto;
             })
             .map(this.produtoMapper::converterEntidadeParaDtoResponse)
+            .orElseThrow(() -> new RestauranteNaoEncontradoException(idRestaurante));
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
+    @Override
+    public Set<Usuario> consultarUsuariosDeRestaurantePorId(final Long idRestaurante) {
+
+        return this.crudRepository.consultarPorId(idRestaurante)
+            .map(Restaurante::getUsuarios)
+            .orElseThrow(() -> new RestauranteNaoEncontradoException(idRestaurante));
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
+    @Override
+    public Restaurante associarNoRestaurantePorIdUmUsuarioPorId(final Long idRestaurante, final Long idUsuario) {
+
+        var usuarioParaAdicionar = this.usuarioCrudRepository.consultarPorId(idUsuario)
+            .orElseThrow(() -> new UsuarioNaoEncontradoException(idUsuario));
+
+        return this.crudRepository.consultarPorId(idRestaurante)
+            .map(restaurante -> {
+                restaurante.getUsuarios().add(usuarioParaAdicionar);
+                return restaurante;
+            })
+            .orElseThrow(() -> new UsuarioNaoEncontradoException(idUsuario));
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
+    @Override
+    public void removerDoRestaurantePorIdUmUsuarioPorId(final Long idRestaurante, final Long idUsuario) {
+
+        var usuarioParaRemover = this.usuarioCrudRepository.consultarPorId(idUsuario)
+            .orElseThrow(() -> new UsuarioNaoEncontradoException(idUsuario));
+
+        this.crudRepository.consultarPorId(idRestaurante)
+            .map(restaurante -> {
+                restaurante.getUsuarios().remove(usuarioParaRemover);
+                return restaurante;
+            })
             .orElseThrow(() -> new RestauranteNaoEncontradoException(idRestaurante));
     }
 

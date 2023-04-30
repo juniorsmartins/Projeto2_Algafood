@@ -5,6 +5,7 @@ import io.algafoodapi.presentation.dto.request.ProdutoDtoRequest;
 import io.algafoodapi.presentation.dto.response.FormaPagamentoDtoResponse;
 import io.algafoodapi.presentation.dto.response.PoliticaDtoResponse;
 import io.algafoodapi.presentation.dto.response.ProdutoDtoResponse;
+import io.algafoodapi.presentation.dto.response.UsuarioDtoResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -69,5 +70,14 @@ public interface PoliticaRestauranteController<R extends PoliticaDtoRequest, S e
 
   @GetMapping(path = "/{idRestaurante}/produtos/{idProduto}")
   ResponseEntity<ProdutoDtoResponse> buscarProdutoPorIdNoRestaurantePorId(I idRestaurante, I idProduto);
+
+  @GetMapping(path = "/{idRestaurante}/usuarios")
+  ResponseEntity<Set<UsuarioDtoResponse>> consultarUsuariosDeRestaurantePorId(I idRestaurante);
+
+  @PutMapping(path = "/{idRestaurante}/usuarios/{idUsuario}")
+  ResponseEntity<S> associarNoRestaurantePorIdUmUsuarioPorId(I idRestaurante, I idUsuario);
+
+  @DeleteMapping(path = "/{idRestaurante}/usuarios/{idUsuario}")
+  ResponseEntity<?> removerDoRestaurantePorIdUmUsuarioPorId(I idRestaurante, I idUsuario);
 }
 

@@ -1,14 +1,20 @@
 package io.algafoodapi.presentation.controller;
 
+import io.algafoodapi.business.model.Grupo;
+import io.algafoodapi.business.model.Usuario;
+import io.algafoodapi.business.service.PoliticaCrudBaseService;
+import io.algafoodapi.business.service.PoliticaUsuarioService;
+import io.algafoodapi.presentation.dto.request.GrupoAtualizarDtoRequest;
+import io.algafoodapi.presentation.dto.request.GrupoDtoRequest;
+import io.algafoodapi.presentation.dto.request.GrupoPesquisarDtoRequest;
 import io.algafoodapi.presentation.dto.request.UsuarioAtualizarDtoRequest;
 import io.algafoodapi.presentation.dto.request.UsuarioDtoRequest;
 import io.algafoodapi.presentation.dto.request.UsuarioPesquisarDtoRequest;
 import io.algafoodapi.presentation.dto.request.UsuarioTrocarSenhaDtoRequest;
+import io.algafoodapi.presentation.dto.response.GrupoDtoResponse;
 import io.algafoodapi.presentation.dto.response.UsuarioDtoResponse;
 import io.algafoodapi.presentation.mapper.PoliticaMapper;
-import io.algafoodapi.business.model.Usuario;
-import io.algafoodapi.business.service.PoliticaCrudBaseService;
-import io.algafoodapi.business.service.PoliticaUsuarioService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,8 +27,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import jakarta.validation.Valid;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = {"/v1/usuarios"})
@@ -38,6 +45,10 @@ public final class UsuarioControllerImpl implements PoliticaCrudBaseController<U
 
     @Autowired
     private PoliticaUsuarioService<UsuarioTrocarSenhaDtoRequest, Long, String> usuarioService;
+
+    @Autowired
+    private PoliticaMapper<GrupoDtoRequest, GrupoDtoResponse, GrupoPesquisarDtoRequest,
+        GrupoAtualizarDtoRequest, Grupo, Long> grupoMapper;
 
     @Override
     public ResponseEntity<UsuarioDtoResponse> cadastrar(@RequestBody @Valid final UsuarioDtoRequest dtoRequest,
@@ -104,6 +115,46 @@ public final class UsuarioControllerImpl implements PoliticaCrudBaseController<U
         return ResponseEntity
             .ok()
             .body(response);
+    }
+
+    @Override
+    public ResponseEntity<Set<GrupoDtoResponse>> consultarGruposPorIdDeUsuario(
+        @PathVariable(name = "idUsuario") final Long idUsuario) {
+
+        var response = this.usuarioService.consultarGruposPorIdDeUsuario(idUsuario)
+            .stream()
+            .map(this.grupoMapper::converterEntidadeParaDtoResponse)
+            .collect(Collectors.toSet());
+
+        return ResponseEntity
+            .ok()
+            .body(response);
+    }
+
+    @Override
+    public ResponseEntity<UsuarioDtoResponse> associarNoUsuarioPorIdUmGrupoPorId(
+        @PathVariable(name = "idUsuario") final Long idUsuario,
+        @PathVariable(name = "idGrupo") final Long idGrupo) {
+
+        var response = Optional.of(this.usuarioService.associarNoUsuarioPorIdUmGrupoPorId(idUsuario, idGrupo))
+            .map(this.mapper::converterEntidadeParaDtoResponse)
+            .orElseThrow();
+
+        return ResponseEntity
+            .ok()
+            .body(response);
+    }
+
+    @Override
+    public ResponseEntity<?> removerDoUsuarioPorIdUmGrupoPorId(
+        @PathVariable(name = "idUsuario") final Long idUsuario,
+        @PathVariable(name = "idGrupo") final Long idGrupo) {
+
+        this.usuarioService.removerDoUsuarioPorIdUmGrupoPorId(idUsuario, idGrupo);
+
+        return ResponseEntity
+            .noContent()
+            .build();
     }
 }
 

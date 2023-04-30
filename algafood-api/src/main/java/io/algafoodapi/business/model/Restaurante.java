@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -78,6 +79,14 @@ public final class Restaurante implements PoliticaEntidade<Long>, Serializable {
 
     @OneToMany(mappedBy = "restaurante", fetch = FetchType.LAZY)
     private List<Pedido> pedidos = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(name = "restaurantes_usuarios",
+        joinColumns = @JoinColumn(name = "restaurante_id", referencedColumnName = "id", columnDefinition = "BIGINT",
+            nullable = false, foreignKey = @ForeignKey(name = "fk_restaurantes_usuarios_restaurante_id")),
+        inverseJoinColumns = @JoinColumn(name = "usuario_id", referencedColumnName = "id", columnDefinition = "BIGINT",
+            nullable = false, foreignKey = @ForeignKey(name = "fk_restaurantes_usuarios_usuario_id")))
+    private Set<Usuario> usuarios = new HashSet<>();
 
     @Embedded
     private Endereco endereco;
