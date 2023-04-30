@@ -1,6 +1,7 @@
 package io.algafoodapi.business.model;
 
 import io.algafoodapi.business.model.enuns.StatusPedidoEnum;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -37,7 +38,7 @@ import java.util.List;
 @Setter
 @ToString
 @EqualsAndHashCode(of = "id")
-public final class Pedido implements Serializable {
+public final class Pedido implements PoliticaEntidade<Long>, Serializable {
 
     public static final long serialVersionUID = 1L;
 
@@ -45,6 +46,9 @@ public final class Pedido implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
+
+    @Transient
+    private String nome;
 
     @Column(name = "subtotal", columnDefinition = "decimal(10.2)", nullable = false)
     private BigDecimal subtotal;
@@ -70,7 +74,7 @@ public final class Pedido implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status_pedido", nullable = false)
-    private StatusPedidoEnum statusPedido;
+    private StatusPedidoEnum statusPedido = StatusPedidoEnum.CRIADO;
 
     @OneToMany(mappedBy = "pedido")
     private List<ItemPedido> itensPedido = new ArrayList<>();
