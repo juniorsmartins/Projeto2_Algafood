@@ -47,6 +47,12 @@ public interface PoliticaRestauranteController<R extends PoliticaDtoRequest, S e
   @DeleteMapping(path = "/{id}/ativos")
   ResponseEntity inativar(I id);
 
+  @PutMapping(path = "/ativacoes")
+  ResponseEntity ativarMultiplos(List<I> idsRestaurantes);
+
+  @DeleteMapping(path = "/ativacoes")
+  ResponseEntity inativarMultiplos(List<I> idsRestaurantes);
+
   @PutMapping(path = "/{id}/abertura")
   ResponseEntity abertura(I id);
 

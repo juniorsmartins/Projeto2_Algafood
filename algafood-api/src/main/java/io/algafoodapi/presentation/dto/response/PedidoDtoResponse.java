@@ -2,6 +2,8 @@ package io.algafoodapi.presentation.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
 import io.algafoodapi.business.model.enuns.StatusPedidoEnum;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -42,6 +44,7 @@ public final class PedidoDtoResponse implements PoliticaDtoResponse<Long>, Seria
 
     private OffsetDateTime dataEntrega;
 
+    @Enumerated(EnumType.STRING)
     private StatusPedidoEnum statusPedido;
 
 //    private List<ItemPedido> itensPedido = new ArrayList<>();

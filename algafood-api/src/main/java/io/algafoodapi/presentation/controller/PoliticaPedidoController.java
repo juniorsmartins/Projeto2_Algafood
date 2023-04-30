@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 public interface PoliticaPedidoController<R extends PoliticaDtoRequest, S extends PoliticaDtoResponse<I>, I> {
 
-  @GetMapping
-  MappingJacksonValue listar(String campos);
+  @GetMapping(path = {"/listar-campos-escolhidos"})
+  MappingJacksonValue listarCamposEscolhidos(String campos);
 }
 
