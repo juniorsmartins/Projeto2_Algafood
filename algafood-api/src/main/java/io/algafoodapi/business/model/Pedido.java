@@ -1,6 +1,7 @@
 package io.algafoodapi.business.model;
 
 import io.algafoodapi.business.model.enuns.StatusPedidoEnum;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -79,7 +80,7 @@ public final class Pedido implements PoliticaEntidade<Long>, Serializable {
     @OneToMany(mappedBy = "pedido")
     private List<ItemPedido> itensPedido = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "forma_pagamento_id", referencedColumnName = "id", nullable = false)
     private FormaPagamento formaPagamento;
 
