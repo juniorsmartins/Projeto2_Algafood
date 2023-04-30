@@ -1,18 +1,18 @@
 package io.algafoodapi.presentation.mapper;
 
+import io.algafoodapi.business.model.Usuario;
 import io.algafoodapi.presentation.dto.request.UsuarioAtualizarDtoRequest;
 import io.algafoodapi.presentation.dto.request.UsuarioDtoRequest;
 import io.algafoodapi.presentation.dto.request.UsuarioPesquisarDtoRequest;
 import io.algafoodapi.presentation.dto.response.UsuarioDtoResponse;
-import io.algafoodapi.business.model.Usuario;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Service
+@Component
 public final class UsuarioMapper implements PoliticaMapper<UsuarioDtoRequest, UsuarioDtoResponse,
     UsuarioPesquisarDtoRequest, UsuarioAtualizarDtoRequest, Usuario, Long> {
 
