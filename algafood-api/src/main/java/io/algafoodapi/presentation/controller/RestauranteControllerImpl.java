@@ -229,6 +229,26 @@ public final class RestauranteControllerImpl implements PoliticaCrudBaseControll
     }
 
     @Override
+    public ResponseEntity ativarMultiplos(@RequestBody final List<Long> idsRestaurantes) {
+
+        this.restauranteService.ativar(idsRestaurantes);
+
+        return ResponseEntity
+            .noContent()
+            .build();
+    }
+
+    @Override
+    public ResponseEntity inativarMultiplos(@RequestBody final List<Long> idsRestaurantes) {
+
+        this.restauranteService.inativar(idsRestaurantes);
+
+        return ResponseEntity
+            .noContent()
+            .build();
+    }
+
+    @Override
     public ResponseEntity abertura(@PathVariable(name = "id") final Long idRestaurante) {
 
         this.restauranteService.abertura(idRestaurante);
