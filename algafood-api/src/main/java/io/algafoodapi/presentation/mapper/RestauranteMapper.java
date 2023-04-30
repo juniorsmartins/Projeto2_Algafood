@@ -5,6 +5,7 @@ import io.algafoodapi.presentation.dto.request.RestauranteAtualizarDtoRequest;
 import io.algafoodapi.presentation.dto.request.RestauranteDtoRequest;
 import io.algafoodapi.presentation.dto.request.RestaurantePesquisarDtoRequest;
 import io.algafoodapi.presentation.dto.response.RestauranteDtoResponse;
+import io.algafoodapi.presentation.dto.response.RestauranteResumoDtoResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,7 +15,7 @@ import java.util.List;
 
 @Component
 public final class RestauranteMapper implements PoliticaMapper<RestauranteDtoRequest, RestauranteDtoResponse,
-    RestaurantePesquisarDtoRequest, RestauranteAtualizarDtoRequest, Restaurante, Long> {
+    RestaurantePesquisarDtoRequest, RestauranteAtualizarDtoRequest, RestauranteResumoDtoResponse, Restaurante, Long> {
 
     @Autowired
     private ModelMapper modelMapper;
@@ -47,6 +48,18 @@ public final class RestauranteMapper implements PoliticaMapper<RestauranteDtoReq
     @Override
     public List<RestauranteDtoResponse> converterListaDeEntidadesParaListaDeDtoResponse(List<Restaurante> entidades) {
         return entidades.stream().map(this::converterEntidadeParaDtoResponse).toList();
+    }
+
+    @Override
+    public RestauranteResumoDtoResponse converterEntidadeParaResumoDtoResponse(Restaurante entidade) {
+        return this.modelMapper.map(entidade, RestauranteResumoDtoResponse.class);
+    }
+
+    @Override
+    public List<RestauranteResumoDtoResponse> converterListaDeEntidadesParaListaDeResumoDtoResponse(List<Restaurante> entidades) {
+        return entidades.stream()
+            .map(this::converterEntidadeParaResumoDtoResponse)
+            .toList();
     }
 
     public Restaurante converterPesquisarDtoRequestParaEntidade(RestaurantePesquisarDtoRequest dtoRequest) {

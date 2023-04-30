@@ -5,6 +5,7 @@ import io.algafoodapi.presentation.dto.request.PermissaoAtualizarDtoRequest;
 import io.algafoodapi.presentation.dto.request.PermissaoDtoRequest;
 import io.algafoodapi.presentation.dto.request.PermissaoPesquisarDtoRequest;
 import io.algafoodapi.presentation.dto.response.PermissaoDtoResponse;
+import io.algafoodapi.presentation.dto.response.PermissaoResumoDtoResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,7 +15,7 @@ import java.util.List;
 
 @Component
 public final class PermissaoMapper implements PoliticaMapper<PermissaoDtoRequest, PermissaoDtoResponse,
-    PermissaoPesquisarDtoRequest, PermissaoAtualizarDtoRequest, Permissao, Long> {
+    PermissaoPesquisarDtoRequest, PermissaoAtualizarDtoRequest, PermissaoResumoDtoResponse, Permissao, Long> {
 
     @Autowired
     private ModelMapper modelMapper;
@@ -48,6 +49,18 @@ public final class PermissaoMapper implements PoliticaMapper<PermissaoDtoRequest
     public List<PermissaoDtoResponse> converterListaDeEntidadesParaListaDeDtoResponse(List<Permissao> entidades) {
         return entidades.stream()
             .map(this::converterEntidadeParaDtoResponse)
+            .toList();
+    }
+
+    @Override
+    public PermissaoResumoDtoResponse converterEntidadeParaResumoDtoResponse(Permissao entidade) {
+        return this.modelMapper.map(entidade, PermissaoResumoDtoResponse.class);
+    }
+
+    @Override
+    public List<PermissaoResumoDtoResponse> converterListaDeEntidadesParaListaDeResumoDtoResponse(List<Permissao> entidades) {
+        return entidades.stream()
+            .map(this::converterEntidadeParaResumoDtoResponse)
             .toList();
     }
 }
