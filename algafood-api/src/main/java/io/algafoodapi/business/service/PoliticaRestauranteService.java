@@ -27,6 +27,10 @@ public interface PoliticaRestauranteService<R, I> {
 
   void inativar(I id);
 
+  void ativar(List<Long> idsRestaurantes);
+
+  void inativar(List<Long> idsRestaurantes);
+
   void abertura(I id);
 
   void fechamento(I id);

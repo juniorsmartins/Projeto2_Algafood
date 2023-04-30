@@ -203,7 +203,7 @@ public class RestauranteServiceImpl implements PoliticaCrudBaseService<Restauran
         return restaurantes;
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
+    @Transactional
     @Override
     public void ativar(final Long idRestaurante) {
         this.restauranteRepository.findById(idRestaurante)
@@ -214,7 +214,7 @@ public class RestauranteServiceImpl implements PoliticaCrudBaseService<Restauran
             .orElseThrow(() -> new RestauranteNaoEncontradoException(idRestaurante));
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
+    @Transactional
     @Override
     public void inativar(final Long idRestaurante) {
         this.restauranteRepository.findById(idRestaurante)
@@ -223,6 +223,18 @@ public class RestauranteServiceImpl implements PoliticaCrudBaseService<Restauran
                 return restaurante;
             })
             .orElseThrow(() -> new RestauranteNaoEncontradoException(idRestaurante));
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
+    @Override
+    public void ativar(final List<Long> idsRestaurantes) {
+        idsRestaurantes.forEach(this::ativar);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
+    @Override
+    public void inativar(final List<Long> idsRestaurantes) {
+        idsRestaurantes.forEach(this::inativar);
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)

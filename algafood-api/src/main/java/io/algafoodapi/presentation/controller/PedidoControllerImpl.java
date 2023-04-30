@@ -2,24 +2,47 @@ package io.algafoodapi.presentation.controller;
 
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import io.algafoodapi.business.model.Pedido;
+import io.algafoodapi.business.service.PoliticaCrudBaseService;
 import io.algafoodapi.business.service.PoliticaPedidoService;
+import io.algafoodapi.presentation.dto.request.PedidoAtualizarDtoRequest;
 import io.algafoodapi.presentation.dto.request.PedidoDtoRequest;
+import io.algafoodapi.presentation.dto.request.PedidoPesquisarDtoRequest;
 import io.algafoodapi.presentation.dto.response.PedidoDtoResponse;
+import io.algafoodapi.presentation.mapper.PoliticaMapper;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/v1/pedidos")
-public final class PedidoControllerImpl implements PoliticaPedidoController<PedidoDtoRequest, PedidoDtoResponse, Long> {
+public final class PedidoControllerImpl implements PoliticaCrudBaseController<PedidoDtoRequest, PedidoDtoResponse,
+    PedidoPesquisarDtoRequest, PedidoAtualizarDtoRequest, Long>, PoliticaPedidoController<PedidoDtoRequest, PedidoDtoResponse, Long> {
+
+  @Autowired
+  private PoliticaMapper<PedidoDtoRequest, PedidoDtoResponse, PedidoPesquisarDtoRequest,
+      PedidoAtualizarDtoRequest, Pedido, Long> mapper;
+
+  @Autowired
+  private PoliticaCrudBaseService<Pedido, Long> pedidoCrudService;
 
   @Autowired
   private PoliticaPedidoService service;
 
   @Override
-  public MappingJacksonValue listar(@RequestParam(required = false) final String campos) {
+  public MappingJacksonValue listarCamposEscolhidos(@RequestParam(required = false) final String campos) {
 
     var pedidosDtoResponse = this.service.listar();
     MappingJacksonValue pedidosEnvelopados = new MappingJacksonValue(pedidosDtoResponse);
@@ -35,6 +58,49 @@ public final class PedidoControllerImpl implements PoliticaPedidoController<Pedi
     pedidosEnvelopados.setFilters(provedorDeFiltro);
 
     return pedidosEnvelopados;
+  }
+
+  @Override
+  public ResponseEntity<PedidoDtoResponse> cadastrar(
+      @RequestBody @Valid final PedidoDtoRequest dtoRequest, final UriComponentsBuilder uriComponentsBuilder) {
+
+    var response = Optional.of(dtoRequest)
+        .map(this.mapper::converterDtoRequestParaEntidade)
+        .map(this.pedidoCrudService::cadastrar)
+        .map(this.mapper::converterEntidadeParaDtoResponse)
+        .orElseThrow();
+
+    return ResponseEntity
+        .created(uriComponentsBuilder
+            .path("/v1/pedidos/{id}")
+            .buildAndExpand(response.getId())
+            .toUri())
+        .body(response);
+  }
+
+  @Override
+  public ResponseEntity<PedidoDtoResponse> atualizar(PedidoAtualizarDtoRequest dtoRequest) {
+    return null;
+  }
+
+  @Override
+  public ResponseEntity<Page<PedidoDtoResponse>> pesquisar(final PedidoPesquisarDtoRequest dtoRequest,
+   @PageableDefault(sort = "id", direction = Sort.Direction.DESC, page = 0, size = 10) final Pageable paginacao) {
+
+    var response = Optional.of(dtoRequest)
+        .map(this.mapper::converterPesquisarDtoRequestParaEntidade)
+        .map(pedido -> this.pedidoCrudService.pesquisar(pedido, paginacao))
+        .map(this.mapper::converterPaginaDeEntidadesParaPaginaDeDtoResponse)
+        .orElseThrow();
+
+    return ResponseEntity
+        .ok()
+        .body(response);
+  }
+
+  @Override
+  public ResponseEntity deletar(Long id) {
+    return null;
   }
 }
 
