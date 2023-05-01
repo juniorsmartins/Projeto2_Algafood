@@ -51,13 +51,13 @@ public final class Pedido implements PoliticaEntidade<Long>, Serializable {
     @Transient
     private String nome;
 
-    @Column(name = "subtotal", columnDefinition = "decimal(10.2)", nullable = false)
+    @Column(name = "subtotal", columnDefinition = "decimal(10.2)")
     private BigDecimal subtotal;
 
-    @Column(name = "taxa_frete", columnDefinition = "decimal(10.2) default 0.00", nullable = false)
+    @Column(name = "taxa_frete", columnDefinition = "decimal(10.2) default 0.00")
     private BigDecimal taxaFrete = BigDecimal.ZERO;
 
-    @Column(name = "valor_total", columnDefinition = "decimal(10.2)", nullable = false)
+    @Column(name = "valor_total", columnDefinition = "decimal(10.2)")
     private BigDecimal valorTotal;
 
     @CreationTimestamp
@@ -89,7 +89,7 @@ public final class Pedido implements PoliticaEntidade<Long>, Serializable {
     private Restaurante restaurante;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "usuario_id", referencedColumnName = "id")
     private Usuario usuario;
 
     @Embedded

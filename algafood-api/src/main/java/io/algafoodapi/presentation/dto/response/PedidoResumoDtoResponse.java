@@ -1,5 +1,6 @@
 package io.algafoodapi.presentation.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -19,6 +20,7 @@ import java.time.OffsetDateTime;
 @Setter
 @ToString
 @EqualsAndHashCode(of = "subtotal")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public final class PedidoResumoDtoResponse implements PoliticaResumoDtoResponse<Long>, Serializable {
 
     private static final long serialVersionUID = 1L;

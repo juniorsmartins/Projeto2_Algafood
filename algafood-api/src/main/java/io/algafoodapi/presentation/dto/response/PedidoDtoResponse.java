@@ -1,6 +1,7 @@
 package io.algafoodapi.presentation.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.algafoodapi.business.model.enuns.StatusPedidoEnum;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -15,6 +16,8 @@ import lombok.ToString;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @JsonFilter("pedidoFilter")
 @Builder
@@ -24,6 +27,7 @@ import java.time.OffsetDateTime;
 @Setter
 @ToString
 @EqualsAndHashCode(of = "id")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public final class PedidoDtoResponse implements PoliticaDtoResponse<Long>, Serializable {
 
     public static final long serialVersionUID = 1L;
@@ -47,13 +51,13 @@ public final class PedidoDtoResponse implements PoliticaDtoResponse<Long>, Seria
     @Enumerated(EnumType.STRING)
     private StatusPedidoEnum statusPedido;
 
-//    private List<ItemPedido> itensPedido = new ArrayList<>();
+    private List<ItemPedidoDtoResponse> itensPedido = new ArrayList<>();
 
     private FormaPagamentoDtoResponse formaPagamento;
 
     private RestauranteDtoResponse restaurante;
 
-//    private Usuario usuario;
+    private UsuarioDtoResponse usuario;
 
     private EnderecoDtoResponse enderecoEntrega;
 }
