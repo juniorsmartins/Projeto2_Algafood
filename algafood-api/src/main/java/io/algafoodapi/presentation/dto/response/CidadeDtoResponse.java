@@ -25,6 +25,8 @@ public final class CidadeDtoResponse implements Serializable {
 
         private Long id;
 
+        private String codigo;
+
         private String nome;
 
         private EstadoDtoResponse estado;

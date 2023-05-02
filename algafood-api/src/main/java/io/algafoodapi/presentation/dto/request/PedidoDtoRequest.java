@@ -27,11 +27,11 @@ public final class PedidoDtoRequest implements PoliticaDtoRequest, Serializable 
 
     @NotNull
     @Valid
-    private RestauranteIdDtoRequest restaurante;
+    private UsuarioIdDtoRequest usuario;
 
     @NotNull
     @Valid
-    private UsuarioIdDtoRequest usuario;
+    private RestauranteIdDtoRequest restaurante;
 
     @NotNull
     @Valid

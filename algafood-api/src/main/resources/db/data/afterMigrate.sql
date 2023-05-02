@@ -31,13 +31,13 @@ INSERT INTO estados(id, nome) VALUES
     (6, 'Minas Gerais')
     On CONFLICT(id) DO NOTHING;
 
-INSERT INTO cidades(id, nome, estado_id) VALUES
-    (1, 'Porto Alegre', 1),
-    (2, 'Dom Pedrito', 1),
-    (3, 'São José', 2),
-    (4, 'Toledo', 3),
-    (5, 'Cuiabá', 5),
-    (6, 'Iturama', 6)
+INSERT INTO cidades(id, codigo, nome, estado_id) VALUES
+    (1, '0639046e-8d9b-449c-92e8-c737a880aea5', 'Porto Alegre', 1),
+    (2, '23cfed16-768c-4943-b164-91da460af7ba', 'Dom Pedrito', 1),
+    (3, '1fca0999-914a-4fce-83e5-062ab056b9e0', 'São José', 2),
+    (4, gen_random_uuid(), 'Toledo', 3),
+    (5, gen_random_uuid(), 'Cuiabá', 5),
+    (6, gen_random_uuid(), 'Iturama', 6)
     On CONFLICT(id) DO NOTHING;
 
 INSERT INTO cozinhas(id, nome) VALUES
