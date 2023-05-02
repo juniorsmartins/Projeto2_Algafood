@@ -6,6 +6,7 @@ import io.algafoodapi.presentation.dto.request.PermissaoAtualizarDtoRequest;
 import io.algafoodapi.presentation.dto.request.PermissaoDtoRequest;
 import io.algafoodapi.presentation.dto.request.PermissaoPesquisarDtoRequest;
 import io.algafoodapi.presentation.dto.response.PermissaoDtoResponse;
+import io.algafoodapi.presentation.dto.response.PermissaoResumoDtoResponse;
 import io.algafoodapi.presentation.mapper.PoliticaMapper;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ public final class PermissaoControllerImpl implements PoliticaCrudBaseController
 
   @Autowired
   private PoliticaMapper<PermissaoDtoRequest, PermissaoDtoResponse, PermissaoPesquisarDtoRequest,
-      PermissaoAtualizarDtoRequest, Permissao, Long> mapper;
+      PermissaoAtualizarDtoRequest, PermissaoResumoDtoResponse, Permissao, Long> mapper;
 
   @Autowired
   private PoliticaCrudBaseService<Permissao, Long> service;

@@ -12,7 +12,9 @@ import io.algafoodapi.presentation.dto.request.UsuarioDtoRequest;
 import io.algafoodapi.presentation.dto.request.UsuarioPesquisarDtoRequest;
 import io.algafoodapi.presentation.dto.request.UsuarioTrocarSenhaDtoRequest;
 import io.algafoodapi.presentation.dto.response.GrupoDtoResponse;
+import io.algafoodapi.presentation.dto.response.GrupoResumoDtoResponse;
 import io.algafoodapi.presentation.dto.response.UsuarioDtoResponse;
+import io.algafoodapi.presentation.dto.response.UsuarioResumoDtoResponse;
 import io.algafoodapi.presentation.mapper.PoliticaMapper;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +40,7 @@ public final class UsuarioControllerImpl implements PoliticaCrudBaseController<U
 
     @Autowired
     private PoliticaMapper<UsuarioDtoRequest, UsuarioDtoResponse, UsuarioPesquisarDtoRequest,
-                UsuarioAtualizarDtoRequest, Usuario, Long> mapper;
+                UsuarioAtualizarDtoRequest, UsuarioResumoDtoResponse, Usuario, Long> mapper;
 
     @Autowired
     private PoliticaCrudBaseService<Usuario, Long> crudService;
@@ -48,7 +50,7 @@ public final class UsuarioControllerImpl implements PoliticaCrudBaseController<U
 
     @Autowired
     private PoliticaMapper<GrupoDtoRequest, GrupoDtoResponse, GrupoPesquisarDtoRequest,
-        GrupoAtualizarDtoRequest, Grupo, Long> grupoMapper;
+        GrupoAtualizarDtoRequest, GrupoResumoDtoResponse, Grupo, Long> grupoMapper;
 
     @Override
     public ResponseEntity<UsuarioDtoResponse> cadastrar(@RequestBody @Valid final UsuarioDtoRequest dtoRequest,

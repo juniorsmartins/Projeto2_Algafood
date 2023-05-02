@@ -5,6 +5,7 @@ import io.algafoodapi.presentation.dto.request.PedidoAtualizarDtoRequest;
 import io.algafoodapi.presentation.dto.request.PedidoDtoRequest;
 import io.algafoodapi.presentation.dto.request.PedidoPesquisarDtoRequest;
 import io.algafoodapi.presentation.dto.response.PedidoDtoResponse;
+import io.algafoodapi.presentation.dto.response.PedidoResumoDtoResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,7 +15,7 @@ import java.util.List;
 
 @Service
 public final class PedidoMapper implements PoliticaMapper<PedidoDtoRequest, PedidoDtoResponse,
-    PedidoPesquisarDtoRequest, PedidoAtualizarDtoRequest, Pedido, Long> {
+    PedidoPesquisarDtoRequest, PedidoAtualizarDtoRequest, PedidoResumoDtoResponse, Pedido, Long> {
 
   @Autowired
   private ModelMapper modelMapper;
@@ -25,8 +26,8 @@ public final class PedidoMapper implements PoliticaMapper<PedidoDtoRequest, Pedi
   }
 
   @Override
-  public PedidoDtoResponse converterEntidadeParaDtoResponse(Pedido entidade) {
-    return this.modelMapper.map(entidade, PedidoDtoResponse.class);
+  public PedidoDtoResponse converterEntidadeParaDtoResponse(Pedido pedido) {
+    return this.modelMapper.map(pedido, PedidoDtoResponse.class);
   }
 
   @Override
@@ -48,6 +49,19 @@ public final class PedidoMapper implements PoliticaMapper<PedidoDtoRequest, Pedi
   public List<PedidoDtoResponse> converterListaDeEntidadesParaListaDeDtoResponse(List<Pedido> entidades) {
     return entidades.stream()
         .map(this::converterEntidadeParaDtoResponse)
+        .toList();
+  }
+
+  @Override
+  public PedidoResumoDtoResponse converterEntidadeParaResumoDtoResponse(Pedido pedido) {
+    return this.modelMapper.map(pedido, PedidoResumoDtoResponse.class);
+  }
+
+  @Override
+  public List<PedidoResumoDtoResponse> converterListaDeEntidadesParaListaDeResumoDtoResponse(List<Pedido> entidades) {
+
+    return entidades.stream()
+        .map(this::converterEntidadeParaResumoDtoResponse)
         .toList();
   }
 }

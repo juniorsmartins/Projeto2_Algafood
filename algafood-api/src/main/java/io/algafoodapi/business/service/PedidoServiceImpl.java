@@ -1,10 +1,10 @@
 package io.algafoodapi.business.service;
 
+import io.algafoodapi.business.exception.http404.PedidoNaoEncontradoException;
 import io.algafoodapi.business.model.Pedido;
 import io.algafoodapi.business.utils.ServiceUtils;
 import io.algafoodapi.infraestrutura.repository.PoliticaCrudBaseRepository;
 import io.algafoodapi.infraestrutura.repository.PoliticaPedidoRepository;
-import io.algafoodapi.presentation.dto.response.PedidoDtoResponse;
 import io.algafoodapi.presentation.mapper.PedidoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -32,13 +32,11 @@ public class PedidoServiceImpl implements PoliticaCrudBaseService<Pedido, Long>,
   @Autowired
   private ServiceUtils serviceUtils;
 
+  @Transactional(readOnly = true)
   @Override
-  public List<PedidoDtoResponse> listar() {
+  public List<Pedido> listar() {
 
-    return this.pedidoRepository.buscarTodos()
-      .stream()
-      .map(this.mapper::converterEntidadeParaDtoResponse)
-      .toList();
+    return this.pedidoRepository.buscarTodos();
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
@@ -50,6 +48,7 @@ public class PedidoServiceImpl implements PoliticaCrudBaseService<Pedido, Long>,
         .orElseThrow();
   }
 
+  @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
   @Override
   public Pedido atualizar(Pedido entidade) {
     return null;
@@ -63,9 +62,16 @@ public class PedidoServiceImpl implements PoliticaCrudBaseService<Pedido, Long>,
     return this.pedidoCrudRepository.pesquisar(condicoesDePesquisa, paginacao);
   }
 
+  @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
   @Override
-  public void deletar(Long id) {
+  public void deletar(final Long id) {
 
+    this.pedidoCrudRepository.consultarPorId(id)
+        .map(pedido -> {
+          this.pedidoCrudRepository.deletar(pedido);
+          return true;
+        })
+        .orElseThrow(() -> new PedidoNaoEncontradoException(id));
   }
 }
 

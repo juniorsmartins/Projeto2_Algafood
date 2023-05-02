@@ -1,6 +1,5 @@
 package io.algafoodapi.presentation.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -18,17 +17,12 @@ import java.io.Serializable;
 @Setter
 @ToString
 @EqualsAndHashCode(of = "id")
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public final class CidadeDtoResponse implements Serializable {
+public final class GrupoResumoDtoResponse implements PoliticaResumoDtoResponse<Long>, Serializable {
 
-        private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-        private Long id;
+    private Long id;
 
-        private String codigo;
-
-        private String nome;
-
-        private EstadoDtoResponse estado;
+    private String nome;
 }
 

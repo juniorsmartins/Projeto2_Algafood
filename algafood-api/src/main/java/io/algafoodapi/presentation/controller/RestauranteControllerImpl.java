@@ -21,9 +21,13 @@ import io.algafoodapi.presentation.dto.request.UsuarioAtualizarDtoRequest;
 import io.algafoodapi.presentation.dto.request.UsuarioDtoRequest;
 import io.algafoodapi.presentation.dto.request.UsuarioPesquisarDtoRequest;
 import io.algafoodapi.presentation.dto.response.FormaPagamentoDtoResponse;
+import io.algafoodapi.presentation.dto.response.FormaPagamentoResumoDtoResponse;
 import io.algafoodapi.presentation.dto.response.ProdutoDtoResponse;
+import io.algafoodapi.presentation.dto.response.ProdutoResumoDtoResponse;
 import io.algafoodapi.presentation.dto.response.RestauranteDtoResponse;
+import io.algafoodapi.presentation.dto.response.RestauranteResumoDtoResponse;
 import io.algafoodapi.presentation.dto.response.UsuarioDtoResponse;
+import io.algafoodapi.presentation.dto.response.UsuarioResumoDtoResponse;
 import io.algafoodapi.presentation.mapper.PoliticaMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -54,19 +58,19 @@ public final class RestauranteControllerImpl implements PoliticaCrudBaseControll
 
     @Autowired
     private PoliticaMapper<RestauranteDtoRequest, RestauranteDtoResponse, RestaurantePesquisarDtoRequest,
-        RestauranteAtualizarDtoRequest, Restaurante, Long> restauranteMapper;
+        RestauranteAtualizarDtoRequest, RestauranteResumoDtoResponse, Restaurante, Long> restauranteMapper;
 
     @Autowired
     private PoliticaMapper<FormaPagamentoDtoRequest, FormaPagamentoDtoResponse, FormaPagamentoPesquisarDtoRequest,
-        FormaPagamentoAtualizarDtoRequest, FormaPagamento, Long> formaPagamentoMapper;
+        FormaPagamentoAtualizarDtoRequest, FormaPagamentoResumoDtoResponse, FormaPagamento, Long> formaPagamentoMapper;
 
     @Autowired
     private PoliticaMapper<ProdutoDtoRequest, ProdutoDtoResponse, ProdutoPesquisarDtoRequest,
-        ProdutoAtualizarDtoRequest, Produto, Long> produtoMapper;
+        ProdutoAtualizarDtoRequest, ProdutoResumoDtoResponse, Produto, Long> produtoMapper;
 
     @Autowired
     private PoliticaMapper<UsuarioDtoRequest, UsuarioDtoResponse, UsuarioPesquisarDtoRequest,
-        UsuarioAtualizarDtoRequest, Usuario, Long> usuarioMapper;
+        UsuarioAtualizarDtoRequest, UsuarioResumoDtoResponse, Usuario, Long> usuarioMapper;
 
     @Autowired
     private PoliticaCrudBaseService<Restaurante, Long> crudService;

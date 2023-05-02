@@ -1,11 +1,11 @@
 package io.algafoodapi.business.service;
 
-import io.algafoodapi.presentation.dto.response.PedidoDtoResponse;
+import io.algafoodapi.business.model.Pedido;
 
 import java.util.List;
 
 public interface PoliticaPedidoService {
 
-  List<PedidoDtoResponse> listar();
+  List<Pedido> listar();
 }
 
