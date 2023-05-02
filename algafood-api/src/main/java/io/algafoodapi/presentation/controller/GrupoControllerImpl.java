@@ -11,7 +11,9 @@ import io.algafoodapi.presentation.dto.request.PermissaoAtualizarDtoRequest;
 import io.algafoodapi.presentation.dto.request.PermissaoDtoRequest;
 import io.algafoodapi.presentation.dto.request.PermissaoPesquisarDtoRequest;
 import io.algafoodapi.presentation.dto.response.GrupoDtoResponse;
+import io.algafoodapi.presentation.dto.response.GrupoResumoDtoResponse;
 import io.algafoodapi.presentation.dto.response.PermissaoDtoResponse;
+import io.algafoodapi.presentation.dto.response.PermissaoResumoDtoResponse;
 import io.algafoodapi.presentation.mapper.PoliticaMapper;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,11 +39,11 @@ public final class GrupoControllerImpl implements PoliticaCrudBaseController<Gru
 
     @Autowired
     private PoliticaMapper<GrupoDtoRequest, GrupoDtoResponse, GrupoPesquisarDtoRequest,
-        GrupoAtualizarDtoRequest, Grupo, Long> mapper;
+        GrupoAtualizarDtoRequest, GrupoResumoDtoResponse, Grupo, Long> mapper;
 
     @Autowired
     private PoliticaMapper<PermissaoDtoRequest, PermissaoDtoResponse, PermissaoPesquisarDtoRequest,
-        PermissaoAtualizarDtoRequest, Permissao, Long> permissaoMapper;
+        PermissaoAtualizarDtoRequest, PermissaoResumoDtoResponse, Permissao, Long> permissaoMapper;
 
     @Autowired
     private PoliticaCrudBaseService<Grupo, Long> service;

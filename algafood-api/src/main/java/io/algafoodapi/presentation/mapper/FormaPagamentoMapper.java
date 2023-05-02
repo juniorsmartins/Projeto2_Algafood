@@ -5,6 +5,7 @@ import io.algafoodapi.presentation.dto.request.FormaPagamentoAtualizarDtoRequest
 import io.algafoodapi.presentation.dto.request.FormaPagamentoDtoRequest;
 import io.algafoodapi.presentation.dto.request.FormaPagamentoPesquisarDtoRequest;
 import io.algafoodapi.presentation.dto.response.FormaPagamentoDtoResponse;
+import io.algafoodapi.presentation.dto.response.FormaPagamentoResumoDtoResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,7 +15,7 @@ import java.util.List;
 
 @Component
 public final class FormaPagamentoMapper implements PoliticaMapper<FormaPagamentoDtoRequest, FormaPagamentoDtoResponse,
-    FormaPagamentoPesquisarDtoRequest, FormaPagamentoAtualizarDtoRequest, FormaPagamento, Long> {
+    FormaPagamentoPesquisarDtoRequest, FormaPagamentoAtualizarDtoRequest, FormaPagamentoResumoDtoResponse, FormaPagamento, Long> {
 
     @Autowired
     private ModelMapper modelMapper;
@@ -48,6 +49,18 @@ public final class FormaPagamentoMapper implements PoliticaMapper<FormaPagamento
     public List<FormaPagamentoDtoResponse> converterListaDeEntidadesParaListaDeDtoResponse(List<FormaPagamento> entidades) {
         return entidades.stream()
             .map(this::converterEntidadeParaDtoResponse)
+            .toList();
+    }
+
+    @Override
+    public FormaPagamentoResumoDtoResponse converterEntidadeParaResumoDtoResponse(FormaPagamento entidade) {
+        return this.modelMapper.map(entidade, FormaPagamentoResumoDtoResponse.class);
+    }
+
+    @Override
+    public List<FormaPagamentoResumoDtoResponse> converterListaDeEntidadesParaListaDeResumoDtoResponse(List<FormaPagamento> entidades) {
+        return entidades.stream()
+            .map(this::converterEntidadeParaResumoDtoResponse)
             .toList();
     }
 }

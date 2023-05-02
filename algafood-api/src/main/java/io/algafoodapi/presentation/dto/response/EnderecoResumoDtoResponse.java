@@ -17,18 +17,16 @@ import java.io.Serializable;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = {"cep", "bairro", "logradouro", "numero"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public final class CidadeDtoResponse implements Serializable {
+public final class EnderecoResumoDtoResponse implements PoliticaResumoDtoResponse<Long>, Serializable {
 
-        private static final long serialVersionUID = 1L;
+    private Long id;
 
-        private Long id;
+    private String cep;
 
-        private String codigo;
+    private String bairro;
 
-        private String nome;
-
-        private EstadoDtoResponse estado;
+    private CidadeResumoDtoResponse cidade;
 }
 

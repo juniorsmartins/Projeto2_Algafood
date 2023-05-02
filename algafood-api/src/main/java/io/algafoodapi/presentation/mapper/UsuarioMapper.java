@@ -5,6 +5,7 @@ import io.algafoodapi.presentation.dto.request.UsuarioAtualizarDtoRequest;
 import io.algafoodapi.presentation.dto.request.UsuarioDtoRequest;
 import io.algafoodapi.presentation.dto.request.UsuarioPesquisarDtoRequest;
 import io.algafoodapi.presentation.dto.response.UsuarioDtoResponse;
+import io.algafoodapi.presentation.dto.response.UsuarioResumoDtoResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,7 +15,7 @@ import java.util.List;
 
 @Component
 public final class UsuarioMapper implements PoliticaMapper<UsuarioDtoRequest, UsuarioDtoResponse,
-    UsuarioPesquisarDtoRequest, UsuarioAtualizarDtoRequest, Usuario, Long> {
+    UsuarioPesquisarDtoRequest, UsuarioAtualizarDtoRequest, UsuarioResumoDtoResponse, Usuario, Long> {
 
     @Autowired
     private ModelMapper modelMapper;
@@ -48,6 +49,18 @@ public final class UsuarioMapper implements PoliticaMapper<UsuarioDtoRequest, Us
     public List<UsuarioDtoResponse> converterListaDeEntidadesParaListaDeDtoResponse(List<Usuario> entidades) {
         return entidades.stream()
             .map(this::converterEntidadeParaDtoResponse)
+            .toList();
+    }
+
+    @Override
+    public UsuarioResumoDtoResponse converterEntidadeParaResumoDtoResponse(Usuario entidade) {
+        return this.modelMapper.map(entidade, UsuarioResumoDtoResponse.class);
+    }
+
+    @Override
+    public List<UsuarioResumoDtoResponse> converterListaDeEntidadesParaListaDeResumoDtoResponse(List<Usuario> entidades) {
+        return entidades.stream()
+            .map(this::converterEntidadeParaResumoDtoResponse)
             .toList();
     }
 }

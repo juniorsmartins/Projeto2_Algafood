@@ -1,9 +1,6 @@
-package io.algafoodapi.presentation.dto.request;
+package io.algafoodapi.presentation.dto.response;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -11,8 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.validator.constraints.Length;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Builder
@@ -22,27 +19,23 @@ import java.math.BigDecimal;
 @Setter
 @ToString
 @EqualsAndHashCode(of = "")
-public class ItemPedidoDtoRequest {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public final class ItemPedidoDtoResponse implements PoliticaDtoResponse<Long>, Serializable {
 
-  @NotNull
+  private static final long serialVersionUID = 1L;
+
+  private Long id;
+
   private Long produtoId;
 
-  @NotBlank
   private String produtoNome;
 
-  @NotNull
-  @PositiveOrZero
   private Integer quantidade;
 
-  @NotNull
-  @Positive
   private BigDecimal precoUnitario;
 
-  @NotNull
-  @Positive
   private BigDecimal precoTotal;
 
-  @Length(max = 250)
   private String observacao;
 }
 

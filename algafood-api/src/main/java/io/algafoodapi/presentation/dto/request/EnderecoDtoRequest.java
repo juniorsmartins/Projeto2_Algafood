@@ -21,7 +21,7 @@ import java.io.Serializable;
 @Setter
 @ToString
 @EqualsAndHashCode(of = {"cep", "bairro", "logradouro", "numero"})
-public final class EnderecoDtoRequest implements Serializable {
+public final class  EnderecoDtoRequest implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

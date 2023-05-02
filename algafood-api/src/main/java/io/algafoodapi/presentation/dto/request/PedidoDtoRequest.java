@@ -1,5 +1,8 @@
 package io.algafoodapi.presentation.dto.request;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -9,8 +12,6 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.time.OffsetDateTime;
 import java.util.List;
 
 @Builder
@@ -24,30 +25,25 @@ public final class PedidoDtoRequest implements PoliticaDtoRequest, Serializable 
 
     private static final long serialVersionUID = 1L;
 
-    private BigDecimal subtotal;
-
-    private BigDecimal taxaFrete;
-
-    private BigDecimal valorTotal;
-
-    private String statusPedido;
-
-    private OffsetDateTime dataHoraCriacao;
-
-    private OffsetDateTime dataConfirmacao;
-
-    private OffsetDateTime dataCancelamento;
-
-    private OffsetDateTime dataEntrega;
-
-    private RestauranteIdDtoRequest restaurante;
-
+    @NotNull
+    @Valid
     private UsuarioIdDtoRequest usuario;
 
+    @NotNull
+    @Valid
+    private RestauranteIdDtoRequest restaurante;
+
+    @NotNull
+    @Valid
     private FormaPagamentoIdDtoRequest formaPagamento;
 
+    @NotNull
+    @Size(min = 1)
+    @Valid
     private List<ItemPedidoDtoRequest> itensPedido;
 
+    @NotNull
+    @Valid
     private EnderecoDtoRequest enderecoEntrega;
 }
 

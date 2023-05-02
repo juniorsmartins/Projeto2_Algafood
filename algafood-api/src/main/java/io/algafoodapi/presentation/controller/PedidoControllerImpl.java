@@ -9,6 +9,7 @@ import io.algafoodapi.presentation.dto.request.PedidoAtualizarDtoRequest;
 import io.algafoodapi.presentation.dto.request.PedidoDtoRequest;
 import io.algafoodapi.presentation.dto.request.PedidoPesquisarDtoRequest;
 import io.algafoodapi.presentation.dto.response.PedidoDtoResponse;
+import io.algafoodapi.presentation.dto.response.PedidoResumoDtoResponse;
 import io.algafoodapi.presentation.mapper.PoliticaMapper;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +19,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -33,7 +36,7 @@ public final class PedidoControllerImpl implements PoliticaCrudBaseController<Pe
 
   @Autowired
   private PoliticaMapper<PedidoDtoRequest, PedidoDtoResponse, PedidoPesquisarDtoRequest,
-      PedidoAtualizarDtoRequest, Pedido, Long> mapper;
+      PedidoAtualizarDtoRequest, PedidoResumoDtoResponse, Pedido, Long> mapper;
 
   @Autowired
   private PoliticaCrudBaseService<Pedido, Long> pedidoCrudService;
@@ -99,8 +102,26 @@ public final class PedidoControllerImpl implements PoliticaCrudBaseController<Pe
   }
 
   @Override
-  public ResponseEntity deletar(Long id) {
-    return null;
+  public ResponseEntity deletar(@PathVariable(name = "id") final Long id) {
+
+    this.pedidoCrudService.deletar(id);
+
+    return ResponseEntity
+        .noContent()
+        .build();
+  }
+
+  @Override
+  public ResponseEntity<List<PedidoResumoDtoResponse>> listarResumido() {
+
+    var response = this.service.listar()
+        .stream()
+        .map(this.mapper::converterEntidadeParaResumoDtoResponse)
+        .toList();
+
+    return ResponseEntity
+        .ok()
+        .body(response);
   }
 }
 

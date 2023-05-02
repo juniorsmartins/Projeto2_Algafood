@@ -1,6 +1,7 @@
 package io.algafoodapi.business.model;
 
 import io.algafoodapi.business.model.enuns.StatusPedidoEnum;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -50,13 +51,13 @@ public final class Pedido implements PoliticaEntidade<Long>, Serializable {
     @Transient
     private String nome;
 
-    @Column(name = "subtotal", columnDefinition = "decimal(10.2)", nullable = false)
+    @Column(name = "subtotal", columnDefinition = "decimal(10.2)")
     private BigDecimal subtotal;
 
-    @Column(name = "taxa_frete", columnDefinition = "decimal(10.2) default 0.00", nullable = false)
+    @Column(name = "taxa_frete", columnDefinition = "decimal(10.2) default 0.00")
     private BigDecimal taxaFrete = BigDecimal.ZERO;
 
-    @Column(name = "valor_total", columnDefinition = "decimal(10.2)", nullable = false)
+    @Column(name = "valor_total", columnDefinition = "decimal(10.2)")
     private BigDecimal valorTotal;
 
     @CreationTimestamp
@@ -79,7 +80,7 @@ public final class Pedido implements PoliticaEntidade<Long>, Serializable {
     @OneToMany(mappedBy = "pedido")
     private List<ItemPedido> itensPedido = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "forma_pagamento_id", referencedColumnName = "id", nullable = false)
     private FormaPagamento formaPagamento;
 
@@ -88,7 +89,7 @@ public final class Pedido implements PoliticaEntidade<Long>, Serializable {
     private Restaurante restaurante;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "usuario_id", referencedColumnName = "id")
     private Usuario usuario;
 
     @Embedded

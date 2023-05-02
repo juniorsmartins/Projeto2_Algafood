@@ -19,16 +19,14 @@ import java.io.Serializable;
 @ToString
 @EqualsAndHashCode(of = "id")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public final class CidadeDtoResponse implements Serializable {
+public final class CidadeResumoDtoResponse implements PoliticaResumoDtoResponse<Long>, Serializable {
 
         private static final long serialVersionUID = 1L;
 
         private Long id;
 
-        private String codigo;
-
         private String nome;
 
-        private EstadoDtoResponse estado;
+        private EstadoResumoDtoResponse estado;
 }
 
