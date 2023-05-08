@@ -19,7 +19,7 @@ import java.io.Serializable;
 @ToString
 @EqualsAndHashCode(of = {"cep", "bairro", "logradouro", "numero"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public final class EnderecoResumoDtoResponse implements PoliticaResumoDtoResponse<Long>, Serializable {
+public final class EnderecoResumoDtoResponse implements PoliticaResumoDtoResponse, Serializable {
 
     private Long id;
 

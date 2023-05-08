@@ -1,3 +1,0 @@
-ALTER TABLE IF EXISTS cidades ADD codigo VARCHAR(36) NOT NULL;
-ALTER TABLE IF EXISTS cidades ADD CONSTRAINT uk_cidade_codigo UNIQUE(codigo);
-

@@ -21,7 +21,7 @@ import java.time.OffsetDateTime;
 @ToString
 @EqualsAndHashCode(of = "subtotal")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public final class PedidoResumoDtoResponse implements PoliticaResumoDtoResponse<Long>, Serializable {
+public final class PedidoResumoDtoResponse implements PoliticaResumoDtoResponse, Serializable {
 
     private static final long serialVersionUID = 1L;
 
