@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface PoliticaMapper<R extends PoliticaDtoRequest, S extends PoliticaDtoResponse<I>,
     P extends PoliticaPesquisarDtoRequest<I>, A extends PoliticaAtualizarDtoRequest<I>,
-    M extends PoliticaResumoDtoResponse<I>, E extends PoliticaEntidade<I>, I> {
+    M extends PoliticaResumoDtoResponse, E extends PoliticaEntidade<I>, I> {
 
     E converterDtoRequestParaEntidade(R dtoRequest);
 

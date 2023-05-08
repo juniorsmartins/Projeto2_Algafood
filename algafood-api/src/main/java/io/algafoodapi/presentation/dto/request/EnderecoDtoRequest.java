@@ -46,6 +46,6 @@ public final class  EnderecoDtoRequest implements Serializable {
 
     @NotNull
     @Valid
-    private CidadeIdRequest cidade;
+    private CidadeCodigoRequest cidade;
 }
 

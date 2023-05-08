@@ -20,7 +20,7 @@ import java.math.BigDecimal;
 @ToString
 @EqualsAndHashCode(of = {"id"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public final class ProdutoResumoDtoResponse implements PoliticaResumoDtoResponse<Long>, Serializable {
+public final class ProdutoResumoDtoResponse implements PoliticaResumoDtoResponse, Serializable {
 
   private static final Long serialVersionUID = 1L;
 

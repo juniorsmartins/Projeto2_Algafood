@@ -5,9 +5,10 @@ import io.algafoodapi.business.exception.http400.RequisicaoMalFormuladaException
 import io.algafoodapi.business.exception.http404.CidadeNaoEncontradaException;
 import io.algafoodapi.business.exception.http409.CidadeEmUsoException;
 import io.algafoodapi.business.model.Cidade;
-import io.algafoodapi.infraestrutura.repository.jpa.CidadeRepositoryJpa;
 import io.algafoodapi.business.ports.EstadoRepository;
+import io.algafoodapi.infraestrutura.repository.jpa.CidadeRepositoryJpa;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -21,63 +22,61 @@ import java.util.List;
 @Service
 public class CidadeService {
 
-    private final CidadeRepositoryJpa cidadeRepository;
-    private final EstadoRepository estadoRepository;
+    @Autowired
+    private CidadeRepositoryJpa cidadeRepository;
 
-    public CidadeService(final CidadeRepositoryJpa cidadeRepository, final EstadoRepository estadoRepository) {
-        this.cidadeRepository = cidadeRepository;
-        this.estadoRepository = estadoRepository;
-    }
+    @Autowired
+    private EstadoRepository estadoRepository;
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
-    public Cidade criar(Cidade cidade) {
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public Cidade cadastrar(Cidade cidade) {
 
         this.validarEstado(cidade);
         return this.cidadeRepository.save(cidade);
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
-    public Cidade atualizar(final Long idCidade, Cidade cidade) {
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public Cidade atualizar(final String codigoCidade, Cidade cidade) {
 
         this.validarEstado(cidade);
 
-        return this.cidadeRepository.findById(idCidade)
+        return this.cidadeRepository.findByCodigo(codigoCidade)
                 .map(city -> {
-                    BeanUtils.copyProperties(cidade, city, "id");
+                    BeanUtils.copyProperties(cidade, city, "id", "codigo");
                     return city;
                 })
-                .orElseThrow(() -> new CidadeNaoEncontradaException(idCidade));
+                .orElseThrow(() -> new CidadeNaoEncontradaException(codigoCidade));
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
-    public void excluirPorId(final Long idCidade) {
+    public void excluirPorCodigo(final String codigoCidade) {
 
         try {
-            this.cidadeRepository.deleteById(idCidade);
+            this.cidadeRepository.deleteByCodigo(codigoCidade);
             this.cidadeRepository.flush(); // Manda descarregar as operações antes do commit da transação
 
         } catch (EmptyResultDataAccessException dataAccessException) {
-            throw new CidadeNaoEncontradaException(idCidade);
+            throw new CidadeNaoEncontradaException(codigoCidade);
 
         } catch (DataIntegrityViolationException dataIntegrityViolationException) {
-            throw new CidadeEmUsoException(idCidade);
+            throw new CidadeEmUsoException(codigoCidade);
         }
     }
 
     @Transactional(readOnly = true)
-    public Cidade consultarPorId(final Long idCidade) {
+    public Cidade consultarPorCodigo(final String codigoCidade) {
 
-        return this.cidadeRepository.findById(idCidade)
-                .orElseThrow(() -> new CidadeNaoEncontradaException(idCidade));
+        return this.cidadeRepository.findByCodigo(codigoCidade)
+                .orElseThrow(() -> new CidadeNaoEncontradaException(codigoCidade));
     }
 
     @Transactional(readOnly = true)
     public List<Cidade> listar() {
 
         var cidades = this.cidadeRepository.findAll()
-                .stream()
-                .sorted(Comparator.comparing(Cidade::getId).reversed())
-                .toList();
+            .stream()
+            .sorted(Comparator.comparing(Cidade::getId).reversed())
+            .toList();
 
         if (cidades.isEmpty()) {
             throw new CidadeNaoEncontradaException(Constantes.NÃO_EXISTEM_CIDADES);
@@ -89,8 +88,8 @@ public class CidadeService {
     private void validarEstado(Cidade cidade) {
         var idEstado = cidade.getEstado().getId();
         var estado = this.estadoRepository.findById(idEstado)
-                .orElseThrow(() ->
-                        new RequisicaoMalFormuladaException(String.format(Constantes.ESTADO_NAO_ENCONTRADO, idEstado)));
+            .orElseThrow(() ->
+                new RequisicaoMalFormuladaException(String.format(Constantes.ESTADO_NAO_ENCONTRADO, idEstado)));
         cidade.setEstado(estado);
     }
 }
