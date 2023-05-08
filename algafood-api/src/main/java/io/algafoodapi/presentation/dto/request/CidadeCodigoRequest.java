@@ -18,13 +18,15 @@ import java.io.Serializable;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode(of = "id")
-public final class CidadeIdRequest implements Serializable {
+@EqualsAndHashCode(of = "codigo")
+public final class CidadeCodigoRequest implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @NotNull
     @Positive
     private Long id;
+
+    private String codigo;
 }
 

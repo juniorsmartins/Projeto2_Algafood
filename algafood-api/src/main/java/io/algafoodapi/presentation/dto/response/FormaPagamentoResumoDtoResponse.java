@@ -19,7 +19,7 @@ import java.io.Serializable;
 @ToString
 @EqualsAndHashCode(of = "id")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public final class FormaPagamentoResumoDtoResponse implements PoliticaResumoDtoResponse<Long>, Serializable {
+public final class FormaPagamentoResumoDtoResponse implements PoliticaResumoDtoResponse, Serializable {
 
     private static final long serialVersionUID = 1L;
 

@@ -6,7 +6,7 @@ public final class Constantes {
 
     public static final String ESTADO_NAO_ENCONTRADO = "Não encontrado estado com código %d.";
 
-    public static final String CIDADE_NAO_ENCONTRADA = "Não encontrada cidade com código %d.";
+    public static final String CIDADE_NAO_ENCONTRADA = "Não encontrada cidade com código %s.";
 
     public static final String COZINHA_NAO_ENCONTRADA = "Não encontrada cozinha com código %d.";
 

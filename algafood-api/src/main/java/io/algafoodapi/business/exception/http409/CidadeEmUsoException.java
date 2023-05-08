@@ -1,15 +1,13 @@
 package io.algafoodapi.business.exception.http409;
 
+import io.algafoodapi.business.core.Constantes;
+
 public final class CidadeEmUsoException extends RegraDeNegocioVioladaException {
 
     private static final long serialVersionUID = 1L;
 
-    public CidadeEmUsoException(String mensagem) {
-        super(mensagem);
-    }
-
-    public CidadeEmUsoException(Long id) {
-        this(String.format("Cidade, com ID %d, não pode ser apagada por estar em uso.", id));
+    public CidadeEmUsoException(String codigoCidade) {
+        super(String.format(Constantes.CIDADE_NAO_ENCONTRADA, codigoCidade));
     }
 }
 

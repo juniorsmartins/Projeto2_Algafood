@@ -19,7 +19,7 @@ import java.io.Serializable;
 @ToString
 @EqualsAndHashCode(of = "id")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public final class PermissaoResumoDtoResponse implements PoliticaResumoDtoResponse<Long>, Serializable {
+public final class PermissaoResumoDtoResponse implements PoliticaResumoDtoResponse, Serializable {
 
   public static final long serialVersionUID = 1L;
 

@@ -17,7 +17,7 @@ import java.io.Serializable;
 @Setter
 @ToString
 @EqualsAndHashCode(of = "id")
-public final class GrupoResumoDtoResponse implements PoliticaResumoDtoResponse<Long>, Serializable {
+public final class GrupoResumoDtoResponse implements PoliticaResumoDtoResponse, Serializable {
 
     private static final long serialVersionUID = 1L;
 

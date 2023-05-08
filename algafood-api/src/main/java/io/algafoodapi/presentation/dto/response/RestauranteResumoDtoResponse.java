@@ -22,7 +22,7 @@ import java.util.List;
 @ToString
 @EqualsAndHashCode(of = "id")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public final class RestauranteResumoDtoResponse implements PoliticaResumoDtoResponse<Long>, Serializable {
+public final class RestauranteResumoDtoResponse implements PoliticaResumoDtoResponse, Serializable {
 
     public static final long serialVersionUID = 1L;
 

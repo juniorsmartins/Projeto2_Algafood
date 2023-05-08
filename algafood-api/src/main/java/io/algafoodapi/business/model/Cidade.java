@@ -16,6 +16,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,6 +27,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 @Entity
 @Table(name = "cidades")
@@ -55,5 +57,10 @@ public final class Cidade implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "estado_id", referencedColumnName = "id", nullable = false)
     private Estado estado;
+
+    @PrePersist
+    private void gerarCodigo() {
+        this.setCodigo(UUID.randomUUID().toString());
+    }
 }
 
