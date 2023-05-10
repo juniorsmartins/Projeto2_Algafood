@@ -10,6 +10,7 @@ import io.algafoodapi.presentation.dto.request.PedidoDtoRequest;
 import io.algafoodapi.presentation.dto.request.PedidoPesquisarDtoRequest;
 import io.algafoodapi.presentation.dto.response.PedidoDtoResponse;
 import io.algafoodapi.presentation.dto.response.PedidoResumoDtoResponse;
+import io.algafoodapi.presentation.filtros.PedidoFiltro;
 import io.algafoodapi.presentation.mapper.PoliticaMapper;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,6 +123,21 @@ public final class PedidoControllerImpl implements PoliticaCrudBaseController<Pe
     return ResponseEntity
         .ok()
         .body(response);
+  }
+
+  @Override
+  public ResponseEntity<Page<PedidoDtoResponse>> pesquisarComFiltro(
+    final PedidoFiltro pedidoFiltro,
+    @PageableDefault(sort = "id", direction = Sort.Direction.ASC, page = 0, size = 10) Pageable paginacao) {
+
+    var responsePage = Optional.of(pedidoFiltro)
+      .map(filtro ->this.service.pesquisar(filtro, paginacao))
+      .map(this.mapper::converterPaginaDeEntidadesParaPaginaDeDtoResponse)
+      .orElseThrow();
+
+    return ResponseEntity
+      .ok()
+      .body(responsePage);
   }
 }
 
