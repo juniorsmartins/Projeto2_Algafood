@@ -5,6 +5,7 @@ import io.algafoodapi.business.model.Pedido;
 import io.algafoodapi.business.utils.ServiceUtils;
 import io.algafoodapi.infraestrutura.repository.PoliticaCrudBaseRepository;
 import io.algafoodapi.infraestrutura.repository.PoliticaPedidoRepository;
+import io.algafoodapi.presentation.filtros.PedidoFiltro;
 import io.algafoodapi.presentation.mapper.PedidoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -31,6 +32,11 @@ public class PedidoServiceImpl implements PoliticaCrudBaseService<Pedido, Long>,
 
   @Autowired
   private ServiceUtils serviceUtils;
+
+  @Override
+  public Page<Pedido> pesquisar(final PedidoFiltro pedidoFiltro, final Pageable paginacao) {
+    return this.pedidoRepository.pesquisar(pedidoFiltro, paginacao);
+  }
 
   @Transactional(readOnly = true)
   @Override
