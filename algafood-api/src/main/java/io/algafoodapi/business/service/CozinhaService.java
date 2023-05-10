@@ -8,6 +8,8 @@ import io.algafoodapi.business.ports.CozinhaRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -79,18 +81,15 @@ public class CozinhaService {
     }
 
     @Transactional(readOnly = true)
-    public List<Cozinha> listar() {
+    public Page<Cozinha> listar(Pageable paginacao) {
 
-        var cozinhas = this.cozinhaRepository.findAll()
-                .stream()
-                .sorted(Comparator.comparing(Cozinha::getId).reversed())
-                .toList();
+        var cozinhasPage = this.cozinhaRepository.findAll(paginacao);
 
-        if (cozinhas.isEmpty()) {
+        if (cozinhasPage.isEmpty()) {
             throw new CozinhaNaoEncontradaException(Constantes.NAO_EXISTEM_COZINHAS);
         }
 
-        return cozinhas;
+        return cozinhasPage;
     }
 }
 

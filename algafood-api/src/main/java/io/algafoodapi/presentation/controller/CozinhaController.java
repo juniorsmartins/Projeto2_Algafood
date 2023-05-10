@@ -1,9 +1,14 @@
 package io.algafoodapi.presentation.controller;
 
+import io.algafoodapi.business.service.CozinhaService;
 import io.algafoodapi.presentation.dto.request.CozinhaDtoRequest;
 import io.algafoodapi.presentation.dto.response.CozinhaDtoResponse;
 import io.algafoodapi.presentation.mapper.CozinhaMapper;
-import io.algafoodapi.business.service.CozinhaService;
+import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -100,16 +104,15 @@ public final class CozinhaController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CozinhaDtoResponse>> listar() {
+    public ResponseEntity<Page<CozinhaDtoResponse>> listar(
+      @PageableDefault(sort = "id", direction = Sort.Direction.DESC, page = 0, size = 10) Pageable paginacao) {
 
-        var response = this.cozinhaService.listar()
-                .stream()
-                .map(this.cozinhaMapper::converterEntidadeParaDtoResponse)
-                .toList();
+      var responsePage = this.cozinhaService.listar(paginacao)
+        .map(this.cozinhaMapper::converterEntidadeParaDtoResponse);
 
-        return ResponseEntity
-                .ok()
-                .body(response);
+      return ResponseEntity
+        .ok()
+        .body(responsePage);
     }
 }
 
