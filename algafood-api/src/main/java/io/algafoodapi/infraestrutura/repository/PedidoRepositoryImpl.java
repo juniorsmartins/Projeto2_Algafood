@@ -2,6 +2,8 @@ package io.algafoodapi.infraestrutura.repository;
 
 import io.algafoodapi.business.model.Pedido;
 import io.algafoodapi.infraestrutura.repository.jpa.PedidoRepositoryJpa;
+import io.algafoodapi.infraestrutura.repository.spec.PedidoSpecs;
+import io.algafoodapi.presentation.filtros.PedidoFiltro;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -17,15 +19,18 @@ public class PedidoRepositoryImpl implements PoliticaCrudBaseRepository<Pedido, 
   @Autowired
   private PedidoRepositoryJpa repositoryJpa;
 
+  @Override
+  public Page<Pedido> pesquisar(final PedidoFiltro pedidoFiltro, final Pageable paginacao) {
+    return this.repositoryJpa.findAll(PedidoSpecs.pesquisaDinamicaComFiltro(pedidoFiltro), paginacao);
+  }
 
   @Override
   public List<Pedido> buscarTodos() {
-
     return this.repositoryJpa.findAll();
   }
 
   @Override
-  public Pedido salvar(Pedido pedido) {
+  public Pedido salvar(final Pedido pedido) {
     return this.repositoryJpa.save(pedido);
   }
 
