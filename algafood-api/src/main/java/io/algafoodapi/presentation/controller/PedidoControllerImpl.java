@@ -125,6 +125,8 @@ public final class PedidoControllerImpl implements PoliticaCrudBaseController<Pe
         .body(response);
   }
 
+  // TODO - cadastrar pedidos com bug
+
   @Override
   public ResponseEntity<Page<PedidoDtoResponse>> pesquisarComFiltro(
     final PedidoFiltro pedidoFiltro,
