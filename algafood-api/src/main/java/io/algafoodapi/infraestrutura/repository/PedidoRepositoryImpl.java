@@ -41,17 +41,17 @@ public class PedidoRepositoryImpl implements PoliticaCrudBaseRepository<Pedido, 
 
   @Override
   public void deletar(Pedido entidade) {
-
+    this.repositoryJpa.delete(entidade);
   }
 
   @Override
   public Optional<Pedido> consultarPorId(Long id) {
-    return Optional.empty();
+    return this.repositoryJpa.findById(id);
   }
 
   @Override
   public List<Pedido> listar() {
-    return null;
+    return this.repositoryJpa.findAll();
   }
 }
 

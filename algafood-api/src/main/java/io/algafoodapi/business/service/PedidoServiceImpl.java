@@ -7,6 +7,7 @@ import io.algafoodapi.infraestrutura.repository.PoliticaCrudBaseRepository;
 import io.algafoodapi.infraestrutura.repository.PoliticaPedidoRepository;
 import io.algafoodapi.presentation.filtros.PedidoFiltro;
 import io.algafoodapi.presentation.mapper.PedidoMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -57,7 +58,13 @@ public class PedidoServiceImpl implements PoliticaCrudBaseService<Pedido, Long>,
   @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
   @Override
   public Pedido atualizar(Pedido entidade) {
-    return null;
+
+    return this.pedidoCrudRepository.consultarPorId(entidade.getId())
+      .map(pedido -> {
+        BeanUtils.copyProperties(entidade, pedido, "id");
+        return pedido;
+      })
+      .orElseThrow();
   }
 
   @Transactional(readOnly = true)
